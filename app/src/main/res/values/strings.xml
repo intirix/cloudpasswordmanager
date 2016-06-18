@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Cloud Password Manager</string>
+
+    <string name="login_url_hint">https://mycloud.example.com/owncloud</string>
+    <string name="login_user_hint">Username</string>
+    <string name="login_pass_hint">Password</string>
+    <string name="login_login_label">Login</string>
 </resources>
