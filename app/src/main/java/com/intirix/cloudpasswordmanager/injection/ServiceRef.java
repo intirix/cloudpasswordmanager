@@ -4,16 +4,19 @@ import com.intirix.cloudpasswordmanager.LoginActivity;
 import com.intirix.cloudpasswordmanager.services.PasswordStorageService;
 import com.intirix.cloudpasswordmanager.services.SessionService;
 
+import javax.inject.Singleton;
+
 import dagger.Component;
 
 /**
  * Created by jeff on 6/18/16.
  */
 @Component(modules = CloudPasswordManagerModule.class)
+@Singleton
 public interface ServiceRef {
-    PasswordStorageService storageService();
+//    PasswordStorageService storageService();
 
-    SessionService sessionService();
+//    SessionService sessionService();
 
     void inject(LoginActivity activity);
 }

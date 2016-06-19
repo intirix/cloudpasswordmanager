@@ -14,9 +14,10 @@ import dagger.Provides;
  * Created by jeff on 6/18/16.
  */
 @Module
+@Singleton
 public class CloudPasswordManagerModule {
 
-    @Provides
+    @Provides @Singleton
     SessionService provideSessionService() {
         return new SessionServiceImpl();
     }

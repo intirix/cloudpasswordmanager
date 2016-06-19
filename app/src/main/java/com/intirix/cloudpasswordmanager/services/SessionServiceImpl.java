@@ -4,11 +4,11 @@ package com.intirix.cloudpasswordmanager.services;
  * Created by jeff on 6/18/16.
  */
 public class SessionServiceImpl implements SessionService {
-    private static String url;
+    private String url;
 
-    private static String username;
+    private String username;
 
-    private static String password;
+    private String password;
 
 
     @Override
@@ -18,7 +18,7 @@ public class SessionServiceImpl implements SessionService {
 
     @Override
     public void setUrl(String url) {
-        SessionServiceImpl.url = url;
+        this.url = url;
     }
 
     @Override
@@ -28,7 +28,7 @@ public class SessionServiceImpl implements SessionService {
 
     @Override
     public void setUsername(String username) {
-        SessionServiceImpl.username = username;
+        this.username = username;
     }
 
     @Override
@@ -38,7 +38,7 @@ public class SessionServiceImpl implements SessionService {
 
     @Override
     public void setPassword(String password) {
-        SessionServiceImpl.password = password;
+        this.password = password;
     }
 
     @Override
