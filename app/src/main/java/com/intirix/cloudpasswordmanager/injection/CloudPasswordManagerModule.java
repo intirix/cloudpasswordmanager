@@ -1,4 +1,4 @@
-package com.intirix.cloudpasswordmanager;
+package com.intirix.cloudpasswordmanager.injection;
 
 import com.intirix.cloudpasswordmanager.services.PasswordStorageService;
 import com.intirix.cloudpasswordmanager.services.PasswordStorageServiceImpl;

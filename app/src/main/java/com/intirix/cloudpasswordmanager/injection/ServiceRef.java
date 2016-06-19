@@ -1,5 +1,6 @@
-package com.intirix.cloudpasswordmanager;
+package com.intirix.cloudpasswordmanager.injection;
 
+import com.intirix.cloudpasswordmanager.LoginActivity;
 import com.intirix.cloudpasswordmanager.services.PasswordStorageService;
 import com.intirix.cloudpasswordmanager.services.SessionService;
 
@@ -13,4 +14,6 @@ public interface ServiceRef {
     PasswordStorageService storageService();
 
     SessionService sessionService();
+
+    void inject(LoginActivity activity);
 }

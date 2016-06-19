@@ -7,9 +7,12 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.intirix.cloudpasswordmanager.injection.*;
 import com.intirix.cloudpasswordmanager.services.PasswordStorageService;
 import com.intirix.cloudpasswordmanager.services.SessionService;
 import com.intirix.cloudpasswordmanager.services.callbacks.VersionCallback;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -17,9 +20,11 @@ import butterknife.OnClick;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private SessionService session;
+    @Inject
+    SessionService session;
 
-    private PasswordStorageService passwordStorage;
+    @Inject
+    PasswordStorageService passwordStorage;
 
     @BindView(R.id.login_url)
     EditText urlInput;
@@ -35,9 +40,11 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
         ButterKnife.bind(this);
-        ServiceRef sref = DaggerServiceRef.builder().cloudPasswordManagerModule(new CloudPasswordManagerModule()).build();
-        session = sref.sessionService();
-        passwordStorage = sref.storageService();
+        ServiceRef sref = com.intirix.cloudpasswordmanager.injection.DaggerServiceRef.builder().cloudPasswordManagerModule(new CloudPasswordManagerModule()).build();
+
+        sref.inject(this);
+        //session = sref.sessionService();
+        //passwordStorage = sref.storageService();
     }
 
     @OnClick(R.id.login_login_button)
