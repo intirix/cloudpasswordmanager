@@ -40,11 +40,10 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
         ButterKnife.bind(this);
-        ServiceRef sref = com.intirix.cloudpasswordmanager.injection.DaggerServiceRef.builder().cloudPasswordManagerModule(new CloudPasswordManagerModule()).build();
+        PasswordApplication.getSInjector(this).inject(this);
+//        ServiceRef sref = com.intirix.cloudpasswordmanager.injection.DaggerServiceRef.builder().cloudPasswordManagerModule(new CloudPasswordManagerModule()).build();
 
-        sref.inject(this);
-        //session = sref.sessionService();
-        //passwordStorage = sref.storageService();
+  //      sref.inject(this);
     }
 
     @OnClick(R.id.login_login_button)
