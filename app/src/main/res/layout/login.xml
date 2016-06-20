@@ -41,11 +41,18 @@
             android:inputType="textPassword"
             android:hint="@string/login_pass_hint"/>
 
+        <TextView
+            android:id="@+id/login_error_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/login_pass"
+            android:contentDescription="@string/login_error_description"/>
+
         <Button
             android:id="@+id/login_login_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/login_pass"
+            android:layout_below="@id/login_error_message"
             android:layout_alignParentRight="true"
             android:text="@string/login_login_label"/>
 

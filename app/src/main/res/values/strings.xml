@@ -5,4 +5,5 @@
     <string name="login_user_hint">Username</string>
     <string name="login_pass_hint">Password</string>
     <string name="login_login_label">Login</string>
+    <string name="login_error_description">Error message</string>
 </resources>
