@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.intirix.cloudpasswordmanager.injection.*;
@@ -35,15 +36,31 @@ public class LoginActivity extends AppCompatActivity {
     @BindView(R.id.login_pass)
     EditText passInput;
 
+    @BindView(R.id.login_error_message)
+    TextView errorMessageView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
         ButterKnife.bind(this);
         PasswordApplication.getSInjector(this).inject(this);
-//        ServiceRef sref = com.intirix.cloudpasswordmanager.injection.DaggerServiceRef.builder().cloudPasswordManagerModule(new CloudPasswordManagerModule()).build();
+    }
 
-  //      sref.inject(this);
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // only show the error message if the view is populated
+        updateErrorMessageVisibility();
+    }
+
+    private void updateErrorMessageVisibility() {
+        if (errorMessageView.getText().length()>0) {
+            errorMessageView.setVisibility(View.VISIBLE);
+        } else {
+            errorMessageView.setVisibility(View.GONE);
+        }
     }
 
     @OnClick(R.id.login_login_button)
@@ -61,8 +78,8 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onError(String message) {
-                Toast.makeText(LoginActivity.this, message, Toast.LENGTH_SHORT).show();
-
+                errorMessageView.setText(message);
+                updateErrorMessageVisibility();
             }
         });
     }
