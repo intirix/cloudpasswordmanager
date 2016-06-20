@@ -16,6 +16,8 @@ import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
 import okhttp3.MediaType;
+import okhttp3.Protocol;
+import okhttp3.Request;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -42,7 +44,6 @@ public class PasswordStorageServiceImplUnitSpec {
 
     @Before
     public void setUp() {
-        //context = EasyMock.createMock(Context.class);
         context = RuntimeEnvironment.application;
         sessionService = new MockSessionService();
         restService = EasyMock.createMock(PasswordRestService.class);
@@ -125,6 +126,38 @@ public class PasswordStorageServiceImplUnitSpec {
             @Override
             public void enqueue(Callback cb) {
                 cb.onResponse(null, Response.error(401, ResponseBody.create(MediaType.parse("text/plain"), "Unauthorized")));
+            }
+        };
+
+        // verify that the Auth header is sent correctly
+        EasyMock.expect(restService.getVersion(AUTHORIZATION)).andReturn(call);
+        EasyMock.replay(callback, restService);
+
+        // invoke the service to test it
+        impl.getServerVersion(callback);
+        EasyMock.verify(callback, restService);
+    }
+
+    @Test
+    public void serverErrorPassesMessageToCallback() {
+        sessionService.setUsername(TESTUSER);
+        sessionService.setPassword(TESTPASS);
+
+        // expect an exception to be sent to the callback
+        final String MESSAGE = "Internal server error";
+        VersionCallback callback = EasyMock.createMock(VersionCallback.class);
+        callback.onError(MESSAGE);
+        EasyMock.expectLastCall();
+
+        Call<String> call = new MockCall<String>() {
+            @Override
+            public void enqueue(Callback cb) {
+                cb.onResponse(null, Response.error(ResponseBody.create(MediaType.parse("text/plain"),""),new okhttp3.Response.Builder() //
+                        .code(500)
+                        .message(MESSAGE)
+                        .protocol(Protocol.HTTP_1_1)
+                        .request(new Request.Builder().url("http://localhost/").build())
+                        .build()));
             }
         };
 
