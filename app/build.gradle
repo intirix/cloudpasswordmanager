@@ -30,6 +30,9 @@ dependencies {
     apt 'com.squareup:javapoet:1.7.0'
     apt 'com.google.dagger:dagger-compiler:2.2'
 
+    compile 'com.squareup.retrofit2:retrofit:2.1.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.1.0'
+
     testCompile "org.robolectric:robolectric:3.1"
     testCompile 'org.khronos:opengl-api:gl1.1-android-2.1_r1'
 
