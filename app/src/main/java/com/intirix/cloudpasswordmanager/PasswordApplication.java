@@ -2,6 +2,7 @@ package com.intirix.cloudpasswordmanager;
 
 import android.app.Application;
 import android.content.Context;
+import android.support.annotation.NonNull;
 
 import com.intirix.cloudpasswordmanager.injection.CloudPasswordManagerModule;
 import com.intirix.cloudpasswordmanager.injection.ServiceRef;
@@ -23,7 +24,12 @@ public class PasswordApplication extends Application {
      * Initialize the objects
      */
     protected void initObjects() {
-        serviceRef = com.intirix.cloudpasswordmanager.injection.DaggerServiceRef.builder().cloudPasswordManagerModule(new CloudPasswordManagerModule()).build();
+        serviceRef = com.intirix.cloudpasswordmanager.injection.DaggerServiceRef.builder().cloudPasswordManagerModule(getModule()).build();
+    }
+
+    @NonNull
+    protected CloudPasswordManagerModule getModule() {
+        return new CloudPasswordManagerModule();
     }
 
     /**
