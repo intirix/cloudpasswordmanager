@@ -6,4 +6,6 @@
     <string name="login_pass_hint">Password</string>
     <string name="login_login_label">Login</string>
     <string name="login_error_description">Error message</string>
+
+    <string name="error_invalid_username_password">Invalid username and password</string>
 </resources>

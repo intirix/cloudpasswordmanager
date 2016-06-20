@@ -1,7 +1,9 @@
 package com.intirix.cloudpasswordmanager.services;
 
+import android.content.Context;
 import android.util.Base64;
 
+import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.services.callbacks.VersionCallback;
 
 import javax.inject.Inject;
@@ -17,6 +19,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 public class PasswordStorageServiceImpl implements PasswordStorageService {
 
+    private Context context;
+
     private SessionService sessionService;
 
     private String currentUrl;
@@ -24,7 +28,8 @@ public class PasswordStorageServiceImpl implements PasswordStorageService {
     private PasswordRestService restService;
 
     @Inject
-    public PasswordStorageServiceImpl(SessionService sessionService) {
+    public PasswordStorageServiceImpl(Context context, SessionService sessionService) {
+        this.context = context;
         this.sessionService = sessionService;
     }
 
@@ -52,7 +57,7 @@ public class PasswordStorageServiceImpl implements PasswordStorageService {
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {
                     if (response.code()==401) {
-                        cb.onError("Invalid username and password");
+                        cb.onError(context.getString(R.string.error_invalid_username_password).toString());
                     } else if (response.code()==200) {
                         cb.onReturn(response.body());
                     } else {

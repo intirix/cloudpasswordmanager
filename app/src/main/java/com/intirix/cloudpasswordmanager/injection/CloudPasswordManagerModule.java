@@ -1,5 +1,7 @@
 package com.intirix.cloudpasswordmanager.injection;
 
+import android.content.Context;
+
 import com.intirix.cloudpasswordmanager.services.PasswordStorageService;
 import com.intirix.cloudpasswordmanager.services.PasswordStorageServiceImpl;
 import com.intirix.cloudpasswordmanager.services.SessionService;
@@ -16,6 +18,17 @@ import dagger.Provides;
 @Module
 @Singleton
 public class CloudPasswordManagerModule {
+
+    private Context context;
+
+    public CloudPasswordManagerModule(Context context) {
+        this.context = context;
+    }
+
+    @Provides
+    Context provideContext() {
+        return context;
+    }
 
     @Provides @Singleton
     SessionService provideSessionService() {

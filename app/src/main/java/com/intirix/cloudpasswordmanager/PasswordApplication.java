@@ -29,7 +29,7 @@ public class PasswordApplication extends Application {
 
     @NonNull
     protected CloudPasswordManagerModule getModule() {
-        return new CloudPasswordManagerModule();
+        return new CloudPasswordManagerModule(this);
     }
 
     /**
