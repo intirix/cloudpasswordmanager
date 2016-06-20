@@ -36,4 +36,7 @@ dependencies {
     testCompile "org.robolectric:robolectric:3.1"
     testCompile 'org.khronos:opengl-api:gl1.1-android-2.1_r1'
 
+    testCompile 'org.easymock:easymock:3.1'
+
+
 }

@@ -33,7 +33,7 @@ public class PasswordStorageServiceImpl implements PasswordStorageService {
         this.sessionService = sessionService;
     }
 
-    private void initRestService() {
+    protected PasswordRestService getRestService() {
         if (currentUrl==null||restService==null||!currentUrl.equals(sessionService.getUrl())) {
             currentUrl = sessionService.getUrl();
             Retrofit retrofit = new Retrofit.Builder()
@@ -43,6 +43,7 @@ public class PasswordStorageServiceImpl implements PasswordStorageService {
 
             restService = retrofit.create(PasswordRestService.class);
         }
+        return restService;
     }
 
     private String getAuthHeader() {
@@ -51,8 +52,7 @@ public class PasswordStorageServiceImpl implements PasswordStorageService {
 
     @Override
     public void getServerVersion(final VersionCallback cb) {
-            initRestService();
-            Call<String> call = restService.getVersion(getAuthHeader());
+            Call<String> call = getRestService().getVersion(getAuthHeader());
             call.enqueue(new Callback<String>() {
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {

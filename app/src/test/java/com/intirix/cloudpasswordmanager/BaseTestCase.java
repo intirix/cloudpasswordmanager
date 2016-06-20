@@ -24,7 +24,7 @@ public class BaseTestCase {
 
     @NonNull
     protected CloudPasswordManagerModule createMockModule() {
-        return new MockCloudPasswordManagerModule();
+        return new MockCloudPasswordManagerModule(RuntimeEnvironment.application);
     }
 
 }
