@@ -3,6 +3,7 @@ package com.intirix.cloudpasswordmanager.services;
 import android.content.Context;
 
 import com.intirix.cloudpasswordmanager.BuildConfig;
+import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.TestPasswordApplication;
 import com.intirix.cloudpasswordmanager.services.callbacks.VersionCallback;
 
@@ -11,8 +12,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
+import okhttp3.MediaType;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -25,6 +29,9 @@ import retrofit2.Response;
         application = TestPasswordApplication.class)
 public class PasswordStorageServiceImplUnitSpec {
 
+    public static final String TESTUSER = "testuser";
+    public static final String TESTPASS = "testpass";
+    public static final String AUTHORIZATION = "Basic dGVzdHVzZXI6dGVzdHBhc3M=";
     private Context context;
 
     private MockSessionService sessionService;
@@ -35,7 +42,8 @@ public class PasswordStorageServiceImplUnitSpec {
 
     @Before
     public void setUp() {
-        context = EasyMock.createMock(Context.class);
+        //context = EasyMock.createMock(Context.class);
+        context = RuntimeEnvironment.application;
         sessionService = new MockSessionService();
         restService = EasyMock.createMock(PasswordRestService.class);
 
@@ -49,8 +57,8 @@ public class PasswordStorageServiceImplUnitSpec {
 
     @Test
     public void successfulVersionRequestPassesVersionToCallback() {
-        sessionService.setUsername("testuser");
-        sessionService.setPassword("testpass");
+        sessionService.setUsername(TESTUSER);
+        sessionService.setPassword(TESTPASS);
 
         // expect the version to be sent to the callback
         final String VERSION = "19.0";
@@ -66,7 +74,7 @@ public class PasswordStorageServiceImplUnitSpec {
         };
 
         // verify that the Auth header is sent correctly
-        EasyMock.expect(restService.getVersion("Basic dGVzdHVzZXI6dGVzdHBhc3M=")).andReturn(call);
+        EasyMock.expect(restService.getVersion(AUTHORIZATION)).andReturn(call);
         EasyMock.replay(callback, restService);
 
         // invoke the service to test it
@@ -76,8 +84,8 @@ public class PasswordStorageServiceImplUnitSpec {
 
     @Test
     public void failedVersionRequestPassesExceptionToCallback() {
-        sessionService.setUsername("testuser");
-        sessionService.setPassword("testpass");
+        sessionService.setUsername(TESTUSER);
+        sessionService.setPassword(TESTPASS);
 
         // expect an exception to be sent to the callback
         final String MESSAGE = "Message inside of the exception";
@@ -93,7 +101,35 @@ public class PasswordStorageServiceImplUnitSpec {
         };
 
         // verify that the Auth header is sent correctly
-        EasyMock.expect(restService.getVersion("Basic dGVzdHVzZXI6dGVzdHBhc3M=")).andReturn(call);
+        EasyMock.expect(restService.getVersion(AUTHORIZATION)).andReturn(call);
+        EasyMock.replay(callback, restService);
+
+        // invoke the service to test it
+        impl.getServerVersion(callback);
+        EasyMock.verify(callback, restService);
+    }
+
+
+    @Test
+    public void authenticationFailurePassesStringsXmlErrorToCallback() {
+        sessionService.setUsername(TESTUSER);
+        sessionService.setPassword(TESTPASS);
+
+        // expect an exception to be sent to the callback
+        final String MESSAGE = context.getString(R.string.error_invalid_username_password).toString();
+        VersionCallback callback = EasyMock.createMock(VersionCallback.class);
+        callback.onError(MESSAGE);
+        EasyMock.expectLastCall();
+
+        Call<String> call = new MockCall<String>() {
+            @Override
+            public void enqueue(Callback cb) {
+                cb.onResponse(null, Response.error(401, ResponseBody.create(MediaType.parse("text/plain"), "Unauthorized")));
+            }
+        };
+
+        // verify that the Auth header is sent correctly
+        EasyMock.expect(restService.getVersion(AUTHORIZATION)).andReturn(call);
         EasyMock.replay(callback, restService);
 
         // invoke the service to test it
