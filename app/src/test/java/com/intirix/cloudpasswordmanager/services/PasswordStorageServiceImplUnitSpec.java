@@ -71,5 +71,34 @@ public class PasswordStorageServiceImplUnitSpec {
 
         // invoke the service to test it
         impl.getServerVersion(callback);
+        EasyMock.verify(callback, restService);
     }
+
+    @Test
+    public void failedVersionRequestPassesExceptionToCallback() {
+        sessionService.setUsername("testuser");
+        sessionService.setPassword("testpass");
+
+        // expect an exception to be sent to the callback
+        final String MESSAGE = "Message inside of the exception";
+        VersionCallback callback = EasyMock.createMock(VersionCallback.class);
+        callback.onError("Failed: java.lang.Exception: "+MESSAGE);
+        EasyMock.expectLastCall();
+
+        Call<String> call = new MockCall<String>() {
+            @Override
+            public void enqueue(Callback cb) {
+                cb.onFailure(null, new Exception(MESSAGE));
+            }
+        };
+
+        // verify that the Auth header is sent correctly
+        EasyMock.expect(restService.getVersion("Basic dGVzdHVzZXI6dGVzdHBhc3M=")).andReturn(call);
+        EasyMock.replay(callback, restService);
+
+        // invoke the service to test it
+        impl.getServerVersion(callback);
+        EasyMock.verify(callback, restService);
+    }
+
 }
