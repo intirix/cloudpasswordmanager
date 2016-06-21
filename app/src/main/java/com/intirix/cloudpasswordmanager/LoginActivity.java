@@ -1,14 +1,13 @@
 package com.intirix.cloudpasswordmanager;
 
-import android.support.v7.app.AppCompatActivity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.intirix.cloudpasswordmanager.injection.*;
 import com.intirix.cloudpasswordmanager.services.PasswordStorageService;
 import com.intirix.cloudpasswordmanager.services.SessionService;
 import com.intirix.cloudpasswordmanager.services.callbacks.VersionCallback;
@@ -73,7 +72,9 @@ public class LoginActivity extends AppCompatActivity {
         passwordStorage.getServerVersion(new VersionCallback() {
             @Override
             public void onReturn(String version) {
-                Toast.makeText(LoginActivity.this, version, Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(LoginActivity.this, PasswordListActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
             }
 
             @Override
