@@ -9,4 +9,6 @@
 
     <string name="error_invalid_username_password">Invalid username and password</string>
     <string name="title_activity_password_list">PasswordListActivity</string>
+
+    <string name="menuitem_logout">Logout</string>
 </resources>
