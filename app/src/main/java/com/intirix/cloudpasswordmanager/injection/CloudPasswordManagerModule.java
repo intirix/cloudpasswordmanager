@@ -31,8 +31,8 @@ public class CloudPasswordManagerModule {
     }
 
     @Provides @Singleton
-    SessionService provideSessionService() {
-        return new SessionServiceImpl();
+    SessionService provideSessionService(SessionServiceImpl impl) {
+        return impl;
     }
 
     @Provides

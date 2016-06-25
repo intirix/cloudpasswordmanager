@@ -5,6 +5,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.intirix.cloudpasswordmanager.services.MockPasswordStorageService;
+import com.intirix.cloudpasswordmanager.services.MockSessionService;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -46,12 +47,19 @@ public class LoginActivityActionSpec extends BaseTestCase {
         Assert.assertEquals(MOCK_USER, activity.session.getUsername());
         Assert.assertEquals(MOCK_PASS, activity.session.getPassword());
 
+        // the session was started, but hasn't ended yet
+        MockSessionService sessionService = (MockSessionService)activity.session;
+        Assert.assertTrue(sessionService.isStarted());
+        Assert.assertFalse(sessionService.isEnded());
+
         // notify the activity of the error
-        MockPasswordStorageService service = (MockPasswordStorageService)activity.passwordStorage;
-        service.getLastVersionCallback().onError(MOCK_ERROR);
+        MockPasswordStorageService passwordStorageService = (MockPasswordStorageService)activity.passwordStorage;
+        passwordStorageService.getLastVersionCallback().onError(MOCK_ERROR);
         Assert.assertEquals(MOCK_ERROR, activity.errorMessageView.getText().toString());
         // verify that the error message is visible
         Assert.assertEquals(View.VISIBLE, activity.errorMessageView.getVisibility());
+        // verify that the session was ended
+        Assert.assertTrue(sessionService.isEnded());
 
 
         controller.pause().stop().destroy();
@@ -79,6 +87,10 @@ public class LoginActivityActionSpec extends BaseTestCase {
         Assert.assertEquals(MOCK_URL, activity.session.getUrl());
         Assert.assertEquals(MOCK_USER, activity.session.getUsername());
         Assert.assertEquals(MOCK_PASS, activity.session.getPassword());
+
+        MockSessionService sessionService = (MockSessionService)activity.session;
+        Assert.assertTrue(sessionService.isStarted());
+        Assert.assertFalse(sessionService.isEnded());
 
         // notify the activity of the error
         MockPasswordStorageService service = (MockPasswordStorageService)activity.passwordStorage;

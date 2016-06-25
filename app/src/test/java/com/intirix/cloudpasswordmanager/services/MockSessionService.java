@@ -10,9 +10,18 @@ public class MockSessionService implements SessionService {
 
     private String password;
 
+    private boolean started = false;
+
+    private boolean ended = false;
+
+    @Override
+    public void start() {
+        started = true;
+    }
 
     @Override
     public void end() {
+        ended = true;
         password = null;
     }
 
@@ -44,5 +53,13 @@ public class MockSessionService implements SessionService {
     @Override
     public String getPassword() {
         return password;
+    }
+
+    public boolean isEnded() {
+        return ended;
+    }
+
+    public boolean isStarted() {
+        return started;
     }
 }

@@ -6,30 +6,35 @@ package com.intirix.cloudpasswordmanager.services;
 public interface SessionService {
 
     /**
+     * Start a session
+     */
+    public void start();
+
+    /**
      * End the session
      */
     public void end();
 
     /**
-     * Set the url of the session
+     * Set the url of the last started session
      * @param url
      */
     public void setUrl(String url);
 
     /**
-     * Get the url of the session
+     * Get the url of the last started session
      * @return
      */
     public String getUrl();
 
     /**
-     * Set the username of the session
+     * Set the username of the last started session
      * @param username
      */
     public void setUsername(String username);
 
     /**
-     * Get the username of the session
+     * Get the username of the last started session
      * @return
      */
     public String getUsername();

@@ -72,6 +72,7 @@ public class LoginActivity extends AppCompatActivity {
         session.setUrl(urlInput.getText().toString());
         session.setUsername(userInput.getText().toString());
         session.setPassword(passInput.getText().toString());
+        session.start();
         passwordStorage.getServerVersion(new VersionCallback() {
             @Override
             public void onReturn(String version) {
@@ -82,6 +83,7 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onError(String message) {
+                session.end();
                 errorMessageView.setText(message);
                 updateErrorMessageVisibility();
             }
