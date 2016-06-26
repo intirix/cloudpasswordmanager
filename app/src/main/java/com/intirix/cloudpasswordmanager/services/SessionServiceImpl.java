@@ -11,8 +11,8 @@ import javax.inject.Inject;
  */
 public class SessionServiceImpl implements SessionService {
 
-    static final String URL_KEY = "last.url";
-    static final String USERNAME_KEY = "last.user";
+    public static final String URL_KEY = "last.url";
+    public static final String USERNAME_KEY = "last.user";
 
     private Context context;
 

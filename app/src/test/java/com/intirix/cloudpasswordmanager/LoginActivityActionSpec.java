@@ -110,4 +110,69 @@ public class LoginActivityActionSpec extends BaseTestCase {
         controller.pause().stop().destroy();
     }
 
+
+    @Test
+    public void verifyFormIsBlankOnFirstStart() {
+        ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class).create().start().resume();
+        LoginActivity activity = controller.get();
+
+        Assert.assertEquals("", activity.urlInput.getText().toString());
+        Assert.assertEquals("", activity.userInput.getText().toString());
+        Assert.assertEquals("", activity.passInput.getText().toString());
+
+        controller.pause().stop().destroy();
+    }
+
+
+    @Test
+    public void verifyFormIsPrepopulatedWhenRelaunched() {
+        final String TESTURL = "https://www.example.com/owncloud";
+        final String TESTUSER = "testuser";
+
+        ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class).create();
+        LoginActivity activity = controller.get();
+
+        activity.session.setUrl(TESTURL);
+        activity.session.setUsername(TESTUSER);
+
+        controller.start().resume();
+
+        Assert.assertEquals(TESTURL, activity.urlInput.getText().toString());
+        Assert.assertEquals(TESTUSER, activity.userInput.getText().toString());
+        Assert.assertEquals("", activity.passInput.getText().toString());
+
+        controller.pause().stop().destroy();
+    }
+
+    @Test
+    public void verifyFormDoesNotOverrideValuesWhenBackgrounded() {
+        final String TESTURL1 = "https://www.example.com/owncloud";
+        final String TESTURL2 = "https://www.example.com/nextcloud";
+        final String TESTUSER1 = "testuser";
+        final String TESTUSER2 = "testuser2";
+
+        ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class).create();
+        LoginActivity activity = controller.get();
+
+        activity.session.setUrl(TESTURL1);
+        activity.session.setUsername(TESTUSER1);
+
+        controller.start().resume();
+
+        Assert.assertEquals(TESTURL1, activity.urlInput.getText().toString());
+        Assert.assertEquals(TESTUSER1, activity.userInput.getText().toString());
+        Assert.assertEquals("", activity.passInput.getText().toString());
+
+        activity.urlInput.setText(TESTURL2);
+        activity.userInput.setText(TESTUSER2);
+
+        controller.pause().resume();
+
+        Assert.assertEquals(TESTURL2, activity.urlInput.getText().toString());
+        Assert.assertEquals(TESTUSER2, activity.userInput.getText().toString());
+        Assert.assertEquals("", activity.passInput.getText().toString());
+
+        controller.pause().stop().destroy();
+    }
+
 }

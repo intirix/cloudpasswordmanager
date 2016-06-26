@@ -53,6 +53,14 @@ public class LoginActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
+        if (urlInput.getText().toString().length()==0) {
+            urlInput.setText(session.getUrl());
+        }
+
+        if (userInput.getText().toString().length()==0) {
+            userInput.setText(session.getUsername());
+        }
+
         // only show the error message if the view is populated
         updateErrorMessageVisibility();
     }
