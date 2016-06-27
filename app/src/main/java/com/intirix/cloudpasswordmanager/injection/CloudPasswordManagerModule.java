@@ -11,6 +11,7 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import okhttp3.OkHttpClient;
 
 /**
  * Created by jeff on 6/18/16.
@@ -23,6 +24,12 @@ public class CloudPasswordManagerModule {
 
     public CloudPasswordManagerModule(Context context) {
         this.context = context;
+    }
+
+    @Provides
+    OkHttpClient provideHttpClient() {
+        OkHttpClient okClient = new OkHttpClient.Builder().build();
+        return okClient;
     }
 
     @Provides

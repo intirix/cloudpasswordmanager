@@ -1,6 +1,7 @@
 package com.intirix.cloudpasswordmanager.services;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.util.Base64;
 
 import com.intirix.cloudpasswordmanager.R;
@@ -8,6 +9,7 @@ import com.intirix.cloudpasswordmanager.services.callbacks.VersionCallback;
 
 import javax.inject.Inject;
 
+import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -21,6 +23,8 @@ public class PasswordStorageServiceImpl implements PasswordStorageService {
 
     private Context context;
 
+    private OkHttpClient client;
+
     private SessionService sessionService;
 
     private String currentUrl;
@@ -28,15 +32,17 @@ public class PasswordStorageServiceImpl implements PasswordStorageService {
     private PasswordRestService restService;
 
     @Inject
-    public PasswordStorageServiceImpl(Context context, SessionService sessionService) {
+    public PasswordStorageServiceImpl(@NonNull Context context, @NonNull SessionService sessionService, OkHttpClient client) {
         this.context = context;
         this.sessionService = sessionService;
+        this.client = client;
     }
 
     protected PasswordRestService getRestService() {
         if (currentUrl==null||restService==null||!currentUrl.equals(sessionService.getUrl())) {
             currentUrl = sessionService.getUrl();
             Retrofit retrofit = new Retrofit.Builder()
+                    .client(client)
                     .baseUrl(currentUrl+"/index.php/apps/passwords/api/0.1/")
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();

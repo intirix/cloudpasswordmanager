@@ -48,7 +48,7 @@ public class PasswordStorageServiceImplUnitSpec {
         sessionService = new MockSessionService();
         restService = EasyMock.createMock(PasswordRestService.class);
 
-        impl = new PasswordStorageServiceImpl(context, sessionService) {
+        impl = new PasswordStorageServiceImpl(context, sessionService, null) {
             @Override
             protected PasswordRestService getRestService() {
                 return restService;
