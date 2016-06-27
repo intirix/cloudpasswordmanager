@@ -2,7 +2,6 @@ package com.intirix.cloudpasswordmanager.services;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.util.Base64;
 
 import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.services.callbacks.VersionCallback;
@@ -52,13 +51,9 @@ public class PasswordStorageServiceImpl implements PasswordStorageService {
         return restService;
     }
 
-    private String getAuthHeader() {
-        return "Basic " + Base64.encodeToString(String.format("%s:%s", sessionService.getUsername(), sessionService.getPassword()).getBytes(), Base64.NO_WRAP);
-    }
-
     @Override
     public void getServerVersion(final VersionCallback cb) {
-            Call<String> call = getRestService().getVersion(getAuthHeader());
+            Call<String> call = getRestService().getVersion();
             call.enqueue(new Callback<String>() {
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {

@@ -75,7 +75,7 @@ public class PasswordStorageServiceImplUnitSpec {
         };
 
         // verify that the Auth header is sent correctly
-        EasyMock.expect(restService.getVersion(AUTHORIZATION)).andReturn(call);
+        EasyMock.expect(restService.getVersion()).andReturn(call);
         EasyMock.replay(callback, restService);
 
         // invoke the service to test it
@@ -102,7 +102,7 @@ public class PasswordStorageServiceImplUnitSpec {
         };
 
         // verify that the Auth header is sent correctly
-        EasyMock.expect(restService.getVersion(AUTHORIZATION)).andReturn(call);
+        EasyMock.expect(restService.getVersion()).andReturn(call);
         EasyMock.replay(callback, restService);
 
         // invoke the service to test it
@@ -130,7 +130,7 @@ public class PasswordStorageServiceImplUnitSpec {
         };
 
         // verify that the Auth header is sent correctly
-        EasyMock.expect(restService.getVersion(AUTHORIZATION)).andReturn(call);
+        EasyMock.expect(restService.getVersion()).andReturn(call);
         EasyMock.replay(callback, restService);
 
         // invoke the service to test it
@@ -162,7 +162,7 @@ public class PasswordStorageServiceImplUnitSpec {
         };
 
         // verify that the Auth header is sent correctly
-        EasyMock.expect(restService.getVersion(AUTHORIZATION)).andReturn(call);
+        EasyMock.expect(restService.getVersion()).andReturn(call);
         EasyMock.replay(callback, restService);
 
         // invoke the service to test it

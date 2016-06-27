@@ -39,8 +39,14 @@ public class PasswordRestServiceUnitSpec {
 
     private String responseJson;
 
+    private MockSessionService sessionService;
+
     @Before
     public void setUp() {
+
+        sessionService = new MockSessionService();
+        sessionService.setUsername(TESTUSER);
+        sessionService.setPassword(TESTPASS);
 
         interceptor = new Interceptor() {
             @Override
@@ -56,7 +62,9 @@ public class PasswordRestServiceUnitSpec {
             }
         };
 
-        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
+        OkHttpClient client = new OkHttpClient.Builder()
+                .addInterceptor(new AuthenticationInterceptor(sessionService))
+                .addInterceptor(interceptor).build();
 
         Retrofit retrofit = new Retrofit.Builder()
                 .client(client)
@@ -72,7 +80,7 @@ public class PasswordRestServiceUnitSpec {
     public void testSimpleVersionResponse() throws IOException {
         responseJson = "\"19\"";
 
-        Assert.assertEquals("19", impl.getVersion(AUTHORIZATION).execute().body());
+        Assert.assertEquals("19", impl.getVersion().execute().body());
     }
 
 }

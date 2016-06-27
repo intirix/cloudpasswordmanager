@@ -2,6 +2,7 @@ package com.intirix.cloudpasswordmanager.injection;
 
 import android.content.Context;
 
+import com.intirix.cloudpasswordmanager.services.AuthenticationInterceptor;
 import com.intirix.cloudpasswordmanager.services.PasswordStorageService;
 import com.intirix.cloudpasswordmanager.services.PasswordStorageServiceImpl;
 import com.intirix.cloudpasswordmanager.services.SessionService;
@@ -27,8 +28,10 @@ public class CloudPasswordManagerModule {
     }
 
     @Provides
-    OkHttpClient provideHttpClient() {
-        OkHttpClient okClient = new OkHttpClient.Builder().build();
+    OkHttpClient provideHttpClient(SessionService sessionService) {
+        OkHttpClient okClient = new OkHttpClient.Builder()
+                .addInterceptor(new AuthenticationInterceptor(sessionService))
+                .build();
         return okClient;
     }
 
