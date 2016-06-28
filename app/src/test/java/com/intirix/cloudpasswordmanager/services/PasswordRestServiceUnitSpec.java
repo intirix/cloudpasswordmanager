@@ -2,6 +2,7 @@ package com.intirix.cloudpasswordmanager.services;
 
 import com.intirix.cloudpasswordmanager.BuildConfig;
 import com.intirix.cloudpasswordmanager.TestPasswordApplication;
+import com.intirix.cloudpasswordmanager.services.beans.Category;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -11,6 +12,7 @@ import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 
 import java.io.IOException;
+import java.util.List;
 
 import okhttp3.Interceptor;
 import okhttp3.MediaType;
@@ -22,6 +24,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
+ * Specification for the REST service impl that gets generated my Retrofit
  * Created by jeff on 6/26/16.
  */
 @RunWith(RobolectricGradleTestRunner.class)
@@ -81,6 +84,28 @@ public class PasswordRestServiceUnitSpec {
         responseJson = "\"19\"";
 
         Assert.assertEquals("19", impl.getVersion().execute().body());
+    }
+
+    @Test
+    public void testListCategoriesWithZero() throws IOException {
+        responseJson = "[]";
+
+        Assert.assertEquals(0, impl.listCategories().execute().body().size());
+    }
+
+    @Test
+    public void testListCategoriesWithOne() throws IOException {
+        responseJson = "[{\"id\":1,\"user_id\":\"pwuser1\",\"category_name\":\"test\",\"category_colour\":\"eeeeee\"}]";
+
+        List<Category> categoryList = impl.listCategories().execute().body();
+        Assert.assertEquals(1, categoryList.size());
+
+        Category cat = categoryList.get(0);
+        Assert.assertEquals("1", cat.getId());
+        Assert.assertEquals("pwuser1", cat.getUser_id());
+        Assert.assertEquals("test", cat.getCategory_name());
+        Assert.assertEquals("eeeeee", cat.getCategory_colour());
+
     }
 
 }

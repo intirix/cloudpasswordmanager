@@ -5,7 +5,11 @@ import android.content.Context;
 import com.intirix.cloudpasswordmanager.BuildConfig;
 import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.TestPasswordApplication;
+import com.intirix.cloudpasswordmanager.services.beans.Category;
+import com.intirix.cloudpasswordmanager.services.callbacks.CategoryListCallback;
 import com.intirix.cloudpasswordmanager.services.callbacks.VersionCallback;
+
+import junit.framework.Assert;
 
 import org.easymock.EasyMock;
 import org.junit.Before;
@@ -14,6 +18,11 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import okhttp3.MediaType;
 import okhttp3.Protocol;
@@ -24,6 +33,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
+ * Specification for all the behaviors of the PasswordStorageServiceImpl class
  * Created by jeff on 6/20/16.
  */
 @RunWith(RobolectricGradleTestRunner.class)
@@ -169,5 +179,96 @@ public class PasswordStorageServiceImplUnitSpec {
         impl.getServerVersion(callback);
         EasyMock.verify(callback, restService);
     }
+
+    @Test
+    public void verifyEmptyCategoryResponseWorks() {
+        sessionService.setUsername(TESTUSER);
+        sessionService.setPassword(TESTPASS);
+
+        final List<Category> empty = Collections.emptyList();
+        final AtomicInteger counter = new AtomicInteger(0);
+
+        CategoryListCallback cb = new CategoryListCallback() {
+            @Override
+            public void onReturn(List<Category> categories) {
+                Assert.assertEquals(0, categories.size());
+                counter.incrementAndGet();
+            }
+
+            @Override
+            public void onError(String message) {
+                Assert.fail(message);
+            }
+        };
+
+        Call<List<Category>> call = new MockCall<List<Category>>() {
+            @Override
+            public void enqueue(Callback callback) {
+                callback.onResponse(this, Response.success(empty));
+            }
+        };
+
+        EasyMock.expect(restService.listCategories()).andReturn(call);
+        EasyMock.replay(restService);
+
+        impl.listCategories(cb);
+        EasyMock.verify(restService);
+        Assert.assertEquals(1,counter.get());
+
+    }
+
+    /**
+     * The Owncloud Password app API returns values for other users.  The values are nulled out
+     * so there is no information disclosure, but it does mean the UI has to filter out all
+     * the values that are null
+     */
+    @Test
+    public void verifyOtherUserCategorysAreFiltered() {
+        sessionService.setUsername(TESTUSER);
+        sessionService.setPassword(TESTPASS);
+
+        final Category c1 = new Category();
+        final Category c2 = new Category();
+        c2.setId("2");
+        c2.setUser_id(TESTUSER);
+        c2.setCategory_name("My category");
+        c2.setCategory_colour("aaaaaa");
+
+        final List<Category> list = new ArrayList<>();
+        list.add(c1);
+        list.add(c2);
+
+        final AtomicInteger counter = new AtomicInteger(0);
+
+        CategoryListCallback cb = new CategoryListCallback() {
+            @Override
+            public void onReturn(List<Category> categories) {
+                Assert.assertEquals(1, categories.size());
+                Assert.assertEquals(c2, categories.get(0));
+                counter.incrementAndGet();
+            }
+
+            @Override
+            public void onError(String message) {
+                Assert.fail(message);
+            }
+        };
+
+        Call<List<Category>> call = new MockCall<List<Category>>() {
+            @Override
+            public void enqueue(Callback callback) {
+                callback.onResponse(this, Response.success(list));
+            }
+        };
+
+        EasyMock.expect(restService.listCategories()).andReturn(call);
+        EasyMock.replay(restService);
+
+        impl.listCategories(cb);
+        EasyMock.verify(restService);
+        Assert.assertEquals(1,counter.get());
+
+    }
+
 
 }

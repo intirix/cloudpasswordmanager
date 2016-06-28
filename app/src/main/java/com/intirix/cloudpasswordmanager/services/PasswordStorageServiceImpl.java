@@ -4,7 +4,12 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.intirix.cloudpasswordmanager.R;
+import com.intirix.cloudpasswordmanager.services.beans.Category;
+import com.intirix.cloudpasswordmanager.services.callbacks.CategoryListCallback;
 import com.intirix.cloudpasswordmanager.services.callbacks.VersionCallback;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -71,5 +76,27 @@ public class PasswordStorageServiceImpl implements PasswordStorageService {
                     cb.onError("Failed: " + t);
                 }
             });
+    }
+
+    @Override
+    public void listCategories(final CategoryListCallback cb) {
+        Call<List<Category>> call = getRestService().listCategories();
+        call.enqueue(new Callback<List<Category>>() {
+            @Override
+            public void onResponse(Call<List<Category>> call, Response<List<Category>> response) {
+                final List<Category> list = new ArrayList<Category>(response.body().size());
+                for (final Category c: response.body()) {
+                    if (sessionService.getUsername().equals(c.getUser_id())) {
+                        list.add(c);
+                    }
+                }
+                cb.onReturn(list);
+            }
+
+            @Override
+            public void onFailure(Call<List<Category>> call, Throwable t) {
+                cb.onError("Failed: " + t);
+            }
+        });
     }
 }
