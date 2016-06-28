@@ -1,6 +1,7 @@
 package com.intirix.cloudpasswordmanager.services;
 
 import com.intirix.cloudpasswordmanager.services.beans.Category;
+import com.intirix.cloudpasswordmanager.services.beans.PasswordResponse;
 
 import java.util.List;
 
@@ -17,4 +18,7 @@ public interface PasswordRestService {
 
     @GET("categories")
     Call<List<Category>> listCategories();
+
+    @GET("passwords")
+    Call<List<PasswordResponse>> listPasswords();
 }

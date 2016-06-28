@@ -1,6 +1,7 @@
 package com.intirix.cloudpasswordmanager.services;
 
 import com.intirix.cloudpasswordmanager.services.callbacks.CategoryListCallback;
+import com.intirix.cloudpasswordmanager.services.callbacks.PasswordListCallback;
 import com.intirix.cloudpasswordmanager.services.callbacks.VersionCallback;
 
 /**
@@ -19,4 +20,10 @@ public interface PasswordStorageService {
      * @param cb
      */
     void listCategories(CategoryListCallback cb);
+
+    /**
+     * List all the passwords that a user has
+     * @param cb
+     */
+    void listPasswords(PasswordListCallback cb);
 }

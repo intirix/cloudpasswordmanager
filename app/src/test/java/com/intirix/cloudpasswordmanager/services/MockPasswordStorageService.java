@@ -1,6 +1,7 @@
 package com.intirix.cloudpasswordmanager.services;
 
 import com.intirix.cloudpasswordmanager.services.callbacks.CategoryListCallback;
+import com.intirix.cloudpasswordmanager.services.callbacks.PasswordListCallback;
 import com.intirix.cloudpasswordmanager.services.callbacks.VersionCallback;
 
 /**
@@ -13,6 +14,8 @@ public class MockPasswordStorageService implements PasswordStorageService {
     private VersionCallback lastVersionCallback;
 
     private CategoryListCallback lastCategoryListCallback;
+
+    private PasswordListCallback lastPasswordListCallack;
 
     @Override
     public void getServerVersion(VersionCallback cb) {
@@ -30,5 +33,14 @@ public class MockPasswordStorageService implements PasswordStorageService {
 
     public CategoryListCallback getLastCategoryListCallback() {
         return lastCategoryListCallback;
+    }
+
+    @Override
+    public void listPasswords(PasswordListCallback cb) {
+        this.lastPasswordListCallack = cb;
+    }
+
+    public PasswordListCallback getLastPasswordListCallack() {
+        return lastPasswordListCallack;
     }
 }

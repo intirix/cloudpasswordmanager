@@ -6,7 +6,9 @@ import com.intirix.cloudpasswordmanager.BuildConfig;
 import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.TestPasswordApplication;
 import com.intirix.cloudpasswordmanager.services.beans.Category;
+import com.intirix.cloudpasswordmanager.services.beans.PasswordResponse;
 import com.intirix.cloudpasswordmanager.services.callbacks.CategoryListCallback;
+import com.intirix.cloudpasswordmanager.services.callbacks.PasswordListCallback;
 import com.intirix.cloudpasswordmanager.services.callbacks.VersionCallback;
 
 import junit.framework.Assert;
@@ -265,6 +267,147 @@ public class PasswordStorageServiceImplUnitSpec {
         EasyMock.replay(restService);
 
         impl.listCategories(cb);
+        EasyMock.verify(restService);
+        Assert.assertEquals(1,counter.get());
+
+    }
+
+
+    @Test
+    public void verifyEmptyPasswordResponseWorks() {
+        sessionService.setUsername(TESTUSER);
+        sessionService.setPassword(TESTPASS);
+
+        final List<PasswordResponse> empty = Collections.emptyList();
+        final AtomicInteger counter = new AtomicInteger(0);
+
+        PasswordListCallback cb = new PasswordListCallback() {
+            @Override
+            public void onReturn(List<PasswordResponse> passwords) {
+                Assert.assertEquals(0, passwords.size());
+                counter.incrementAndGet();
+            }
+
+            @Override
+            public void onError(String message) {
+                Assert.fail(message);
+            }
+        };
+
+        Call<List<PasswordResponse>> call = new MockCall<List<PasswordResponse>>() {
+            @Override
+            public void enqueue(Callback callback) {
+                callback.onResponse(this, Response.success(empty));
+            }
+        };
+
+        EasyMock.expect(restService.listPasswords()).andReturn(call);
+        EasyMock.replay(restService);
+
+        impl.listPasswords(cb);
+        EasyMock.verify(restService);
+        Assert.assertEquals(1,counter.get());
+
+    }
+
+    @Test
+    public void verifyDeletedPasswordsAreRemoved() {
+        sessionService.setUsername(TESTUSER);
+        sessionService.setPassword(TESTPASS);
+
+        final List<PasswordResponse> list = new ArrayList<>();
+
+        final PasswordResponse pr1 = new PasswordResponse();
+        pr1.setId("1");
+        pr1.setUser_id(TESTUSER);
+        pr1.setDeleted("1");
+        final PasswordResponse pr2 = new PasswordResponse();
+        pr2.setId("2");
+        pr2.setUser_id(TESTUSER);
+        pr2.setDeleted("0");
+
+        list.add(pr1);
+        list.add(pr2);
+
+        final AtomicInteger counter = new AtomicInteger(0);
+
+        PasswordListCallback cb = new PasswordListCallback() {
+            @Override
+            public void onReturn(List<PasswordResponse> passwords) {
+                Assert.assertEquals(1, passwords.size());
+                Assert.assertEquals(pr2, passwords.get(0));
+                counter.incrementAndGet();
+            }
+
+            @Override
+            public void onError(String message) {
+                Assert.fail(message);
+            }
+        };
+
+        Call<List<PasswordResponse>> call = new MockCall<List<PasswordResponse>>() {
+            @Override
+            public void enqueue(Callback callback) {
+                callback.onResponse(this, Response.success(list));
+            }
+        };
+
+        EasyMock.expect(restService.listPasswords()).andReturn(call);
+        EasyMock.replay(restService);
+
+        impl.listPasswords(cb);
+        EasyMock.verify(restService);
+        Assert.assertEquals(1,counter.get());
+
+    }
+
+
+    @Test
+    public void verifyOtherUserPasswordsAreRemoved() {
+        sessionService.setUsername(TESTUSER);
+        sessionService.setPassword(TESTPASS);
+
+        final List<PasswordResponse> list = new ArrayList<>();
+
+        final PasswordResponse pr1 = new PasswordResponse();
+        pr1.setId("1");
+        pr1.setUser_id("not-me");
+        pr1.setDeleted("0");
+        final PasswordResponse pr2 = new PasswordResponse();
+        pr2.setId("2");
+        pr2.setUser_id(TESTUSER);
+        pr2.setDeleted("0");
+
+        list.add(pr1);
+        list.add(pr2);
+
+        final AtomicInteger counter = new AtomicInteger(0);
+
+        PasswordListCallback cb = new PasswordListCallback() {
+            @Override
+            public void onReturn(List<PasswordResponse> passwords) {
+                Assert.assertEquals(1, passwords.size());
+                Assert.assertEquals(pr2, passwords.get(0));
+                counter.incrementAndGet();
+            }
+
+            @Override
+            public void onError(String message) {
+                Assert.fail(message);
+            }
+        };
+
+        Call<List<PasswordResponse>> call = new MockCall<List<PasswordResponse>>() {
+            @Override
+            public void enqueue(Callback callback) {
+                callback.onResponse(this, Response.success(list));
+            }
+        };
+
+        EasyMock.expect(restService.listPasswords()).andReturn(call);
+        EasyMock.replay(restService);
+
+        impl.listPasswords(cb);
         EasyMock.verify(restService);
         Assert.assertEquals(1,counter.get());
 

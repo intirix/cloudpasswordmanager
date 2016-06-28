@@ -5,7 +5,9 @@ import android.support.annotation.NonNull;
 
 import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.services.beans.Category;
+import com.intirix.cloudpasswordmanager.services.beans.PasswordResponse;
 import com.intirix.cloudpasswordmanager.services.callbacks.CategoryListCallback;
+import com.intirix.cloudpasswordmanager.services.callbacks.PasswordListCallback;
 import com.intirix.cloudpasswordmanager.services.callbacks.VersionCallback;
 
 import java.util.ArrayList;
@@ -95,6 +97,28 @@ public class PasswordStorageServiceImpl implements PasswordStorageService {
 
             @Override
             public void onFailure(Call<List<Category>> call, Throwable t) {
+                cb.onError("Failed: " + t);
+            }
+        });
+    }
+
+    @Override
+    public void listPasswords(final PasswordListCallback cb) {
+        Call<List<PasswordResponse>> call = getRestService().listPasswords();
+        call.enqueue(new Callback<List<PasswordResponse>>() {
+            @Override
+            public void onResponse(Call<List<PasswordResponse>> call, Response<List<PasswordResponse>> response) {
+                List<PasswordResponse> list = new ArrayList<PasswordResponse>();
+                for (final PasswordResponse pr: response.body()) {
+                    if (sessionService.getUsername().equals(pr.getUser_id())&&"0".equals(pr.getDeleted())) {
+                        list.add(pr);
+                    }
+                }
+                cb.onReturn(list);
+            }
+
+            @Override
+            public void onFailure(Call<List<PasswordResponse>> call, Throwable t) {
                 cb.onError("Failed: " + t);
             }
         });

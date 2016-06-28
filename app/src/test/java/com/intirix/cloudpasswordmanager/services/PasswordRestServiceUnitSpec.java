@@ -3,6 +3,7 @@ package com.intirix.cloudpasswordmanager.services;
 import com.intirix.cloudpasswordmanager.BuildConfig;
 import com.intirix.cloudpasswordmanager.TestPasswordApplication;
 import com.intirix.cloudpasswordmanager.services.beans.Category;
+import com.intirix.cloudpasswordmanager.services.beans.PasswordResponse;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -12,7 +13,9 @@ import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
+import java.util.Scanner;
 
 import okhttp3.Interceptor;
 import okhttp3.MediaType;
@@ -106,6 +109,60 @@ public class PasswordRestServiceUnitSpec {
         Assert.assertEquals("test", cat.getCategory_name());
         Assert.assertEquals("eeeeee", cat.getCategory_colour());
 
+    }
+
+    @Test
+    public void testListPasswordsWithZero() throws IOException {
+        responseJson = "[]";
+
+        List<PasswordResponse> passwordList = impl.listPasswords().execute().body();
+        Assert.assertEquals(0, passwordList.size());
+    }
+
+    @Test
+    public void testListPasswordsWithOne() throws IOException {
+        setMockResponseJson("/password-list-example1.json");
+        List<PasswordResponse> passwordList = impl.listPasswords().execute().body();
+
+        Assert.assertEquals(1, passwordList.size());
+        PasswordResponse pr = passwordList.get(0);
+
+        Assert.assertEquals("5", pr.getId());
+        Assert.assertEquals(TESTUSER, pr.getUser_id());
+        Assert.assertEquals("www.github.com", pr.getWebsite());
+        Assert.assertEquals("password", pr.getPass());
+        Assert.assertEquals(221, pr.getProperties().length());
+        Assert.assertFalse(pr.isNotes());
+        Assert.assertEquals("0", pr.getDeleted());
+    }
+
+    @Test
+    public void testListPasswordsWithNulls() throws IOException {
+        setMockResponseJson("/password-list-example-with-nulls.json");
+        List<PasswordResponse> passwordList = impl.listPasswords().execute().body();
+
+        Assert.assertEquals(2, passwordList.size());
+        PasswordResponse pr = passwordList.get(1);
+
+        Assert.assertEquals("5", pr.getId());
+        Assert.assertEquals(TESTUSER, pr.getUser_id());
+        Assert.assertEquals("www.github.com", pr.getWebsite());
+        Assert.assertEquals("password", pr.getPass());
+        Assert.assertEquals(221, pr.getProperties().length());
+        Assert.assertFalse(pr.isNotes());
+        Assert.assertEquals("0", pr.getDeleted());
+    }
+
+
+    /**
+     * Get the response from a file
+     * @param path
+     */
+    private void setMockResponseJson(String path) {
+        InputStream is = getClass().getResourceAsStream(path);
+
+        Scanner s = new Scanner(is, "UTF-8").useDelimiter("\\A");
+        responseJson = s.hasNext() ? s.next() : "";
     }
 
 }
