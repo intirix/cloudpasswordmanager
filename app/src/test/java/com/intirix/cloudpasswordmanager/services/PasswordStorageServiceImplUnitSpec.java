@@ -6,6 +6,7 @@ import com.intirix.cloudpasswordmanager.BuildConfig;
 import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.TestPasswordApplication;
 import com.intirix.cloudpasswordmanager.services.beans.Category;
+import com.intirix.cloudpasswordmanager.services.beans.PasswordInfo;
 import com.intirix.cloudpasswordmanager.services.beans.PasswordResponse;
 import com.intirix.cloudpasswordmanager.services.callbacks.CategoryListCallback;
 import com.intirix.cloudpasswordmanager.services.callbacks.PasswordListCallback;
@@ -283,7 +284,7 @@ public class PasswordStorageServiceImplUnitSpec {
 
         PasswordListCallback cb = new PasswordListCallback() {
             @Override
-            public void onReturn(List<PasswordResponse> passwords) {
+            public void onReturn(List<PasswordInfo> passwords) {
                 Assert.assertEquals(0, passwords.size());
                 counter.incrementAndGet();
             }
@@ -326,6 +327,10 @@ public class PasswordStorageServiceImplUnitSpec {
         pr2.setUser_id(TESTUSER);
         pr2.setDeleted("0");
 
+        final PasswordInfo pi2 = new PasswordInfo();
+        pi2.setId("2");
+        pi2.setUser_id(TESTUSER);
+
         list.add(pr1);
         list.add(pr2);
 
@@ -333,9 +338,9 @@ public class PasswordStorageServiceImplUnitSpec {
 
         PasswordListCallback cb = new PasswordListCallback() {
             @Override
-            public void onReturn(List<PasswordResponse> passwords) {
+            public void onReturn(List<PasswordInfo> passwords) {
                 Assert.assertEquals(1, passwords.size());
-                Assert.assertEquals(pr2, passwords.get(0));
+                Assert.assertEquals(pi2, passwords.get(0));
                 counter.incrementAndGet();
             }
 
@@ -378,6 +383,10 @@ public class PasswordStorageServiceImplUnitSpec {
         pr2.setUser_id(TESTUSER);
         pr2.setDeleted("0");
 
+        final PasswordInfo pi2 = new PasswordInfo();
+        pi2.setId("2");
+        pi2.setUser_id(TESTUSER);
+
         list.add(pr1);
         list.add(pr2);
 
@@ -385,9 +394,9 @@ public class PasswordStorageServiceImplUnitSpec {
 
         PasswordListCallback cb = new PasswordListCallback() {
             @Override
-            public void onReturn(List<PasswordResponse> passwords) {
+            public void onReturn(List<PasswordInfo> passwords) {
                 Assert.assertEquals(1, passwords.size());
-                Assert.assertEquals(pr2, passwords.get(0));
+                Assert.assertEquals(pi2, passwords.get(0));
                 counter.incrementAndGet();
             }
 
