@@ -1,5 +1,7 @@
 package com.intirix.cloudpasswordmanager.services;
 
+import com.intirix.cloudpasswordmanager.services.beans.SessionInfo;
+
 /**
  * Created by jeff on 6/19/16.
  */
@@ -8,7 +10,9 @@ public class MockSessionService implements SessionService {
 
     private String username;
 
-    private String password;
+    private SessionInfo currentSession;
+
+    private String serverVersion;
 
     private boolean started = false;
 
@@ -17,12 +21,13 @@ public class MockSessionService implements SessionService {
     @Override
     public void start() {
         started = true;
+        currentSession = new SessionInfo();
     }
 
     @Override
     public void end() {
         ended = true;
-        password = null;
+        currentSession = null;
     }
 
     @Override
@@ -46,13 +51,8 @@ public class MockSessionService implements SessionService {
     }
 
     @Override
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
+    public SessionInfo getCurrentSession() {
+        return currentSession;
     }
 
     public boolean isEnded() {

@@ -33,7 +33,6 @@ public class SessionServiceImplUnitSpec {
         impl = new SessionServiceImpl(RuntimeEnvironment.application);
         Assert.assertNull(impl.getUrl());
         Assert.assertNull(impl.getUsername());
-        Assert.assertNull(impl.getPassword());
     }
 
     @Test
@@ -46,7 +45,6 @@ public class SessionServiceImplUnitSpec {
         impl = new SessionServiceImpl(RuntimeEnvironment.application);
         Assert.assertEquals(TESTURL, impl.getUrl());
         Assert.assertEquals(TESTUSER, impl.getUsername());
-        Assert.assertNull(impl.getPassword());
     }
 
     @Test
@@ -55,9 +53,8 @@ public class SessionServiceImplUnitSpec {
 
         impl.setUrl(TESTURL);
         impl.setUsername(TESTUSER);
-        impl.setPassword(TESTPASS);
-
         impl.start();
+
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.application);
 
@@ -74,13 +71,11 @@ public class SessionServiceImplUnitSpec {
 
         impl.setUrl(TESTURL);
         impl.setUsername(TESTUSER);
-        impl.setPassword(TESTPASS);
-
         impl.start();
+
 
         Assert.assertEquals(TESTURL, impl.getUrl());
         Assert.assertEquals(TESTUSER, impl.getUsername());
-        Assert.assertEquals(TESTPASS, impl.getPassword());
 
     }
 
@@ -90,9 +85,10 @@ public class SessionServiceImplUnitSpec {
 
         impl.setUrl(TESTURL);
         impl.setUsername(TESTUSER);
-        impl.setPassword(TESTPASS);
 
         impl.start();
+
+        impl.getCurrentSession().setPassword(TESTPASS);
 
         impl.end();
 
@@ -103,7 +99,7 @@ public class SessionServiceImplUnitSpec {
 
         Assert.assertEquals(TESTURL, impl.getUrl());
         Assert.assertEquals(TESTUSER, impl.getUsername());
-        Assert.assertNull(impl.getPassword());
+        Assert.assertNull(impl.getCurrentSession());
 
     }
 

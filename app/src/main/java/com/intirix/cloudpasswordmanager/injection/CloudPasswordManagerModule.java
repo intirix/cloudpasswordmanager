@@ -3,6 +3,10 @@ package com.intirix.cloudpasswordmanager.injection;
 import android.content.Context;
 
 import com.intirix.cloudpasswordmanager.services.AuthenticationInterceptor;
+import com.intirix.cloudpasswordmanager.services.EventService;
+import com.intirix.cloudpasswordmanager.services.EventServiceImpl;
+import com.intirix.cloudpasswordmanager.services.PasswordRequestService;
+import com.intirix.cloudpasswordmanager.services.PasswordRequestServiceImpl;
 import com.intirix.cloudpasswordmanager.services.PasswordStorageService;
 import com.intirix.cloudpasswordmanager.services.PasswordStorageServiceImpl;
 import com.intirix.cloudpasswordmanager.services.SessionService;
@@ -36,6 +40,11 @@ public class CloudPasswordManagerModule {
     }
 
     @Provides
+    EventService provideEventService() {
+        return new EventServiceImpl();
+    }
+
+    @Provides
     Context provideContext() {
         return context;
     }
@@ -47,6 +56,11 @@ public class CloudPasswordManagerModule {
 
     @Provides
     PasswordStorageService providePasswordStorageService(PasswordStorageServiceImpl impl) {
+        return impl;
+    }
+
+    @Provides
+    PasswordRequestService providePasswordRequestService(PasswordRequestServiceImpl impl) {
         return impl;
     }
 }

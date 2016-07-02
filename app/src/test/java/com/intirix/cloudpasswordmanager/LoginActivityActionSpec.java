@@ -4,9 +4,12 @@ import android.content.Intent;
 import android.view.View;
 import android.widget.Button;
 
-import com.intirix.cloudpasswordmanager.services.MockPasswordStorageService;
+import com.intirix.cloudpasswordmanager.events.FatalErrorEvent;
+import com.intirix.cloudpasswordmanager.events.LoginSuccessfulEvent;
 import com.intirix.cloudpasswordmanager.services.MockSessionService;
+import com.intirix.cloudpasswordmanager.services.PasswordRequestService;
 
+import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,6 +33,11 @@ public class LoginActivityActionSpec extends BaseTestCase {
         ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class).create().start().resume();
         LoginActivity activity = controller.get();
 
+        PasswordRequestService passwordRequestService = activity.passwordRequestService;
+        passwordRequestService.login();
+        EasyMock.expectLastCall();
+        EasyMock.replay(passwordRequestService);
+
         final String MOCK_URL = "https://www.example.com/owncloud";
         final String MOCK_USER = "myusername";
         final String MOCK_PASS = "mypassword";
@@ -45,22 +53,22 @@ public class LoginActivityActionSpec extends BaseTestCase {
         // The form elements are saved in the session
         Assert.assertEquals(MOCK_URL, activity.session.getUrl());
         Assert.assertEquals(MOCK_USER, activity.session.getUsername());
-        Assert.assertEquals(MOCK_PASS, activity.session.getPassword());
 
         // the session was started, but hasn't ended yet
         MockSessionService sessionService = (MockSessionService)activity.session;
         Assert.assertTrue(sessionService.isStarted());
         Assert.assertFalse(sessionService.isEnded());
 
+        // verify that login() was called
+        EasyMock.verify(passwordRequestService);
+
         // notify the activity of the error
-        MockPasswordStorageService passwordStorageService = (MockPasswordStorageService)activity.passwordStorage;
-        passwordStorageService.getLastVersionCallback().onError(MOCK_ERROR);
+        activity.onFatalError(new FatalErrorEvent(MOCK_ERROR));
         Assert.assertEquals(MOCK_ERROR, activity.errorMessageView.getText().toString());
         // verify that the error message is visible
         Assert.assertEquals(View.VISIBLE, activity.errorMessageView.getVisibility());
         // verify that the session was ended
         Assert.assertTrue(sessionService.isEnded());
-
 
         controller.pause().stop().destroy();
     }
@@ -69,6 +77,12 @@ public class LoginActivityActionSpec extends BaseTestCase {
     public void verifySuccessfulLogin() throws Exception {
         ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class).create().start().resume();
         LoginActivity activity = controller.get();
+
+        PasswordRequestService passwordRequestService = activity.passwordRequestService;
+        passwordRequestService.login();
+        EasyMock.expectLastCall();
+        EasyMock.replay(passwordRequestService);
+
 
         final String MOCK_URL = "https://www.example.com/owncloud";
         final String MOCK_USER = "myusername";
@@ -86,15 +100,18 @@ public class LoginActivityActionSpec extends BaseTestCase {
         // The form elements are saved in the session
         Assert.assertEquals(MOCK_URL, activity.session.getUrl());
         Assert.assertEquals(MOCK_USER, activity.session.getUsername());
-        Assert.assertEquals(MOCK_PASS, activity.session.getPassword());
+        Assert.assertEquals(MOCK_PASS, activity.session.getCurrentSession().getPassword());
 
         MockSessionService sessionService = (MockSessionService)activity.session;
         Assert.assertTrue(sessionService.isStarted());
         Assert.assertFalse(sessionService.isEnded());
 
-        // notify the activity of the error
-        MockPasswordStorageService service = (MockPasswordStorageService)activity.passwordStorage;
-        service.getLastVersionCallback().onReturn(VERSION);
+        // verify that login() was called
+        EasyMock.verify(passwordRequestService);
+
+        // notify the activity of result
+        activity.onLogin(new LoginSuccessfulEvent());
+
         Assert.assertEquals("", activity.errorMessageView.getText().toString());
         // verify that the error message is not visible
         Assert.assertEquals(View.GONE, activity.errorMessageView.getVisibility());

@@ -1,18 +1,12 @@
 package com.intirix.cloudpasswordmanager;
 
-import com.intirix.cloudpasswordmanager.injection.MockCloudPasswordManagerModule;
-
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
-import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.util.ActivityController;
-
-import static org.junit.Assert.*;
 
 /**
  * To work on unit tests, switch the Test Artifact in the Build Variants view.
@@ -27,7 +21,7 @@ public class DependencyInjectionUnitTest extends BaseTestCase {
         ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class).create().start().resume();
         LoginActivity activity = controller.get();
 
-        Assert.assertNotNull(activity.passwordStorage);
+        Assert.assertNotNull(activity.passwordRequestService);
         Assert.assertNotNull(activity.session);
 
         controller.pause().stop().destroy();

@@ -32,7 +32,8 @@ public class PasswordListActivityActionSpec extends BaseTestCase {
 
         activity.session.setUrl(MOCK_URL);
         activity.session.setUsername(MOCK_USER);
-        activity.session.setPassword(MOCK_PASS);
+        activity.session.start();
+        activity.session.getCurrentSession().setPassword(MOCK_PASS);
 
         ShadowActivity sact = Shadows.shadowOf(activity);
         sact.onCreateOptionsMenu(new RoboMenu(activity));
@@ -40,8 +41,8 @@ public class PasswordListActivityActionSpec extends BaseTestCase {
         sact.clickMenuItem(R.id.menuitem_logout);
 
 
-        // verify that the password was cleared out
-        Assert.assertNull(activity.session.getPassword());
+        // verify that the session was cleared out
+        Assert.assertNull(activity.session.getCurrentSession());
 
         // verify that we are starting the PasswordListActivity
         ShadowActivity shadowActivity = Shadows.shadowOf(activity);

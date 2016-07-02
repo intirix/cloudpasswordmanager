@@ -27,7 +27,7 @@ public class AuthenticationInterceptor implements Interceptor {
 
 
     private String getAuthHeader() {
-        return "Basic " + Base64.encodeToString(String.format("%s:%s", sessionService.getUsername(), sessionService.getPassword()).getBytes(), Base64.NO_WRAP);
+        return "Basic " + Base64.encodeToString(String.format("%s:%s", sessionService.getUsername(), sessionService.getCurrentSession().getPassword()).getBytes(), Base64.NO_WRAP);
     }
 
 }

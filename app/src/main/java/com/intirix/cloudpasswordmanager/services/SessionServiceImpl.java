@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import com.intirix.cloudpasswordmanager.services.beans.SessionInfo;
+
 import javax.inject.Inject;
 
 /**
@@ -22,7 +24,7 @@ public class SessionServiceImpl implements SessionService {
 
     private String username;
 
-    private String password;
+    private SessionInfo currentSession;
 
     @Inject
     public SessionServiceImpl(Context context) {
@@ -36,11 +38,12 @@ public class SessionServiceImpl implements SessionService {
     @Override
     public void start() {
         preferences.edit().putString(URL_KEY,url).putString(USERNAME_KEY,username).commit();
+        currentSession = new SessionInfo();
     }
 
     @Override
     public void end() {
-        password = null;
+        currentSession = null;
     }
 
     @Override
@@ -64,12 +67,7 @@ public class SessionServiceImpl implements SessionService {
     }
 
     @Override
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
+    public SessionInfo getCurrentSession() {
+        return currentSession;
     }
 }

@@ -9,9 +9,14 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.intirix.cloudpasswordmanager.services.PasswordStorageService;
+import com.intirix.cloudpasswordmanager.events.FatalErrorEvent;
+import com.intirix.cloudpasswordmanager.events.LoginSuccessfulEvent;
+import com.intirix.cloudpasswordmanager.services.PasswordRequestService;
 import com.intirix.cloudpasswordmanager.services.SessionService;
-import com.intirix.cloudpasswordmanager.services.callbacks.VersionCallback;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import javax.inject.Inject;
 
@@ -25,7 +30,7 @@ public class LoginActivity extends AppCompatActivity {
     SessionService session;
 
     @Inject
-    PasswordStorageService passwordStorage;
+    PasswordRequestService passwordRequestService;
 
     @BindView(R.id.login_url)
     EditText urlInput;
@@ -50,6 +55,12 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
 
@@ -63,6 +74,12 @@ public class LoginActivity extends AppCompatActivity {
 
         // only show the error message if the view is populated
         updateErrorMessageVisibility();
+    }
+
+    @Override
+    protected void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
     }
 
     private void updateErrorMessageVisibility() {
@@ -79,22 +96,23 @@ public class LoginActivity extends AppCompatActivity {
         Log.d(LoginActivity.class.getSimpleName(),"onLogin()");
         session.setUrl(urlInput.getText().toString());
         session.setUsername(userInput.getText().toString());
-        session.setPassword(passInput.getText().toString());
         session.start();
-        passwordStorage.getServerVersion(new VersionCallback() {
-            @Override
-            public void onReturn(String version) {
-                Intent intent = new Intent(LoginActivity.this, PasswordListActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-            }
+        session.getCurrentSession().setPassword(passInput.getText().toString());
 
-            @Override
-            public void onError(String message) {
-                session.end();
-                errorMessageView.setText(message);
-                updateErrorMessageVisibility();
-            }
-        });
+        passwordRequestService.login();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onLogin(LoginSuccessfulEvent event) {
+        Intent intent = new Intent(LoginActivity.this, PasswordListActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onFatalError(FatalErrorEvent event) {
+        session.end();
+        errorMessageView.setText(event.getMessage());
+        updateErrorMessageVisibility();
     }
 }

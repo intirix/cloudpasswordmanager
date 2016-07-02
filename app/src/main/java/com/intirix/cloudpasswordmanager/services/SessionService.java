@@ -1,5 +1,7 @@
 package com.intirix.cloudpasswordmanager.services;
 
+import com.intirix.cloudpasswordmanager.services.beans.SessionInfo;
+
 /**
  * Created by jeff on 6/18/16.
  */
@@ -40,14 +42,10 @@ public interface SessionService {
     public String getUsername();
 
     /**
-     * Get the password of the session
-     * @param password
-     */
-    public void setPassword(String password);
-
-    /**
-     * Get the password for the session
+     * Get the current session
      * @return
      */
-    public String getPassword();
+    public SessionInfo getCurrentSession();
+
+
 }

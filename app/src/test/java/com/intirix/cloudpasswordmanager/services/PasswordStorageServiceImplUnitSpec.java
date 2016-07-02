@@ -72,7 +72,8 @@ public class PasswordStorageServiceImplUnitSpec {
     @Test
     public void successfulVersionRequestPassesVersionToCallback() {
         sessionService.setUsername(TESTUSER);
-        sessionService.setPassword(TESTPASS);
+        sessionService.start();
+        sessionService.getCurrentSession().setPassword(TESTPASS);
 
         // expect the version to be sent to the callback
         final String VERSION = "19.0";
@@ -99,7 +100,8 @@ public class PasswordStorageServiceImplUnitSpec {
     @Test
     public void failedVersionRequestPassesExceptionToCallback() {
         sessionService.setUsername(TESTUSER);
-        sessionService.setPassword(TESTPASS);
+        sessionService.start();
+        sessionService.getCurrentSession().setPassword(TESTPASS);
 
         // expect an exception to be sent to the callback
         final String MESSAGE = "Message inside of the exception";
@@ -127,7 +129,8 @@ public class PasswordStorageServiceImplUnitSpec {
     @Test
     public void authenticationFailurePassesStringsXmlErrorToCallback() {
         sessionService.setUsername(TESTUSER);
-        sessionService.setPassword(TESTPASS);
+        sessionService.start();
+        sessionService.getCurrentSession().setPassword(TESTPASS);
 
         // expect an exception to be sent to the callback
         final String MESSAGE = context.getString(R.string.error_invalid_username_password).toString();
@@ -154,7 +157,8 @@ public class PasswordStorageServiceImplUnitSpec {
     @Test
     public void serverErrorPassesMessageToCallback() {
         sessionService.setUsername(TESTUSER);
-        sessionService.setPassword(TESTPASS);
+        sessionService.start();
+        sessionService.getCurrentSession().setPassword(TESTPASS);
 
         // expect an exception to be sent to the callback
         final String MESSAGE = "Internal server error";
@@ -186,7 +190,8 @@ public class PasswordStorageServiceImplUnitSpec {
     @Test
     public void verifyEmptyCategoryResponseWorks() {
         sessionService.setUsername(TESTUSER);
-        sessionService.setPassword(TESTPASS);
+        sessionService.start();
+        sessionService.getCurrentSession().setPassword(TESTPASS);
 
         final List<Category> empty = Collections.emptyList();
         final AtomicInteger counter = new AtomicInteger(0);
@@ -228,7 +233,8 @@ public class PasswordStorageServiceImplUnitSpec {
     @Test
     public void verifyOtherUserCategorysAreFiltered() {
         sessionService.setUsername(TESTUSER);
-        sessionService.setPassword(TESTPASS);
+        sessionService.start();
+        sessionService.getCurrentSession().setPassword(TESTPASS);
 
         final Category c1 = new Category();
         final Category c2 = new Category();
@@ -277,7 +283,8 @@ public class PasswordStorageServiceImplUnitSpec {
     @Test
     public void verifyEmptyPasswordResponseWorks() {
         sessionService.setUsername(TESTUSER);
-        sessionService.setPassword(TESTPASS);
+        sessionService.start();
+        sessionService.getCurrentSession().setPassword(TESTPASS);
 
         final List<PasswordResponse> empty = Collections.emptyList();
         final AtomicInteger counter = new AtomicInteger(0);
@@ -314,7 +321,8 @@ public class PasswordStorageServiceImplUnitSpec {
     @Test
     public void verifyDeletedPasswordsAreRemoved() {
         sessionService.setUsername(TESTUSER);
-        sessionService.setPassword(TESTPASS);
+        sessionService.start();
+        sessionService.getCurrentSession().setPassword(TESTPASS);
 
         final List<PasswordResponse> list = new ArrayList<>();
 
@@ -370,7 +378,8 @@ public class PasswordStorageServiceImplUnitSpec {
     @Test
     public void verifyOtherUserPasswordsAreRemoved() {
         sessionService.setUsername(TESTUSER);
-        sessionService.setPassword(TESTPASS);
+        sessionService.start();
+        sessionService.getCurrentSession().setPassword(TESTPASS);
 
         final List<PasswordResponse> list = new ArrayList<>();
 

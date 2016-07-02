@@ -52,7 +52,8 @@ public class PasswordRestServiceUnitSpec {
 
         sessionService = new MockSessionService();
         sessionService.setUsername(TESTUSER);
-        sessionService.setPassword(TESTPASS);
+        sessionService.start();
+        sessionService.getCurrentSession().setPassword(TESTPASS);
 
         interceptor = new Interceptor() {
             @Override
