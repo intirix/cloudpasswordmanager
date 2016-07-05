@@ -3,6 +3,7 @@ package com.intirix.cloudpasswordmanager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -11,12 +12,16 @@ import com.intirix.cloudpasswordmanager.services.SessionService;
 
 import javax.inject.Inject;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class PasswordListActivity extends AppCompatActivity {
 
     @Inject
     SessionService session;
+
+    @BindView(R.id.password_list_recycler)
+    RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
