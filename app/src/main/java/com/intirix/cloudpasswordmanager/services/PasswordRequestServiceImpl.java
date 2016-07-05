@@ -27,6 +27,8 @@ public class PasswordRequestServiceImpl implements PasswordRequestService {
 
     private EventService eventService;
 
+    private boolean loginRunning = false;
+
     @Inject
     public PasswordRequestServiceImpl(SessionService sessionService, PasswordStorageService passwordStorageService, EventService eventService) {
         this.sessionService = sessionService;
@@ -37,18 +39,26 @@ public class PasswordRequestServiceImpl implements PasswordRequestService {
     @Override
     public void login() {
         final SessionInfo session = sessionService.getCurrentSession();
+        loginRunning = true;
         passwordStorageService.getServerVersion(new VersionCallback() {
             @Override
             public void onReturn(String version) {
                 session.setPasswordServerAppVersion(version);
+                loginRunning = false;
                 eventService.postEvent(new LoginSuccessfulEvent());
             }
 
             @Override
             public void onError(String message) {
+                loginRunning = false;
                 eventService.postEvent(new FatalErrorEvent(message));
             }
         });
+    }
+
+    @Override
+    public boolean isLoginRunning() {
+        return loginRunning;
     }
 
     @Override

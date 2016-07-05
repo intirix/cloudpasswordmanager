@@ -39,8 +39,11 @@ public class PasswordRequestServiceImplUnitSpec {
 
     @Test
     public void verifySuccessfulLoginSendsLoginEvent() {
+        Assert.assertFalse(impl.isLoginRunning());
         impl.login();
+        Assert.assertTrue(impl.isLoginRunning());
         passwordStorageService.getLastVersionCallback().onReturn("19");
+        Assert.assertFalse(impl.isLoginRunning());
         eventService.assertNumberOfPosts(1);
         eventService.assertEventType(0, LoginSuccessfulEvent.class);
         Assert.assertEquals("19",sessionService.getCurrentSession().getPasswordServerAppVersion());
@@ -48,8 +51,11 @@ public class PasswordRequestServiceImplUnitSpec {
 
     @Test
     public void verifyFailedLoginSendsFatalErrorMessage() {
+        Assert.assertFalse(impl.isLoginRunning());
         impl.login();
+        Assert.assertTrue(impl.isLoginRunning());
         passwordStorageService.getLastVersionCallback().onError("ERROR");
+        Assert.assertFalse(impl.isLoginRunning());
         eventService.assertNumberOfPosts(1);
         eventService.assertEventType(0, FatalErrorEvent.class);
         Assert.assertEquals("ERROR", eventService.getEvent(0, FatalErrorEvent.class).getMessage());

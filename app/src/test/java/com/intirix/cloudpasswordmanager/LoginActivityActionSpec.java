@@ -30,12 +30,14 @@ public class LoginActivityActionSpec extends BaseTestCase {
 
     @Test
     public void verifyFailedLogin() throws Exception {
+        // given the user is on the login page
         ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class).create().start().resume();
         LoginActivity activity = controller.get();
 
         PasswordRequestService passwordRequestService = activity.passwordRequestService;
         passwordRequestService.login();
         EasyMock.expectLastCall();
+        EasyMock.expect(passwordRequestService.isLoginRunning()).andReturn(true).andReturn(false);
         EasyMock.replay(passwordRequestService);
 
         final String MOCK_URL = "https://www.example.com/owncloud";
@@ -43,13 +45,24 @@ public class LoginActivityActionSpec extends BaseTestCase {
         final String MOCK_PASS = "mypassword";
         final String MOCK_ERROR = "myerror";
 
+        // and the form is filled out with incorrect information
         activity.urlInput.setText(MOCK_URL);
         activity.userInput.setText(MOCK_USER);
         activity.passInput.setText(MOCK_PASS);
+        Assert.assertNull("ProgressDialog shouldn't be created yet", activity.progressDialog);
+
+        // when the user hits the login button
         Button button = (Button)activity.findViewById(R.id.login_login_button);
         button.performClick();
 
         // then
+        // the progress dialog is showing
+        Assert.assertNotNull("ProgressDialog should exist now", activity.progressDialog);
+        Assert.assertTrue("ProgressDialog should be visisble", activity.progressDialog.isShowing());
+        // we have to simulate a back press to determine if it is cancellable
+        activity.progressDialog.onBackPressed();
+        Assert.assertTrue("ProgressDialog should not be cancellable", activity.progressDialog.isShowing());
+
         // The form elements are saved in the session
         Assert.assertEquals(MOCK_URL, activity.session.getUrl());
         Assert.assertEquals(MOCK_USER, activity.session.getUsername());
@@ -59,11 +72,9 @@ public class LoginActivityActionSpec extends BaseTestCase {
         Assert.assertTrue(sessionService.isStarted());
         Assert.assertFalse(sessionService.isEnded());
 
-        // verify that login() was called
-        EasyMock.verify(passwordRequestService);
-
         // notify the activity of the error
         activity.onFatalError(new FatalErrorEvent(MOCK_ERROR));
+        Assert.assertFalse("ProgressDialog shouldn't be visible", activity.progressDialog.isShowing());
         Assert.assertEquals(MOCK_ERROR, activity.errorMessageView.getText().toString());
         // verify that the error message is visible
         Assert.assertEquals(View.VISIBLE, activity.errorMessageView.getVisibility());
@@ -71,16 +82,21 @@ public class LoginActivityActionSpec extends BaseTestCase {
         Assert.assertTrue(sessionService.isEnded());
 
         controller.pause().stop().destroy();
+
+        // verify that login() was called
+        EasyMock.verify(passwordRequestService);
     }
 
     @Test
     public void verifySuccessfulLogin() throws Exception {
+        // given the user is on the login page
         ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class).create().start().resume();
         LoginActivity activity = controller.get();
 
         PasswordRequestService passwordRequestService = activity.passwordRequestService;
         passwordRequestService.login();
         EasyMock.expectLastCall();
+        EasyMock.expect(passwordRequestService.isLoginRunning()).andReturn(true).andReturn(false);
         EasyMock.replay(passwordRequestService);
 
 
@@ -90,13 +106,24 @@ public class LoginActivityActionSpec extends BaseTestCase {
         final String MOCK_ERROR = "myerror";
         final String VERSION = "19.0";
 
+        // the user has entered correct information in the form
         activity.urlInput.setText(MOCK_URL);
         activity.userInput.setText(MOCK_USER);
         activity.passInput.setText(MOCK_PASS);
+        Assert.assertNull("ProgressDialog shouldn't be created yet", activity.progressDialog);
+
+        // when the user taps the login button
         Button button = (Button)activity.findViewById(R.id.login_login_button);
         button.performClick();
 
         // then
+        // the progress dialog is showing
+        Assert.assertNotNull("ProgressDialog should exist now", activity.progressDialog);
+        Assert.assertTrue("ProgressDialog should be visisble", activity.progressDialog.isShowing());
+        // we have to simulate a back press to determine if it is cancellable
+        activity.progressDialog.onBackPressed();
+        Assert.assertTrue("ProgressDialog should not be cancellable", activity.progressDialog.isShowing());
+
         // The form elements are saved in the session
         Assert.assertEquals(MOCK_URL, activity.session.getUrl());
         Assert.assertEquals(MOCK_USER, activity.session.getUsername());
@@ -105,9 +132,6 @@ public class LoginActivityActionSpec extends BaseTestCase {
         MockSessionService sessionService = (MockSessionService)activity.session;
         Assert.assertTrue(sessionService.isStarted());
         Assert.assertFalse(sessionService.isEnded());
-
-        // verify that login() was called
-        EasyMock.verify(passwordRequestService);
 
         // notify the activity of result
         activity.onLogin(new LoginSuccessfulEvent());
@@ -125,6 +149,9 @@ public class LoginActivityActionSpec extends BaseTestCase {
         Assert.assertEquals(Intent.FLAG_ACTIVITY_NEW_TASK, intent.getFlags() & Intent.FLAG_ACTIVITY_NEW_TASK);
 
         controller.pause().stop().destroy();
+
+        // verify that login() was called
+        EasyMock.verify(passwordRequestService);
     }
 
 

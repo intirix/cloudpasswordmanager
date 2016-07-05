@@ -11,6 +11,12 @@ public interface PasswordRequestService {
     public void login();
 
     /**
+     * Is the login request still running
+     * @return
+     */
+    public boolean isLoginRunning();
+
+    /**
      * Request the list of categories
      */
     public void listCategories();
