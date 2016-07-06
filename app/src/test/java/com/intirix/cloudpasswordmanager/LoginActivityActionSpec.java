@@ -31,14 +31,16 @@ public class LoginActivityActionSpec extends BaseTestCase {
     @Test
     public void verifyFailedLogin() throws Exception {
         // given the user is on the login page
-        ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class).create().start().resume();
+        ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class).create();
         LoginActivity activity = controller.get();
 
         PasswordRequestService passwordRequestService = activity.passwordRequestService;
         passwordRequestService.login();
         EasyMock.expectLastCall();
-        EasyMock.expect(passwordRequestService.isLoginRunning()).andReturn(true).andReturn(false);
+        EasyMock.expect(passwordRequestService.isLoginRunning()).andReturn(false).andReturn(true).andReturn(false);
         EasyMock.replay(passwordRequestService);
+
+        controller.start().resume();
 
         final String MOCK_URL = "https://www.example.com/owncloud";
         final String MOCK_USER = "myusername";
@@ -90,15 +92,16 @@ public class LoginActivityActionSpec extends BaseTestCase {
     @Test
     public void verifySuccessfulLogin() throws Exception {
         // given the user is on the login page
-        ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class).create().start().resume();
+        ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class).create();
         LoginActivity activity = controller.get();
 
         PasswordRequestService passwordRequestService = activity.passwordRequestService;
         passwordRequestService.login();
         EasyMock.expectLastCall();
-        EasyMock.expect(passwordRequestService.isLoginRunning()).andReturn(true).andReturn(false);
+        EasyMock.expect(passwordRequestService.isLoginRunning()).andReturn(false).andReturn(true).andReturn(false);
         EasyMock.replay(passwordRequestService);
 
+        controller.start().resume();
 
         final String MOCK_URL = "https://www.example.com/owncloud";
         final String MOCK_USER = "myusername";
@@ -154,6 +157,28 @@ public class LoginActivityActionSpec extends BaseTestCase {
         EasyMock.verify(passwordRequestService);
     }
 
+    @Test
+    public void verifyProgressDialogStillDisplaysWhenRestartingActivity() {
+        // given the login request is running
+        ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class).create();
+        LoginActivity activity = controller.get();
+
+        PasswordRequestService passwordRequestService = activity.passwordRequestService;
+        EasyMock.expect(passwordRequestService.isLoginRunning()).andReturn(true);
+        EasyMock.replay(passwordRequestService);
+
+        // when the user restarts the page
+        controller.start().resume();
+
+
+        // then
+        // the progress dialog is showing
+        Assert.assertNotNull("ProgressDialog should exist now", activity.progressDialog);
+        Assert.assertTrue("ProgressDialog should be visisble", activity.progressDialog.isShowing());
+
+        controller.pause().stop().destroy();
+
+    }
 
     @Test
     public void verifyFormIsBlankOnFirstStart() {
@@ -198,6 +223,11 @@ public class LoginActivityActionSpec extends BaseTestCase {
         ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class).create();
         LoginActivity activity = controller.get();
 
+        PasswordRequestService passwordRequestService = activity.passwordRequestService;
+        EasyMock.expect(passwordRequestService.isLoginRunning()).andReturn(false).anyTimes();
+        EasyMock.replay(passwordRequestService);
+
+
         activity.session.setUrl(TESTURL1);
         activity.session.setUsername(TESTUSER1);
 
@@ -217,6 +247,8 @@ public class LoginActivityActionSpec extends BaseTestCase {
         Assert.assertEquals("", activity.passInput.getText().toString());
 
         controller.pause().stop().destroy();
+
+        EasyMock.verify(passwordRequestService);
     }
 
 }

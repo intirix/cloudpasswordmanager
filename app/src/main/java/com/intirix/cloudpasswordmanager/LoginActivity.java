@@ -77,6 +77,9 @@ public class LoginActivity extends AppCompatActivity {
 
         // only show the error message if the view is populated
         updateErrorMessageVisibility();
+
+        // when coming back from a rotate, re-show the progress dialog if needed
+        updateProgressDialog();
     }
 
     @Override
