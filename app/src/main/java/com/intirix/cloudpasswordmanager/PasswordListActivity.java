@@ -33,6 +33,11 @@ public class PasswordListActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         PasswordApplication.getSInjector(this).inject(this);
 
+        // if the session has ended, then send us back to the logon page
+        if (session.getCurrentSession()==null) {
+            logoff();
+        }
+
     }
 
     @Override
@@ -46,13 +51,16 @@ public class PasswordListActivity extends AppCompatActivity {
 
         switch (item.getItemId()) {
             case R.id.menuitem_logout:
-                session.end();
-                Intent intent = new Intent(this, LoginActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-
+                logoff();
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    protected void logoff() {
+        session.end();
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 }

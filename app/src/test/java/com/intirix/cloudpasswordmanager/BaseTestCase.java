@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.intirix.cloudpasswordmanager.injection.CloudPasswordManagerModule;
 import com.intirix.cloudpasswordmanager.injection.MockCloudPasswordManagerModule;
+import com.intirix.cloudpasswordmanager.injection.ServiceRef;
 
 import org.junit.Before;
 import org.robolectric.RuntimeEnvironment;
@@ -13,13 +14,19 @@ import org.robolectric.RuntimeEnvironment;
  */
 public class BaseTestCase {
 
+    protected TestPasswordApplication app;
+
+    protected ServiceRef serviceRef;
+
     @Before
     public void setup() {
-        TestPasswordApplication app = (TestPasswordApplication) RuntimeEnvironment.application;
+        app = (TestPasswordApplication) RuntimeEnvironment.application;
         // Setting up the mock module
         CloudPasswordManagerModule module = createMockModule();
         app.setModule(module);
         app.initObjects();
+
+        serviceRef = app.getInjector();
     }
 
     @NonNull
