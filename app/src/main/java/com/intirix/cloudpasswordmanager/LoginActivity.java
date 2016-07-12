@@ -6,7 +6,9 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -55,6 +57,8 @@ public class LoginActivity extends AppCompatActivity {
         setSupportActionBar(myToolbar);
         ButterKnife.bind(this);
         PasswordApplication.getSInjector(this).inject(this);
+
+        attachImeGo(passInput);
     }
 
     @Override
@@ -146,5 +150,32 @@ public class LoginActivity extends AppCompatActivity {
             progressDialog.dismiss();
         }
 
+    }
+
+    private void attachImeGo(View v) {
+        if (v!=null && v instanceof EditText) {
+            final EditText et = (EditText)v;
+            et.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                @Override
+                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                    if (actionId == EditorInfo.IME_ACTION_GO) {
+                        onLogin(v);
+                    }
+                    return true;
+                }
+            });
+
+            et.setOnKeyListener(new View.OnKeyListener() {
+                @Override
+                public boolean onKey(View v, int keyCode, KeyEvent event) {
+                    if (event.getAction()==KeyEvent.ACTION_DOWN
+                            && (keyCode==KeyEvent.KEYCODE_ENTER||keyCode==KeyEvent.KEYCODE_DPAD_CENTER)) {
+                        onLogin(v);
+                        return true;
+                    }
+                    return false;
+                }
+            });
+        }
     }
 }
