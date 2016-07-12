@@ -1,4 +1,4 @@
-package com.intirix.cloudpasswordmanager;
+package com.intirix.cloudpasswordmanager.pages;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -12,8 +12,11 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.intirix.cloudpasswordmanager.PasswordApplication;
+import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.events.FatalErrorEvent;
 import com.intirix.cloudpasswordmanager.events.LoginSuccessfulEvent;
+import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordListActivity;
 import com.intirix.cloudpasswordmanager.services.PasswordRequestService;
 import com.intirix.cloudpasswordmanager.services.SessionService;
 

@@ -1,4 +1,4 @@
-package com.intirix.cloudpasswordmanager;
+package com.intirix.cloudpasswordmanager.pages.passwordlist;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -9,8 +9,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.intirix.cloudpasswordmanager.PasswordApplication;
+import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.events.CategoryListUpdatedEvent;
 import com.intirix.cloudpasswordmanager.events.PasswordListUpdatedEvent;
+import com.intirix.cloudpasswordmanager.pages.LoginActivity;
 import com.intirix.cloudpasswordmanager.services.SessionService;
 
 import org.greenrobot.eventbus.EventBus;

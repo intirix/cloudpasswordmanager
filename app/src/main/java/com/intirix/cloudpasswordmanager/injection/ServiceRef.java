@@ -1,7 +1,7 @@
 package com.intirix.cloudpasswordmanager.injection;
 
-import com.intirix.cloudpasswordmanager.LoginActivity;
-import com.intirix.cloudpasswordmanager.PasswordListActivity;
+import com.intirix.cloudpasswordmanager.pages.LoginActivity;
+import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordListActivity;
 import com.intirix.cloudpasswordmanager.services.SessionService;
 
 import javax.inject.Singleton;

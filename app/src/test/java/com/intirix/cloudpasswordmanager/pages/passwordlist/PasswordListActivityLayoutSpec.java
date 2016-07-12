@@ -1,4 +1,8 @@
-package com.intirix.cloudpasswordmanager;
+package com.intirix.cloudpasswordmanager.pages.passwordlist;
+
+import com.intirix.cloudpasswordmanager.BaseTestCase;
+import com.intirix.cloudpasswordmanager.BuildConfig;
+import com.intirix.cloudpasswordmanager.TestPasswordApplication;
 
 import org.junit.Assert;
 import org.junit.Test;

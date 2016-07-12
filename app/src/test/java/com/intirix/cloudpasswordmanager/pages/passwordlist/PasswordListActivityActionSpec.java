@@ -1,7 +1,12 @@
-package com.intirix.cloudpasswordmanager;
+package com.intirix.cloudpasswordmanager.pages.passwordlist;
 
 import android.content.Intent;
 
+import com.intirix.cloudpasswordmanager.BaseTestCase;
+import com.intirix.cloudpasswordmanager.BuildConfig;
+import com.intirix.cloudpasswordmanager.R;
+import com.intirix.cloudpasswordmanager.TestPasswordApplication;
+import com.intirix.cloudpasswordmanager.pages.LoginActivity;
 import com.intirix.cloudpasswordmanager.services.SessionService;
 import com.intirix.cloudpasswordmanager.services.beans.Category;
 import com.intirix.cloudpasswordmanager.services.beans.PasswordInfo;
