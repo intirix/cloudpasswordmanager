@@ -65,11 +65,11 @@ public class LoginActivityActionSpec extends BaseTestCase {
         activity.progressDialog.onBackPressed();
         Assert.assertTrue("ProgressDialog should not be cancellable", activity.progressDialog.isShowing());
 
-        // The form elements are saved in the session
+        // The form elements are saved in the sessionService
         Assert.assertEquals(MOCK_URL, activity.session.getUrl());
         Assert.assertEquals(MOCK_USER, activity.session.getUsername());
 
-        // the session was started, but hasn't ended yet
+        // the sessionService was started, but hasn't ended yet
         MockSessionService sessionService = (MockSessionService)activity.session;
         Assert.assertTrue(sessionService.isStarted());
         Assert.assertFalse(sessionService.isEnded());
@@ -80,7 +80,7 @@ public class LoginActivityActionSpec extends BaseTestCase {
         Assert.assertEquals(MOCK_ERROR, activity.errorMessageView.getText().toString());
         // verify that the error message is visible
         Assert.assertEquals(View.VISIBLE, activity.errorMessageView.getVisibility());
-        // verify that the session was ended
+        // verify that the sessionService was ended
         Assert.assertTrue(sessionService.isEnded());
 
         controller.pause().stop().destroy();
@@ -99,6 +99,10 @@ public class LoginActivityActionSpec extends BaseTestCase {
         passwordRequestService.login();
         EasyMock.expectLastCall();
         EasyMock.expect(passwordRequestService.isLoginRunning()).andReturn(false).andReturn(true).andReturn(false);
+        passwordRequestService.listPasswords();
+        EasyMock.expectLastCall();
+        passwordRequestService.listCategories();
+        EasyMock.expectLastCall();
         EasyMock.replay(passwordRequestService);
 
         controller.start().resume();
@@ -127,7 +131,7 @@ public class LoginActivityActionSpec extends BaseTestCase {
         activity.progressDialog.onBackPressed();
         Assert.assertTrue("ProgressDialog should not be cancellable", activity.progressDialog.isShowing());
 
-        // The form elements are saved in the session
+        // The form elements are saved in the sessionService
         Assert.assertEquals(MOCK_URL, activity.session.getUrl());
         Assert.assertEquals(MOCK_USER, activity.session.getUsername());
         Assert.assertEquals(MOCK_PASS, activity.session.getCurrentSession().getPassword());

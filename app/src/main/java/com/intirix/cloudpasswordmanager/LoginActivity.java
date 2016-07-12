@@ -112,6 +112,10 @@ public class LoginActivity extends AppCompatActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLogin(LoginSuccessfulEvent event) {
         updateProgressDialog();
+
+        passwordRequestService.listPasswords();
+        passwordRequestService.listCategories();
+
         Intent intent = new Intent(LoginActivity.this, PasswordListActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);

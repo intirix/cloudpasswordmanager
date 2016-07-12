@@ -3,6 +3,8 @@ package com.intirix.cloudpasswordmanager;
 import android.content.Intent;
 
 import com.intirix.cloudpasswordmanager.services.SessionService;
+import com.intirix.cloudpasswordmanager.services.beans.Category;
+import com.intirix.cloudpasswordmanager.services.beans.PasswordInfo;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -14,6 +16,8 @@ import org.robolectric.annotation.Config;
 import org.robolectric.fakes.RoboMenu;
 import org.robolectric.shadows.ShadowActivity;
 import org.robolectric.util.ActivityController;
+
+import java.util.ArrayList;
 
 /**
  * Created by jeff on 6/19/16.
@@ -61,12 +65,66 @@ public class PasswordListActivityActionSpec extends BaseTestCase {
         sact.clickMenuItem(R.id.menuitem_logout);
 
 
-        // verify that the session was cleared out
-        Assert.assertNull(activity.session.getCurrentSession());
+        // verify that the sessionService was cleared out
+        Assert.assertNull(activity.sessionService.getCurrentSession());
         assertLogOff(activity);
 
 
         controller.pause().stop().destroy();
+    }
+
+    @Test
+    public void verifyProgressDialogIsVisibleUntilBothPasswordsAndCategoriesAreLoaded() {
+        SessionService sessionService = serviceRef.sessionService();
+
+        final String MOCK_URL = "https://www.example.com/owncloud";
+        final String MOCK_USER = "myusername";
+        final String MOCK_PASS = "mypassword";
+
+        sessionService.setUrl(MOCK_URL);
+        sessionService.setUsername(MOCK_USER);
+        sessionService.start();
+        sessionService.getCurrentSession().setPassword(MOCK_PASS);
+
+        ActivityController<PasswordListActivity> controller = Robolectric.buildActivity(PasswordListActivity.class).create().start().resume();
+        PasswordListActivity activity = controller.get();
+
+        // both should be empty right now
+        Assert.assertNull(sessionService.getCurrentSession().getPasswordList());
+        Assert.assertNull(sessionService.getCurrentSession().getCategoryList());
+
+        // the progress dialog should be showing
+        Assert.assertNotNull("ProgressDialog should exist now", activity.progressDialog);
+        Assert.assertTrue("ProgressDialog should be visisble", activity.progressDialog.isShowing());
+
+
+        // simulate the password list request finishing
+        // categories should still be null
+        sessionService.getCurrentSession().setPasswordList(new ArrayList<PasswordInfo>());
+        activity.onPasswordsUpdated(null);
+        Assert.assertNotNull(sessionService.getCurrentSession().getPasswordList());
+        Assert.assertNull(sessionService.getCurrentSession().getCategoryList());
+
+
+        // the progress dialog should be showing
+        Assert.assertTrue("ProgressDialog should be visisble", activity.progressDialog.isShowing());
+
+
+
+        // simulate the category list request finishing
+        sessionService.getCurrentSession().setCategoryList(new ArrayList<Category>());
+        activity.onCategoriesUpdated(null);
+        Assert.assertNotNull(sessionService.getCurrentSession().getPasswordList());
+        Assert.assertNotNull(sessionService.getCurrentSession().getCategoryList());
+
+
+
+        Assert.assertFalse("ProgressDialog should not be visisble", activity.progressDialog.isShowing());
+
+
+
+        controller.pause().stop().destroy();
+
     }
 
     protected void assertLogOff(PasswordListActivity activity) {
