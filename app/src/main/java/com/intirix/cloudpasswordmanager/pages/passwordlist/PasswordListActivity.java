@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -33,6 +34,8 @@ public class PasswordListActivity extends AppCompatActivity {
     @BindView(R.id.password_list_recycler)
     RecyclerView recyclerView;
 
+    PasswordListAdapter adapter;
+
     ProgressDialog progressDialog;
 
     @Override
@@ -48,6 +51,12 @@ public class PasswordListActivity extends AppCompatActivity {
         // if the session has ended, then send us back to the logon page
         if (sessionService.getCurrentSession()==null) {
             logoff();
+        } else {
+            recyclerView.setHasFixedSize(true);
+            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+            recyclerView.setLayoutManager(layoutManager);
+            adapter = new PasswordListAdapter(sessionService.getCurrentSession());
+            recyclerView.setAdapter(adapter);
         }
 
     }
@@ -92,11 +101,17 @@ public class PasswordListActivity extends AppCompatActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onPasswordsUpdated(PasswordListUpdatedEvent event) {
         updateProgressDialog();
+        if (adapter!=null) {
+            adapter.notifyDataSetChanged();
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onCategoriesUpdated(CategoryListUpdatedEvent event) {
         updateProgressDialog();
+        if (adapter!=null) {
+            adapter.notifyDataSetChanged();
+        }
     }
 
     protected void logoff() {

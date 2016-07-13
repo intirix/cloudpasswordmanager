@@ -11,4 +11,6 @@
     <string name="title_activity_password_list">PasswordListActivity</string>
 
     <string name="menuitem_logout">Logout</string>
+
+    <string name="password_list_row_website_example">www.github.com</string>
 </resources>

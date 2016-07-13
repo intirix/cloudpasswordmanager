@@ -11,6 +11,7 @@ import com.intirix.cloudpasswordmanager.services.SessionService;
 import com.intirix.cloudpasswordmanager.services.beans.Category;
 import com.intirix.cloudpasswordmanager.services.beans.PasswordInfo;
 
+import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -127,6 +128,84 @@ public class PasswordListActivityActionSpec extends BaseTestCase {
         Assert.assertFalse("ProgressDialog should not be visisble", activity.progressDialog.isShowing());
 
 
+
+        controller.pause().stop().destroy();
+
+    }
+
+    @Test
+    public void verifyPasswordListUpdateNotifiesRecyclerView() {
+        SessionService sessionService = serviceRef.sessionService();
+
+        final String MOCK_URL = "https://www.example.com/owncloud";
+        final String MOCK_USER = "myusername";
+        final String MOCK_PASS = "mypassword";
+
+        sessionService.setUrl(MOCK_URL);
+        sessionService.setUsername(MOCK_USER);
+        sessionService.start();
+        sessionService.getCurrentSession().setPassword(MOCK_PASS);
+
+        ActivityController<PasswordListActivity> controller = Robolectric.buildActivity(PasswordListActivity.class).create().start().resume();
+        PasswordListActivity activity = controller.get();
+
+
+        activity.adapter = EasyMock.createMock(PasswordListAdapter.class);
+        activity.adapter.notifyDataSetChanged();
+        EasyMock.expectLastCall();
+        EasyMock.replay(activity.adapter);
+
+        activity.onPasswordsUpdated(null);
+
+        EasyMock.verify(activity.adapter);
+
+        controller.pause().stop().destroy();
+
+    }
+    @Test
+    public void verifyCategoryListUpdateNotifiesRecyclerView() {
+        SessionService sessionService = serviceRef.sessionService();
+
+        final String MOCK_URL = "https://www.example.com/owncloud";
+        final String MOCK_USER = "myusername";
+        final String MOCK_PASS = "mypassword";
+
+        sessionService.setUrl(MOCK_URL);
+        sessionService.setUsername(MOCK_USER);
+        sessionService.start();
+        sessionService.getCurrentSession().setPassword(MOCK_PASS);
+
+        ActivityController<PasswordListActivity> controller = Robolectric.buildActivity(PasswordListActivity.class).create().start().resume();
+        PasswordListActivity activity = controller.get();
+
+
+        activity.adapter = EasyMock.createMock(PasswordListAdapter.class);
+        activity.adapter.notifyDataSetChanged();
+        EasyMock.expectLastCall();
+        EasyMock.replay(activity.adapter);
+
+        activity.onCategoriesUpdated(null);
+
+        EasyMock.verify(activity.adapter);
+
+        controller.pause().stop().destroy();
+
+    }
+
+    @Test
+    public void verifyErrantServerResponseDoesNotCrashApp() {
+        SessionService sessionService = serviceRef.sessionService();
+
+        ActivityController<PasswordListActivity> controller = Robolectric.buildActivity(PasswordListActivity.class).create().start().resume();
+        PasswordListActivity activity = controller.get();
+
+
+        // this should be null because we don't have a valid session
+        Assert.assertNull(activity.adapter);
+
+        // should not crash
+        activity.onPasswordsUpdated(null);
+        activity.onCategoriesUpdated(null);
 
         controller.pause().stop().destroy();
 
