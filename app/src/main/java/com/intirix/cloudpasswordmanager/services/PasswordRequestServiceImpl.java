@@ -5,13 +5,17 @@ import com.intirix.cloudpasswordmanager.events.FatalErrorEvent;
 import com.intirix.cloudpasswordmanager.events.LoginSuccessfulEvent;
 import com.intirix.cloudpasswordmanager.events.PasswordListUpdatedEvent;
 import com.intirix.cloudpasswordmanager.services.beans.Category;
+import com.intirix.cloudpasswordmanager.services.beans.PasswordBean;
 import com.intirix.cloudpasswordmanager.services.beans.PasswordInfo;
 import com.intirix.cloudpasswordmanager.services.beans.SessionInfo;
 import com.intirix.cloudpasswordmanager.services.callbacks.CategoryListCallback;
 import com.intirix.cloudpasswordmanager.services.callbacks.PasswordListCallback;
 import com.intirix.cloudpasswordmanager.services.callbacks.VersionCallback;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -27,13 +31,16 @@ public class PasswordRequestServiceImpl implements PasswordRequestService {
 
     private EventService eventService;
 
+    private ColorService colorService;
+
     private boolean loginRunning = false;
 
     @Inject
-    public PasswordRequestServiceImpl(SessionService sessionService, PasswordStorageService passwordStorageService, EventService eventService) {
+    public PasswordRequestServiceImpl(SessionService sessionService, PasswordStorageService passwordStorageService, EventService eventService, ColorService colorService) {
         this.sessionService = sessionService;
         this.passwordStorageService = passwordStorageService;
         this.eventService = eventService;
+        this.colorService = colorService;
     }
 
     @Override
@@ -68,6 +75,7 @@ public class PasswordRequestServiceImpl implements PasswordRequestService {
             @Override
             public void onReturn(List<Category> categories) {
                 session.setCategoryList(categories);
+                updatePasswordBeanList(session);
                 eventService.postEvent(new CategoryListUpdatedEvent());
             }
 
@@ -86,6 +94,7 @@ public class PasswordRequestServiceImpl implements PasswordRequestService {
             @Override
             public void onReturn(List<PasswordInfo> passwords) {
                 session.setPasswordList(passwords);
+                updatePasswordBeanList(session);
                 eventService.postEvent(new PasswordListUpdatedEvent());
             }
 
@@ -95,5 +104,53 @@ public class PasswordRequestServiceImpl implements PasswordRequestService {
                 eventService.postEvent(new FatalErrorEvent(message));
             }
         });
+    }
+
+    private void updatePasswordBeanList(SessionInfo session) {
+        if (session.getCategoryList()!=null && session.getPasswordList()!=null) {
+            List<PasswordBean> beans = new ArrayList<>(session.getPasswordList().size());
+
+            // put all the categories in a map to make it easier to lookup
+            final Map<String, Category> categoryMap = new HashMap<>();
+            for (final Category category: session.getCategoryList()) {
+                categoryMap.put(category.getId(), category);
+            }
+
+            for (final PasswordInfo passwordInfo: session.getPasswordList()) {
+                final PasswordBean bean = new PasswordBean();
+
+                bean.setId(passwordInfo.getId());
+                bean.setUser_id(passwordInfo.getUser_id());
+                bean.setCategory(passwordInfo.getCategory());
+                bean.setAddress(passwordInfo.getAddress());
+                bean.setDateChanged(passwordInfo.getDateChanged());
+                bean.setHasLower(passwordInfo.isHasLower());
+                bean.setHasNotes(passwordInfo.isHasNotes());
+                bean.setHasSpecial(passwordInfo.isHasSpecial());
+                bean.setHasNumber(passwordInfo.isHasNumber());
+                bean.setHasUpper(passwordInfo.isHasUpper());
+                bean.setLength(passwordInfo.getLength());
+                bean.setStrength(passwordInfo.getStrength());
+                bean.setLoginName(passwordInfo.getLoginName());
+                bean.setNotes(passwordInfo.getNotes());
+                bean.setPass(passwordInfo.getPass());
+                bean.setDateChanged(passwordInfo.getDateChanged());
+                bean.setWebsite(passwordInfo.getWebsite());
+
+                if (categoryMap.containsKey(bean.getCategory())) {
+                    final Category category = categoryMap.get(bean.getCategory());
+                    bean.setCategoryName(category.getCategory_name());
+                    bean.setCategoryBackground(colorService.parseColor('#'+category.getCategory_colour()));
+                    bean.setCategoryForeground(colorService.getTextColorForBackground(bean.getCategoryBackground()));
+                } else {
+                    bean.setCategoryName("");
+                }
+
+                beans.add(bean);
+            }
+
+
+            session.setPasswordBeanList(beans);
+        }
     }
 }

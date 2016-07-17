@@ -13,4 +13,6 @@
     <string name="menuitem_logout">Logout</string>
 
     <string name="password_list_row_website_example">www.github.com</string>
+    <string name="password_list_row_loginName_example">myusername</string>
+    <string name="password_list_row_category_example">Banking</string>
 </resources>

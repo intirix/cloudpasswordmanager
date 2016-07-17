@@ -1,10 +1,13 @@
 package com.intirix.cloudpasswordmanager.pages.passwordlist;
 
+import android.graphics.drawable.ColorDrawable;
+import android.view.View;
+
 import com.intirix.cloudpasswordmanager.BaseTestCase;
 import com.intirix.cloudpasswordmanager.BuildConfig;
 import com.intirix.cloudpasswordmanager.TestPasswordApplication;
 import com.intirix.cloudpasswordmanager.services.SessionService;
-import com.intirix.cloudpasswordmanager.services.beans.PasswordInfo;
+import com.intirix.cloudpasswordmanager.services.beans.PasswordBean;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -37,7 +40,7 @@ public class PasswordListActivityLayoutSpec extends BaseTestCase {
     }
 
     @Test
-    public void verifyRowLayout() {
+    public void verifyRowLayoutWithCategory() {
         SessionService sessionService = serviceRef.sessionService();
 
         final String MOCK_URL = "https://www.example.com/owncloud";
@@ -49,14 +52,22 @@ public class PasswordListActivityLayoutSpec extends BaseTestCase {
         sessionService.start();
         sessionService.getCurrentSession().setPassword(MOCK_PASS);
 
-        PasswordInfo pass1 = new PasswordInfo();
+        PasswordBean pass1 = new PasswordBean();
         pass1.setWebsite("www.gmail.com");
-        List<PasswordInfo> passwords = new ArrayList<>();
+        pass1.setLoginName("myGmailUsername");
+        pass1.setCategory("5");
+        pass1.setCategoryName("Finance");
+        pass1.setCategoryForeground(0xFF00FF00);
+        pass1.setCategoryBackground(0xFFFFFFFF);
+        List<PasswordBean> passwords = new ArrayList<>();
         passwords.add(pass1);
-        sessionService.getCurrentSession().setPasswordList(passwords);
+        sessionService.getCurrentSession().setPasswordBeanList(passwords);
 
         ActivityController<PasswordListActivity> controller = Robolectric.buildActivity(PasswordListActivity.class).create().start().resume();
         PasswordListActivity activity = controller.get();
+
+        // verify that there is an entry in the list
+        Assert.assertEquals(1, activity.adapter.getItemCount());
 
         activity.recyclerView.measure(0,0);
         activity.recyclerView.layout(0,0,100,1000);
@@ -65,8 +76,55 @@ public class PasswordListActivityLayoutSpec extends BaseTestCase {
         PasswordListViewHolder vh = activity.adapter.onCreateViewHolder(activity.recyclerView, 0);
         activity.adapter.onBindViewHolder(vh, 0);
         Assert.assertEquals(pass1.getWebsite(), vh.website.getText().toString());
+        Assert.assertEquals(pass1.getLoginName(), vh.loginName.getText().toString());
+        Assert.assertEquals(View.VISIBLE, vh.categoryName.getVisibility());
+        Assert.assertEquals(pass1.getCategoryName(), vh.categoryName.getText().toString());
+        Assert.assertEquals(pass1.getCategoryForeground(), vh.categoryName.getCurrentTextColor());
+        // this assumes a certain Android implementation
+        Assert.assertEquals(pass1.getCategoryBackground(), ((ColorDrawable)vh.categoryName.getBackground()).getColor());
 
         controller.pause().stop().destroy();
 
     }
+
+    @Test
+    public void verifyRowLayoutWithoutCategory() {
+        SessionService sessionService = serviceRef.sessionService();
+
+        final String MOCK_URL = "https://www.example.com/owncloud";
+        final String MOCK_USER = "myusername";
+        final String MOCK_PASS = "mypassword";
+
+        sessionService.setUrl(MOCK_URL);
+        sessionService.setUsername(MOCK_USER);
+        sessionService.start();
+        sessionService.getCurrentSession().setPassword(MOCK_PASS);
+
+        PasswordBean pass1 = new PasswordBean();
+        pass1.setWebsite("www.gmail.com");
+        pass1.setLoginName("myGmailUsername");
+        List<PasswordBean> passwords = new ArrayList<>();
+        passwords.add(pass1);
+        sessionService.getCurrentSession().setPasswordBeanList(passwords);
+
+        ActivityController<PasswordListActivity> controller = Robolectric.buildActivity(PasswordListActivity.class).create().start().resume();
+        PasswordListActivity activity = controller.get();
+
+        // verify that there is an entry in the list
+        Assert.assertEquals(1, activity.adapter.getItemCount());
+
+        activity.recyclerView.measure(0,0);
+        activity.recyclerView.layout(0,0,100,1000);
+        Shadows.shadowOf(activity.recyclerView).dump();
+
+        PasswordListViewHolder vh = activity.adapter.onCreateViewHolder(activity.recyclerView, 0);
+        activity.adapter.onBindViewHolder(vh, 0);
+        Assert.assertEquals(pass1.getWebsite(), vh.website.getText().toString());
+        Assert.assertEquals(pass1.getLoginName(), vh.loginName.getText().toString());
+        Assert.assertEquals(View.GONE, vh.categoryName.getVisibility());
+
+        controller.pause().stop().destroy();
+
+    }
+
 }

@@ -3,6 +3,8 @@ package com.intirix.cloudpasswordmanager.injection;
 import android.content.Context;
 
 import com.intirix.cloudpasswordmanager.services.AuthenticationInterceptor;
+import com.intirix.cloudpasswordmanager.services.ColorService;
+import com.intirix.cloudpasswordmanager.services.ColorServiceImpl;
 import com.intirix.cloudpasswordmanager.services.EventService;
 import com.intirix.cloudpasswordmanager.services.EventServiceImpl;
 import com.intirix.cloudpasswordmanager.services.PasswordRequestService;
@@ -47,6 +49,11 @@ public class CloudPasswordManagerModule {
     @Provides
     Context provideContext() {
         return context;
+    }
+
+    @Provides @Singleton
+    ColorService provideColorService(ColorServiceImpl impl) {
+        return impl;
     }
 
     @Provides @Singleton

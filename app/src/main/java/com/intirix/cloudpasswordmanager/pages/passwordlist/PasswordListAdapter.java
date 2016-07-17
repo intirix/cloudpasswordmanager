@@ -21,10 +21,10 @@ public class PasswordListAdapter extends RecyclerView.Adapter<PasswordListViewHo
 
     @Override
     public int getItemCount() {
-        if (session.getPasswordList()==null) {
+        if (session.getPasswordBeanList()==null) {
             return 0;
         }
-        return session.getPasswordList().size();
+        return session.getPasswordBeanList().size();
     }
 
     @Override
@@ -36,6 +36,6 @@ public class PasswordListAdapter extends RecyclerView.Adapter<PasswordListViewHo
 
     @Override
     public void onBindViewHolder(PasswordListViewHolder holder, int position) {
-        holder.applyItem(session.getPasswordList().get(position));
+        holder.applyItem(session.getPasswordBeanList().get(position));
     }
 }

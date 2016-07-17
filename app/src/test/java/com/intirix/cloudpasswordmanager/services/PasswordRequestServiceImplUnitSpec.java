@@ -5,8 +5,10 @@ import com.intirix.cloudpasswordmanager.events.FatalErrorEvent;
 import com.intirix.cloudpasswordmanager.events.LoginSuccessfulEvent;
 import com.intirix.cloudpasswordmanager.events.PasswordListUpdatedEvent;
 import com.intirix.cloudpasswordmanager.services.beans.Category;
+import com.intirix.cloudpasswordmanager.services.beans.PasswordBean;
 import com.intirix.cloudpasswordmanager.services.beans.PasswordInfo;
 
+import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,14 +29,17 @@ public class PasswordRequestServiceImplUnitSpec {
 
     private PasswordRequestServiceImpl impl;
 
+    private ColorService colorService;
+
     @Before
     public void setUp() {
         eventService = new MockEventService();
         sessionService = new MockSessionService();
         sessionService.start();
         passwordStorageService = new MockPasswordStorageService();
+        colorService = EasyMock.createMock(ColorService.class);
 
-        impl = new PasswordRequestServiceImpl(sessionService, passwordStorageService, eventService);
+        impl = new PasswordRequestServiceImpl(sessionService, passwordStorageService, eventService, colorService);
     }
 
     @Test
@@ -59,7 +64,6 @@ public class PasswordRequestServiceImplUnitSpec {
         eventService.assertNumberOfPosts(1);
         eventService.assertEventType(0, FatalErrorEvent.class);
         Assert.assertEquals("ERROR", eventService.getEvent(0, FatalErrorEvent.class).getMessage());
-        Assert.assertNull(sessionService.getCurrentSession().getPasswordServerAppVersion());
     }
 
     @Test
@@ -74,6 +78,8 @@ public class PasswordRequestServiceImplUnitSpec {
         eventService.assertNumberOfPosts(1);
         eventService.assertEventType(0, CategoryListUpdatedEvent.class);
         Assert.assertEquals(list, sessionService.getCurrentSession().getCategoryList());
+        Assert.assertNull(sessionService.getCurrentSession().getPasswordList());
+        Assert.assertNull(sessionService.getCurrentSession().getPasswordBeanList());
     }
 
     @Test
@@ -105,6 +111,8 @@ public class PasswordRequestServiceImplUnitSpec {
         eventService.assertNumberOfPosts(1);
         eventService.assertEventType(0, PasswordListUpdatedEvent.class);
         Assert.assertEquals(list, sessionService.getCurrentSession().getPasswordList());
+        Assert.assertNull(sessionService.getCurrentSession().getCategoryList());
+        Assert.assertNull(sessionService.getCurrentSession().getPasswordBeanList());
     }
 
     @Test
@@ -122,6 +130,47 @@ public class PasswordRequestServiceImplUnitSpec {
         eventService.assertEventType(0, FatalErrorEvent.class);
         Assert.assertEquals("ERROR", eventService.getEvent(0, FatalErrorEvent.class).getMessage());
         Assert.assertNull("Session did not terminate when fatal error occurred", sessionService.getCurrentSession());
+    }
+
+    @Test
+    public void verifySuccessfulPasswordListAndCategoryResponseUpdatesPasswordBeanList() {
+        EasyMock.expect(colorService.parseColor("#FFFFFF")).andReturn(0xFFFFFFFF);
+        EasyMock.expect(colorService.getTextColorForBackground(0xFFFFFFFF)).andReturn(0xFF000000);
+        EasyMock.replay(colorService);
+
+
+        impl.listPasswords();
+        final List<PasswordInfo> list1 = new ArrayList<>();
+        PasswordInfo p1 = new PasswordInfo();
+        p1.setId("1");
+        p1.setCategory("2");
+        list1.add(p1);
+
+        impl.listCategories();
+        final List<Category> list2 = new ArrayList<>();
+        Category c1 = new Category();
+        c1.setId("2");
+        c1.setCategory_name("TEST");
+        c1.setCategory_colour("FFFFFF");
+        list2.add(c1);
+
+        passwordStorageService.getLastPasswordListCallack().onReturn(list1);
+        passwordStorageService.getLastCategoryListCallback().onReturn(list2);
+        eventService.assertNumberOfPosts(2);
+        eventService.assertEventType(0, PasswordListUpdatedEvent.class);
+        eventService.assertEventType(1, CategoryListUpdatedEvent.class);
+
+        Assert.assertNotNull(sessionService.getCurrentSession().getPasswordBeanList());
+
+        List<PasswordBean> beans = sessionService.getCurrentSession().getPasswordBeanList();
+        PasswordBean bean1 = beans.get(0);
+        Assert.assertEquals("1", bean1.getId());
+        Assert.assertEquals("2", bean1.getCategory());
+        Assert.assertEquals("TEST", bean1.getCategoryName());
+        Assert.assertEquals(0xFFFFFFFF, bean1.getCategoryBackground());
+        Assert.assertEquals(0xFF000000, bean1.getCategoryForeground());
+
+        EasyMock.verify(colorService);
     }
 
 }

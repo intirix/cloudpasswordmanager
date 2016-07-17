@@ -13,6 +13,8 @@ public class SessionInfo {
 
     private List<Category> categoryList;
 
+    private List<PasswordBean> passwordBeanList;
+
     private String serverVersion;
 
     public void setPassword(String password) {
@@ -45,5 +47,13 @@ public class SessionInfo {
 
     public String getPasswordServerAppVersion() {
         return serverVersion;
+    }
+
+    public List<PasswordBean> getPasswordBeanList() {
+        return passwordBeanList;
+    }
+
+    public void setPasswordBeanList(List<PasswordBean> passwordBeanList) {
+        this.passwordBeanList = passwordBeanList;
     }
 }
