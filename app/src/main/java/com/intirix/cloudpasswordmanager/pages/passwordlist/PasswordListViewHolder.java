@@ -1,5 +1,6 @@
 package com.intirix.cloudpasswordmanager.pages.passwordlist;
 
+import android.graphics.drawable.PaintDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
@@ -38,7 +39,16 @@ public class PasswordListViewHolder extends RecyclerView.ViewHolder {
             categoryName.setVisibility(View.VISIBLE);
             categoryName.setText(pass.getCategoryName());
             categoryName.setTextColor(pass.getCategoryForeground());
-            categoryName.setBackgroundColor(pass.getCategoryBackground());
+
+
+            if (categoryName.getBackground()!=null && categoryName.getBackground() instanceof PaintDrawable) {
+                PaintDrawable bg = (PaintDrawable)categoryName.getBackground();
+                bg.getPaint().setColor(pass.getCategoryBackground());
+            } else {
+                PaintDrawable bg = new PaintDrawable(pass.getCategoryBackground());
+                bg.setCornerRadius(16);
+                categoryName.setBackgroundDrawable(bg);
+            }
         }
     }
 }

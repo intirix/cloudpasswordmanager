@@ -1,6 +1,6 @@
 package com.intirix.cloudpasswordmanager.pages.passwordlist;
 
-import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.PaintDrawable;
 import android.view.View;
 
 import com.intirix.cloudpasswordmanager.BaseTestCase;
@@ -81,7 +81,7 @@ public class PasswordListActivityLayoutSpec extends BaseTestCase {
         Assert.assertEquals(pass1.getCategoryName(), vh.categoryName.getText().toString());
         Assert.assertEquals(pass1.getCategoryForeground(), vh.categoryName.getCurrentTextColor());
         // this assumes a certain Android implementation
-        Assert.assertEquals(pass1.getCategoryBackground(), ((ColorDrawable)vh.categoryName.getBackground()).getColor());
+        Assert.assertEquals(pass1.getCategoryBackground(), ((PaintDrawable)vh.categoryName.getBackground()).getPaint().getColor());
 
         controller.pause().stop().destroy();
 
