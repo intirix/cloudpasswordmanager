@@ -121,7 +121,6 @@ public class PasswordRequestServiceImpl implements PasswordRequestService {
 
                 bean.setId(passwordInfo.getId());
                 bean.setUser_id(passwordInfo.getUser_id());
-                bean.setCategory(passwordInfo.getCategory());
                 bean.setAddress(passwordInfo.getAddress());
                 bean.setDateChanged(passwordInfo.getDateChanged());
                 bean.setHasLower(passwordInfo.isHasLower());
@@ -137,13 +136,22 @@ public class PasswordRequestServiceImpl implements PasswordRequestService {
                 bean.setDateChanged(passwordInfo.getDateChanged());
                 bean.setWebsite(passwordInfo.getWebsite());
 
-                if (categoryMap.containsKey(bean.getCategory())) {
+                if (categoryMap.containsKey(passwordInfo.getCategory())) {
+                    bean.setCategory(passwordInfo.getCategory());
                     final Category category = categoryMap.get(bean.getCategory());
                     bean.setCategoryName(category.getCategory_name());
                     bean.setCategoryBackground(colorService.parseColor('#'+category.getCategory_colour()));
                     bean.setCategoryForeground(colorService.getTextColorForBackground(bean.getCategoryBackground()));
                 } else {
                     bean.setCategoryName("");
+                }
+
+                if (bean.getWebsite()==null||bean.getWebsite().length()==0) {
+                    if (bean.getAddress()==null||bean.getAddress().length()==0) {
+                        bean.setWebsite("(No Website)");
+                    } else {
+                        bean.setWebsite(bean.getAddress());
+                    }
                 }
 
                 beans.add(bean);

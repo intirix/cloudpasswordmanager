@@ -143,6 +143,7 @@ public class PasswordRequestServiceImplUnitSpec {
         final List<PasswordInfo> list1 = new ArrayList<>();
         PasswordInfo p1 = new PasswordInfo();
         p1.setId("1");
+        p1.setWebsite("www.github.com");
         p1.setCategory("2");
         list1.add(p1);
 
@@ -169,6 +170,108 @@ public class PasswordRequestServiceImplUnitSpec {
         Assert.assertEquals("TEST", bean1.getCategoryName());
         Assert.assertEquals(0xFFFFFFFF, bean1.getCategoryBackground());
         Assert.assertEquals(0xFF000000, bean1.getCategoryForeground());
+
+        EasyMock.verify(colorService);
+    }
+
+    @Test
+    public void verifyPasswordWithDeletedCategoryHasNoCategory() {
+        EasyMock.replay(colorService);
+
+
+        impl.listPasswords();
+        final List<PasswordInfo> list1 = new ArrayList<>();
+        PasswordInfo p1 = new PasswordInfo();
+        p1.setId("1");
+        p1.setWebsite("www.github.com");
+        p1.setCategory("2");
+        list1.add(p1);
+
+        impl.listCategories();
+        final List<Category> list2 = new ArrayList<>();
+        Category c1 = new Category();
+        c1.setId("3");
+        c1.setCategory_name("TEST");
+        c1.setCategory_colour("FFFFFF");
+        list2.add(c1);
+
+        passwordStorageService.getLastPasswordListCallack().onReturn(list1);
+        passwordStorageService.getLastCategoryListCallback().onReturn(list2);
+        eventService.assertNumberOfPosts(2);
+        eventService.assertEventType(0, PasswordListUpdatedEvent.class);
+        eventService.assertEventType(1, CategoryListUpdatedEvent.class);
+
+        Assert.assertNotNull(sessionService.getCurrentSession().getPasswordBeanList());
+
+        List<PasswordBean> beans = sessionService.getCurrentSession().getPasswordBeanList();
+        PasswordBean bean1 = beans.get(0);
+        Assert.assertEquals("1", bean1.getId());
+        Assert.assertNull("", bean1.getCategory());
+        Assert.assertEquals("", bean1.getCategoryName());
+
+        EasyMock.verify(colorService);
+    }
+
+    @Test
+    public void verifyPasswordWithoutWebsiteGetsUrl() {
+        EasyMock.replay(colorService);
+
+
+        impl.listPasswords();
+        final List<PasswordInfo> list1 = new ArrayList<>();
+        PasswordInfo p1 = new PasswordInfo();
+        p1.setId("1");
+        p1.setCategory("2");
+        p1.setAddress("www.github.com/wiki");
+        list1.add(p1);
+
+        impl.listCategories();
+        final List<Category> list2 = new ArrayList<>();
+
+        passwordStorageService.getLastPasswordListCallack().onReturn(list1);
+        passwordStorageService.getLastCategoryListCallback().onReturn(list2);
+        eventService.assertNumberOfPosts(2);
+        eventService.assertEventType(0, PasswordListUpdatedEvent.class);
+        eventService.assertEventType(1, CategoryListUpdatedEvent.class);
+
+        Assert.assertNotNull(sessionService.getCurrentSession().getPasswordBeanList());
+
+        List<PasswordBean> beans = sessionService.getCurrentSession().getPasswordBeanList();
+        PasswordBean bean1 = beans.get(0);
+        Assert.assertEquals("1", bean1.getId());
+        Assert.assertEquals("www.github.com/wiki", bean1.getWebsite());
+
+        EasyMock.verify(colorService);
+    }
+
+
+    @Test
+    public void verifyPasswordWithoutWebsiteOrUrlGetsPlaceholder() {
+        EasyMock.replay(colorService);
+
+
+        impl.listPasswords();
+        final List<PasswordInfo> list1 = new ArrayList<>();
+        PasswordInfo p1 = new PasswordInfo();
+        p1.setId("1");
+        p1.setCategory("2");
+        list1.add(p1);
+
+        impl.listCategories();
+        final List<Category> list2 = new ArrayList<>();
+
+        passwordStorageService.getLastPasswordListCallack().onReturn(list1);
+        passwordStorageService.getLastCategoryListCallback().onReturn(list2);
+        eventService.assertNumberOfPosts(2);
+        eventService.assertEventType(0, PasswordListUpdatedEvent.class);
+        eventService.assertEventType(1, CategoryListUpdatedEvent.class);
+
+        Assert.assertNotNull(sessionService.getCurrentSession().getPasswordBeanList());
+
+        List<PasswordBean> beans = sessionService.getCurrentSession().getPasswordBeanList();
+        PasswordBean bean1 = beans.get(0);
+        Assert.assertEquals("1", bean1.getId());
+        Assert.assertEquals("(No Website)", bean1.getWebsite());
 
         EasyMock.verify(colorService);
     }
