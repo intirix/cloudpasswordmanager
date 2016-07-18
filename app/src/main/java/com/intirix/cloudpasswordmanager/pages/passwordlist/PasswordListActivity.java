@@ -127,7 +127,7 @@ public class PasswordListActivity extends AppCompatActivity {
 
             if (showDialog) {
                 if (progressDialog==null) {
-                    progressDialog = ProgressDialog.show(this, "", "Loading");
+                    progressDialog = ProgressDialog.show(this, "", getString(R.string.password_list_progress_message));
                 } else {
                     progressDialog.show();
                 }

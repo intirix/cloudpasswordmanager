@@ -1,5 +1,7 @@
 package com.intirix.cloudpasswordmanager.services;
 
+import com.intirix.cloudpasswordmanager.BuildConfig;
+import com.intirix.cloudpasswordmanager.TestPasswordApplication;
 import com.intirix.cloudpasswordmanager.events.CategoryListUpdatedEvent;
 import com.intirix.cloudpasswordmanager.events.FatalErrorEvent;
 import com.intirix.cloudpasswordmanager.events.LoginSuccessfulEvent;
@@ -12,6 +14,10 @@ import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RuntimeEnvironment;
+import org.robolectric.annotation.Config;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +25,9 @@ import java.util.List;
 /**
  * Created by jeff on 6/29/16.
  */
+@RunWith(RobolectricGradleTestRunner.class)
+@Config(constants = BuildConfig.class,
+        application = TestPasswordApplication.class)
 public class PasswordRequestServiceImplUnitSpec {
 
     private MockEventService eventService;
@@ -39,7 +48,7 @@ public class PasswordRequestServiceImplUnitSpec {
         passwordStorageService = new MockPasswordStorageService();
         colorService = EasyMock.createMock(ColorService.class);
 
-        impl = new PasswordRequestServiceImpl(sessionService, passwordStorageService, eventService, colorService);
+        impl = new PasswordRequestServiceImpl(RuntimeEnvironment.application, sessionService, passwordStorageService, eventService, colorService);
     }
 
     @Test

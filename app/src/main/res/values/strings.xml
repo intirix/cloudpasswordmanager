@@ -6,13 +6,17 @@
     <string name="login_pass_hint">Password</string>
     <string name="login_login_label">Login</string>
     <string name="login_error_description">Error message</string>
+    <string name="login_progress_message">Logging In</string>
 
     <string name="error_invalid_username_password">Invalid username and password</string>
     <string name="title_activity_password_list">PasswordListActivity</string>
 
     <string name="menuitem_logout">Logout</string>
 
+    <string name="password_list_progress_message">Loading</string>
     <string name="password_list_row_website_example">www.github.com</string>
+    <string name="password_list_row_website_empty">(No Website)</string>
     <string name="password_list_row_loginName_example">myusername</string>
     <string name="password_list_row_category_example">Banking</string>
+
 </resources>

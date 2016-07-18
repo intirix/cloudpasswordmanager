@@ -1,5 +1,8 @@
 package com.intirix.cloudpasswordmanager.services;
 
+import android.content.Context;
+
+import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.events.CategoryListUpdatedEvent;
 import com.intirix.cloudpasswordmanager.events.FatalErrorEvent;
 import com.intirix.cloudpasswordmanager.events.LoginSuccessfulEvent;
@@ -33,14 +36,17 @@ public class PasswordRequestServiceImpl implements PasswordRequestService {
 
     private ColorService colorService;
 
+    private Context context;
+
     private boolean loginRunning = false;
 
     @Inject
-    public PasswordRequestServiceImpl(SessionService sessionService, PasswordStorageService passwordStorageService, EventService eventService, ColorService colorService) {
+    public PasswordRequestServiceImpl(Context context, SessionService sessionService, PasswordStorageService passwordStorageService, EventService eventService, ColorService colorService) {
         this.sessionService = sessionService;
         this.passwordStorageService = passwordStorageService;
         this.eventService = eventService;
         this.colorService = colorService;
+        this.context = context;
     }
 
     @Override
@@ -148,6 +154,7 @@ public class PasswordRequestServiceImpl implements PasswordRequestService {
 
                 if (bean.getWebsite()==null||bean.getWebsite().length()==0) {
                     if (bean.getAddress()==null||bean.getAddress().length()==0) {
+                        bean.setWebsite(context.getString(R.string.password_list_row_website_empty));
                         bean.setWebsite("(No Website)");
                     } else {
                         bean.setWebsite(bean.getAddress());

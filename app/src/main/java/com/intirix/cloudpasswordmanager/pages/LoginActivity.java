@@ -143,7 +143,7 @@ public class LoginActivity extends AppCompatActivity {
         if (passwordRequestService.isLoginRunning()) {
             // if the progress dialog doesn't exist, then create it
             if (progressDialog==null) {
-                progressDialog = ProgressDialog.show(this, "", "Logging in");
+                progressDialog = ProgressDialog.show(this, "", getString(R.string.login_progress_message));
             }
             // show the dialog
             progressDialog.show();
