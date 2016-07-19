@@ -1,5 +1,6 @@
 package com.intirix.cloudpasswordmanager.pages.passwordlist;
 
+import android.app.Activity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,8 +16,11 @@ public class PasswordListAdapter extends RecyclerView.Adapter<PasswordListViewHo
 
     private SessionInfo session;
 
-    PasswordListAdapter(SessionInfo session) {
+    private Activity activity;
+
+    PasswordListAdapter(Activity activity, SessionInfo session) {
         this.session = session;
+        this.activity = activity;
     }
 
     @Override
@@ -31,11 +35,11 @@ public class PasswordListAdapter extends RecyclerView.Adapter<PasswordListViewHo
     public PasswordListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.password_list_row, parent, false);
-        return new PasswordListViewHolder(v);
+        return new PasswordListViewHolder(activity, v);
     }
 
     @Override
     public void onBindViewHolder(PasswordListViewHolder holder, int position) {
-        holder.applyItem(session.getPasswordBeanList().get(position));
+        holder.applyItem(position, session.getPasswordBeanList().get(position));
     }
 }

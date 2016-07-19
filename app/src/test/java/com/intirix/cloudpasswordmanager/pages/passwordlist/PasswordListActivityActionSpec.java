@@ -7,8 +7,10 @@ import com.intirix.cloudpasswordmanager.BuildConfig;
 import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.TestPasswordApplication;
 import com.intirix.cloudpasswordmanager.pages.LoginActivity;
+import com.intirix.cloudpasswordmanager.pages.passworddetail.PasswordDetailActivity;
 import com.intirix.cloudpasswordmanager.services.SessionService;
 import com.intirix.cloudpasswordmanager.services.beans.Category;
+import com.intirix.cloudpasswordmanager.services.beans.PasswordBean;
 import com.intirix.cloudpasswordmanager.services.beans.PasswordInfo;
 
 import org.easymock.EasyMock;
@@ -24,6 +26,7 @@ import org.robolectric.shadows.ShadowActivity;
 import org.robolectric.util.ActivityController;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by jeff on 6/19/16.
@@ -210,6 +213,60 @@ public class PasswordListActivityActionSpec extends BaseTestCase {
         controller.pause().stop().destroy();
 
     }
+
+
+    @Test
+    public void verifyRowClick() {
+        SessionService sessionService = serviceRef.sessionService();
+
+        final String MOCK_URL = "https://www.example.com/owncloud";
+        final String MOCK_USER = "myusername";
+        final String MOCK_PASS = "mypassword";
+
+        sessionService.setUrl(MOCK_URL);
+        sessionService.setUsername(MOCK_USER);
+        sessionService.start();
+        sessionService.getCurrentSession().setPassword(MOCK_PASS);
+
+        PasswordBean pass1 = new PasswordBean();
+        pass1.setWebsite("www.gmail.com");
+        pass1.setLoginName("myGmailUsername");
+
+        PasswordBean pass2 = new PasswordBean();
+        pass1.setWebsite("www.gmail.com");
+        pass1.setLoginName("myGmailUsername");
+
+
+
+        List<PasswordBean> passwords = new ArrayList<>();
+        passwords.add(pass1);
+        passwords.add(pass2);
+        sessionService.getCurrentSession().setPasswordBeanList(passwords);
+
+        ActivityController<PasswordListActivity> controller = Robolectric.buildActivity(PasswordListActivity.class).create().start().resume();
+        PasswordListActivity activity = controller.get();
+
+        // verify that there is an entry in the list
+        Assert.assertEquals(2, activity.adapter.getItemCount());
+
+        activity.recyclerView.measure(0,0);
+        activity.recyclerView.layout(0,0,100,1000);
+        Shadows.shadowOf(activity.recyclerView).dump();
+
+        final int ROW_TO_CLICK = 1;
+
+        activity.recyclerView.getChildAt(ROW_TO_CLICK).performClick();
+
+        ShadowActivity sact = Shadows.shadowOf(activity);
+        Intent intent = sact.peekNextStartedActivity();
+        Assert.assertNotNull("We should be changing activity, but we are not", intent);
+        Assert.assertEquals("Changing to wrong activity", PasswordDetailActivity.class.getName(), intent.getComponent().getClassName());
+        Assert.assertEquals(ROW_TO_CLICK, intent.getIntExtra(PasswordDetailActivity.KEY_PASSWORD_INDEX, 0));
+
+        controller.pause().stop().destroy();
+
+    }
+
 
     protected void assertLogOff(PasswordListActivity activity) {
         // verify that we are starting the LoginActivity

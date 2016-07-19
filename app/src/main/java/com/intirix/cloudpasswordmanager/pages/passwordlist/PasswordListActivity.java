@@ -55,7 +55,7 @@ public class PasswordListActivity extends AppCompatActivity {
             recyclerView.setHasFixedSize(true);
             RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
             recyclerView.setLayoutManager(layoutManager);
-            adapter = new PasswordListAdapter(sessionService.getCurrentSession());
+            adapter = new PasswordListAdapter(this, sessionService.getCurrentSession());
             recyclerView.setAdapter(adapter);
         }
 
