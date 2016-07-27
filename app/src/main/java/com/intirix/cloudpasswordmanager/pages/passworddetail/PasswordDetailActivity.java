@@ -87,9 +87,23 @@ public class PasswordDetailActivity extends AppCompatActivity {
                 logoff();
             } else {
                 passwordBean = passwordBeanList.get(passwordIndex);
+                updateForm();
             }
         }
 
+    }
+
+    private void updateForm() {
+        website.setText(passwordBean.getWebsite());
+        username.setText(passwordBean.getLoginName());
+        password.setText("********{"+passwordBean.getPass().length()+'}');
+        category.setText(passwordBean.getCategoryName());
+        notes.setText(passwordBean.getNotes());
+
+        passwordContainsLower.setEnabled(passwordBean.isHasLower());
+        passwordContainsUpper.setEnabled(passwordBean.isHasUpper());
+        passwordContainsSpecial.setEnabled(passwordBean.isHasSpecial());
+        passwordContainsNumber.setEnabled(passwordBean.isHasNumber());
     }
 
     protected void logoff() {
