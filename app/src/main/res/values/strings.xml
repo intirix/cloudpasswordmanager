@@ -14,9 +14,23 @@
     <string name="menuitem_logout">Logout</string>
 
     <string name="password_list_progress_message">Loading</string>
-    <string name="password_list_row_website_example">www.github.com</string>
-    <string name="password_list_row_website_empty">(No Website)</string>
-    <string name="password_list_row_loginName_example">myusername</string>
-    <string name="password_list_row_category_example">Banking</string>
+
+    <string name="example_website">www.github.com</string>
+    <string name="example_website_empty">(No Website)</string>
+    <string name="example_loginName">myusername</string>
+    <string name="example_category">Banking</string>
+    <string name="example_password_masked">********{16}</string>
+
+    <string name="password_detail_loginName_label">Login Name:</string>
+    <string name="password_detail_password_label">Password:</string>
+    <string name="password_detail_password_action_copy">Copy</string>
+    <string name="password_detail_password_action_show">Show</string>
+    <string name="password_detail_password_action_hide">Hide</string>
+    <string name="password_detail_password_contains_capital">A</string>
+    <string name="password_detail_password_contains_lower">a</string>
+    <string name="password_detail_password_contains_number">2</string>
+    <string name="password_detail_password_contains_symbol">$</string>
+    <string name="password_detail_category_label">Category:</string>
+    <string name="password_detail_notes_label">Notes:</string>
 
 </resources>

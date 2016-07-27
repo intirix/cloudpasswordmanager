@@ -154,7 +154,7 @@ public class PasswordRequestServiceImpl implements PasswordRequestService {
 
                 if (bean.getWebsite()==null||bean.getWebsite().length()==0) {
                     if (bean.getAddress()==null||bean.getAddress().length()==0) {
-                        bean.setWebsite(context.getString(R.string.password_list_row_website_empty));
+                        bean.setWebsite(context.getString(R.string.example_website_empty));
                         bean.setWebsite("(No Website)");
                     } else {
                         bean.setWebsite(bean.getAddress());
