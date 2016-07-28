@@ -3,7 +3,6 @@ package com.intirix.cloudpasswordmanager.pages.passworddetail;
 import android.graphics.drawable.PaintDrawable;
 import android.os.Bundle;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -93,17 +92,6 @@ public class PasswordDetailActivity extends SecureActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.password_detail_action, menu);
         return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        switch (item.getItemId()) {
-            case R.id.menuitem_logout:
-                logoff();
-                break;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     @OnClick(R.id.password_detail_password_hide)
