@@ -2,6 +2,7 @@ package com.intirix.cloudpasswordmanager.pages.passworddetail;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.view.View;
 
 import com.intirix.cloudpasswordmanager.BaseTestCase;
 import com.intirix.cloudpasswordmanager.BuildConfig;
@@ -86,6 +87,7 @@ public class PasswordDetailsActivityActionSpec extends BaseTestCase {
         List<PasswordBean> passwords = new ArrayList<>();
 
         PasswordBean bean = new PasswordBean();
+        bean.setPass("12345678");
         passwords.add(bean);
 
         sessionService.start();
@@ -101,6 +103,55 @@ public class PasswordDetailsActivityActionSpec extends BaseTestCase {
         ShadowActivity shadowActivity = Shadows.shadowOf(activity);
         Intent nextIntent = shadowActivity.peekNextStartedActivity();
         Assert.assertNull("We expected stay on this activity, but are not", nextIntent);
+    }
+
+    @Test
+    public void verifyHideShowPassword() {
+        SessionService sessionService = serviceRef.sessionService();
+
+        List<PasswordBean> passwords = new ArrayList<>();
+
+        PasswordBean bean = new PasswordBean();
+
+        bean.setWebsite("www.facebook.com");
+        bean.setLoginName("markz");
+        bean.setPass("ABCD!@#$");
+        bean.setHasLower(false);
+        bean.setHasUpper(true);
+        bean.setHasNumber(false);
+        bean.setHasSpecial(true);
+        bean.setCategoryName("Social");
+        bean.setNotes("My facebook login");
+
+        passwords.add(bean);
+
+        sessionService.start();
+        sessionService.getCurrentSession().setPasswordBeanList(passwords);
+
+        Intent intent = new Intent();
+        intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_INDEX, 0);
+
+        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class).withIntent(intent).create().start().resume();
+        PasswordDetailActivity activity = controller.get();
+
+
+        Assert.assertEquals("********{"+bean.getPass().length()+'}', activity.password.getText().toString());
+        Assert.assertEquals(View.INVISIBLE, activity.passwordHideAction.getVisibility());
+        Assert.assertEquals(View.VISIBLE, activity.passwordShowAction.getVisibility());
+
+        activity.passwordShowAction.performClick();
+
+        Assert.assertEquals(bean.getPass(), activity.password.getText().toString());
+        Assert.assertEquals(View.VISIBLE, activity.passwordHideAction.getVisibility());
+        Assert.assertEquals(View.INVISIBLE, activity.passwordShowAction.getVisibility());
+
+        activity.passwordHideAction.performClick();
+
+        Assert.assertEquals("********{"+bean.getPass().length()+'}', activity.password.getText().toString());
+        Assert.assertEquals(View.INVISIBLE, activity.passwordHideAction.getVisibility());
+        Assert.assertEquals(View.VISIBLE, activity.passwordShowAction.getVisibility());
+
+        controller.pause().stop().destroy();
     }
 
 

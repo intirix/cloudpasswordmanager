@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 import android.widget.TextView;
 
 import com.intirix.cloudpasswordmanager.PasswordApplication;
@@ -18,6 +19,7 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class PasswordDetailActivity extends AppCompatActivity {
 
@@ -91,6 +93,20 @@ public class PasswordDetailActivity extends AppCompatActivity {
             }
         }
 
+    }
+
+    @OnClick(R.id.password_detail_password_hide)
+    public void onClickHide(View view) {
+        password.setText("********{"+passwordBean.getPass().length()+'}');
+        passwordShowAction.setVisibility(View.VISIBLE);
+        passwordHideAction.setVisibility(View.INVISIBLE);
+    }
+
+    @OnClick(R.id.password_detail_password_show)
+    public void onClickShow(View view) {
+        password.setText(passwordBean.getPass());
+        passwordShowAction.setVisibility(View.INVISIBLE);
+        passwordHideAction.setVisibility(View.VISIBLE);
     }
 
     private void updateForm() {
