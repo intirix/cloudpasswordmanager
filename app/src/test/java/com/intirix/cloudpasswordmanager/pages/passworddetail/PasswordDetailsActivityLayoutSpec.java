@@ -58,6 +58,7 @@ public class PasswordDetailsActivityLayoutSpec extends BaseTestCase {
         PasswordDetailActivity activity = controller.get();
 
 
+        Assert.assertEquals("Cloud Password Manager", activity.getTitle().toString());
         Assert.assertEquals(bean.getWebsite(), activity.website.getText().toString());
         Assert.assertEquals(bean.getLoginName(), activity.username.getText().toString());
         Assert.assertEquals("********{"+bean.getPass().length()+'}', activity.password.getText().toString());

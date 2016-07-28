@@ -6,6 +6,7 @@ import android.view.View;
 
 import com.intirix.cloudpasswordmanager.BaseTestCase;
 import com.intirix.cloudpasswordmanager.BuildConfig;
+import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.TestPasswordApplication;
 import com.intirix.cloudpasswordmanager.pages.LoginActivity;
 import com.intirix.cloudpasswordmanager.services.SessionService;
@@ -18,6 +19,7 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.Shadows;
 import org.robolectric.annotation.Config;
+import org.robolectric.fakes.RoboMenu;
 import org.robolectric.shadows.ShadowActivity;
 import org.robolectric.util.ActivityController;
 
@@ -200,6 +202,49 @@ public class PasswordDetailsActivityActionSpec extends BaseTestCase {
         Assert.assertEquals("********{"+bean.getPass().length()+'}', activity.password.getText().toString());
         Assert.assertEquals(View.INVISIBLE, activity.passwordHideAction.getVisibility());
         Assert.assertEquals(View.VISIBLE, activity.passwordShowAction.getVisibility());
+
+        controller.pause().stop().destroy();
+    }
+
+    @Test
+    public void verifyLogoffButton() throws Exception {
+        SessionService sessionService = serviceRef.sessionService();
+
+        List<PasswordBean> passwords = new ArrayList<>();
+
+        PasswordBean bean = new PasswordBean();
+
+        bean.setWebsite("www.facebook.com");
+        bean.setLoginName("markz");
+        bean.setPass("ABCD!@#$");
+        bean.setHasLower(false);
+        bean.setHasUpper(true);
+        bean.setHasNumber(false);
+        bean.setHasSpecial(true);
+        bean.setCategoryName("Social");
+        bean.setNotes("My facebook login");
+
+        passwords.add(bean);
+
+        sessionService.start();
+        sessionService.getCurrentSession().setPasswordBeanList(passwords);
+
+        Intent intent = new Intent();
+        intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_INDEX, 0);
+
+        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class).withIntent(intent).create().start().resume();
+        PasswordDetailActivity activity = controller.get();
+
+        ShadowActivity sact = Shadows.shadowOf(activity);
+        sact.onCreateOptionsMenu(new RoboMenu(activity));
+        Shadows.shadowOf(activity.findViewById(R.id.my_toolbar)).dump();
+        sact.clickMenuItem(R.id.menuitem_logout);
+
+
+        // verify that the sessionService was cleared out
+        Assert.assertNull(sessionService.getCurrentSession());
+        assertLogOff(activity);
+
 
         controller.pause().stop().destroy();
     }
