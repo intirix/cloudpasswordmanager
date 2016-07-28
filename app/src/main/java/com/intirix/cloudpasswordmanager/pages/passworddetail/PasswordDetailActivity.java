@@ -1,6 +1,7 @@
 package com.intirix.cloudpasswordmanager.pages.passworddetail;
 
 import android.content.Intent;
+import android.graphics.drawable.PaintDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -120,6 +121,15 @@ public class PasswordDetailActivity extends AppCompatActivity {
         passwordContainsUpper.setEnabled(passwordBean.isHasUpper());
         passwordContainsSpecial.setEnabled(passwordBean.isHasSpecial());
         passwordContainsNumber.setEnabled(passwordBean.isHasNumber());
+
+        if (category.getBackground()!=null && category.getBackground() instanceof PaintDrawable) {
+            PaintDrawable bg = (PaintDrawable)category.getBackground();
+            bg.getPaint().setColor(passwordBean.getCategoryBackground());
+        } else {
+            PaintDrawable bg = new PaintDrawable(passwordBean.getCategoryBackground());
+            bg.setCornerRadius(16);
+            category.setBackgroundDrawable(bg);
+        }
     }
 
     protected void logoff() {
