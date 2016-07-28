@@ -1,10 +1,7 @@
 package com.intirix.cloudpasswordmanager.pages.passworddetail;
 
-import android.content.Intent;
 import android.graphics.drawable.PaintDrawable;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,25 +9,18 @@ import android.widget.TextView;
 
 import com.intirix.cloudpasswordmanager.PasswordApplication;
 import com.intirix.cloudpasswordmanager.R;
-import com.intirix.cloudpasswordmanager.pages.LoginActivity;
-import com.intirix.cloudpasswordmanager.services.SessionService;
+import com.intirix.cloudpasswordmanager.pages.SecureActivity;
 import com.intirix.cloudpasswordmanager.services.beans.PasswordBean;
 
 import java.util.List;
 
-import javax.inject.Inject;
-
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class PasswordDetailActivity extends AppCompatActivity {
+public class PasswordDetailActivity extends SecureActivity {
 
     public static String KEY_PASSWORD_INDEX = "PasswordIndex";
 
-
-    @Inject
-    SessionService sessionService;
 
     @BindView(R.id.password_detail_website)
     TextView website;
@@ -71,14 +61,15 @@ public class PasswordDetailActivity extends AppCompatActivity {
     PasswordBean passwordBean;
 
     @Override
+    protected int getLayoutId() {
+        return R.layout.password_detail;
+    }
+
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.password_detail);
 
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
-        setSupportActionBar(myToolbar);
-
-        ButterKnife.bind(this);
         PasswordApplication.getSInjector(this).inject(this);
 
         int passwordIndex = getIntent().getIntExtra(KEY_PASSWORD_INDEX, 0);
@@ -151,10 +142,4 @@ public class PasswordDetailActivity extends AppCompatActivity {
         }
     }
 
-    protected void logoff() {
-        sessionService.end();
-        Intent intent = new Intent(this, LoginActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
-    }
 }

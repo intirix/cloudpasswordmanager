@@ -75,7 +75,7 @@ public class PasswordListActivityActionSpec extends BaseTestCase {
 
 
         // verify that the sessionService was cleared out
-        Assert.assertNull(activity.sessionService.getCurrentSession());
+        Assert.assertNull(sessionService.getCurrentSession());
         assertLogOff(activity);
 
 

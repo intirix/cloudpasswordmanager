@@ -1,12 +1,9 @@
 package com.intirix.cloudpasswordmanager.pages.passwordlist;
 
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -14,22 +11,15 @@ import com.intirix.cloudpasswordmanager.PasswordApplication;
 import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.events.CategoryListUpdatedEvent;
 import com.intirix.cloudpasswordmanager.events.PasswordListUpdatedEvent;
-import com.intirix.cloudpasswordmanager.pages.LoginActivity;
-import com.intirix.cloudpasswordmanager.services.SessionService;
+import com.intirix.cloudpasswordmanager.pages.SecureActivity;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import javax.inject.Inject;
-
 import butterknife.BindView;
-import butterknife.ButterKnife;
 
-public class PasswordListActivity extends AppCompatActivity {
-
-    @Inject
-    SessionService sessionService;
+public class PasswordListActivity extends SecureActivity {
 
     @BindView(R.id.password_list_recycler)
     RecyclerView recyclerView;
@@ -39,19 +29,17 @@ public class PasswordListActivity extends AppCompatActivity {
     ProgressDialog progressDialog;
 
     @Override
+    protected int getLayoutId() {
+        return R.layout.password_list;
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.password_list);
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
-        setSupportActionBar(myToolbar);
-
-        ButterKnife.bind(this);
         PasswordApplication.getSInjector(this).inject(this);
 
         // if the session has ended, then send us back to the logon page
-        if (sessionService.getCurrentSession()==null) {
-            logoff();
-        } else {
+        if (sessionService.getCurrentSession()!=null) {
             recyclerView.setHasFixedSize(true);
             RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
             recyclerView.setLayoutManager(layoutManager);
@@ -112,13 +100,6 @@ public class PasswordListActivity extends AppCompatActivity {
         if (adapter!=null) {
             adapter.notifyDataSetChanged();
         }
-    }
-
-    protected void logoff() {
-        sessionService.end();
-        Intent intent = new Intent(this, LoginActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
     }
 
     private void updateProgressDialog() {
