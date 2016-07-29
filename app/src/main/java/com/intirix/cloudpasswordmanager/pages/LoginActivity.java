@@ -3,8 +3,6 @@ package com.intirix.cloudpasswordmanager.pages;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -27,10 +25,9 @@ import org.greenrobot.eventbus.ThreadMode;
 import javax.inject.Inject;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends BaseActivity {
 
     @Inject
     SessionService session;
@@ -53,12 +50,13 @@ public class LoginActivity extends AppCompatActivity {
     ProgressDialog progressDialog;
 
     @Override
+    protected int getLayoutId() {
+        return R.layout.login;
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.login);
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
-        setSupportActionBar(myToolbar);
-        ButterKnife.bind(this);
         PasswordApplication.getSInjector(this).inject(this);
 
         attachImeGo(passInput);
