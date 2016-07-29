@@ -26,6 +26,9 @@ import butterknife.ButterKnife;
  * Created by jeff on 7/27/16.
  */
 public abstract class BaseActivity extends AppCompatActivity {
+
+    private NavigationAdapter adapter;
+
     protected abstract int getLayoutId();
 
     protected FrameLayout contentFrame;
@@ -64,6 +67,8 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         drawerToggle.syncState();
 
+        drawerListView.addHeaderView(getLayoutInflater().inflate(R.layout.drawer_header, drawerListView, false));
+
         PasswordApplication.getSInjector(this).inject(this);
 
     }
@@ -79,8 +84,9 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         final LinkedList<NavigationItem> navItems = new LinkedList<>();
         addNavigationItems(navItems);
-        drawerListView.setAdapter(new NavigationAdapter(this, navItems));
-        drawerListView.setOnItemClickListener(new NavigationClickListener(this, drawerLayout));
+        adapter = new NavigationAdapter(this, navItems);
+        drawerListView.setAdapter(adapter);
+        drawerListView.setOnItemClickListener(new NavigationClickListener(this, drawerLayout, adapter));
 
 
         // Sync the toggle state after onRestoreInstanceState has occurred.

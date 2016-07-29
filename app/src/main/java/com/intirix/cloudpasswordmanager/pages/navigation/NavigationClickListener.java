@@ -14,15 +14,21 @@ public class NavigationClickListener implements ListView.OnItemClickListener {
 
     private DrawerLayout drawerLayout;
 
-    public NavigationClickListener(Activity activity, DrawerLayout drawerLayout) {
+    private NavigationAdapter adapter;
+
+    private static final int OFFSET = 1;
+
+    public NavigationClickListener(Activity activity, DrawerLayout drawerLayout, NavigationAdapter adapter) {
         this.activity = activity;
         this.drawerLayout = drawerLayout;
+        this.adapter = adapter;
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        NavigationAdapter adapter = (NavigationAdapter)parent.getAdapter();
-        adapter.getItem(position).onClick(activity);
-        drawerLayout.closeDrawers();
+        if (position>(OFFSET-1)) {
+            adapter.getItem(position-OFFSET).onClick(activity);
+            drawerLayout.closeDrawers();
+        }
     }
 }
