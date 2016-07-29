@@ -7,7 +7,11 @@ import android.view.MenuItem;
 
 import com.intirix.cloudpasswordmanager.PasswordApplication;
 import com.intirix.cloudpasswordmanager.R;
+import com.intirix.cloudpasswordmanager.pages.navigation.NavigationItem;
+import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordListNavigationItem;
 import com.intirix.cloudpasswordmanager.services.SessionService;
+
+import java.util.LinkedList;
 
 import javax.inject.Inject;
 
@@ -46,6 +50,12 @@ public abstract class SecureActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void addNavigationItems(LinkedList<NavigationItem> navItems) {
+        super.addNavigationItems(navItems);
+        navItems.addLast(new PasswordListNavigationItem(this));
+
+    }
 
     protected void logoff() {
         sessionService.end();

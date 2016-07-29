@@ -13,6 +13,11 @@ import android.widget.ListView;
 
 import com.intirix.cloudpasswordmanager.PasswordApplication;
 import com.intirix.cloudpasswordmanager.R;
+import com.intirix.cloudpasswordmanager.pages.navigation.NavigationAdapter;
+import com.intirix.cloudpasswordmanager.pages.navigation.NavigationClickListener;
+import com.intirix.cloudpasswordmanager.pages.navigation.NavigationItem;
+
+import java.util.LinkedList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -63,9 +68,21 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     }
 
+    protected void addNavigationItems(LinkedList<NavigationItem> navItems) {
+        // do nothing
+    }
+
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
+
+
+        final LinkedList<NavigationItem> navItems = new LinkedList<>();
+        addNavigationItems(navItems);
+        drawerListView.setAdapter(new NavigationAdapter(this, navItems));
+        drawerListView.setOnItemClickListener(new NavigationClickListener(this, drawerLayout));
+
+
         // Sync the toggle state after onRestoreInstanceState has occurred.
         drawerToggle.syncState();
     }
