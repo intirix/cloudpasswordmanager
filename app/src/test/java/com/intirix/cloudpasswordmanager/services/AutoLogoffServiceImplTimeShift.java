@@ -3,11 +3,11 @@ package com.intirix.cloudpasswordmanager.services;
 /**
  * Created by jeff on 7/29/16.
  */
-public class AutoLogoffSessionImplTimeShift extends AutoLogoffSessionImpl {
+public class AutoLogoffServiceImplTimeShift extends AutoLogoffServiceImpl {
 
     private long timeShift = 0;
 
-    public AutoLogoffSessionImplTimeShift(SessionService sessionService) {
+    public AutoLogoffServiceImplTimeShift(SessionService sessionService) {
         super(sessionService);
     }
 

@@ -7,14 +7,14 @@ import javax.inject.Inject;
 /**
  * Created by jeff on 7/29/16.
  */
-public class AutoLogoffSessionImpl implements AutoLogoffService {
+public class AutoLogoffServiceImpl implements AutoLogoffService {
 
     private SessionService sessionService;
 
     public static final long TIMEOUT = 5 * 60 * 1000;
 
     @Inject
-    public AutoLogoffSessionImpl(SessionService sessionService) {
+    public AutoLogoffServiceImpl(SessionService sessionService) {
         this.sessionService = sessionService;
     }
 
