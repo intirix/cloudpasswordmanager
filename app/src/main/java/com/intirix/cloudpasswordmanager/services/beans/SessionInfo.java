@@ -9,6 +9,8 @@ public class SessionInfo {
 
     private String password;
 
+    private long lastUserEvent = System.currentTimeMillis();
+
     private List<PasswordInfo> passwordList;
 
     private List<Category> categoryList;
@@ -55,5 +57,13 @@ public class SessionInfo {
 
     public void setPasswordBeanList(List<PasswordBean> passwordBeanList) {
         this.passwordBeanList = passwordBeanList;
+    }
+
+    public long getLastUserEvent() {
+        return lastUserEvent;
+    }
+
+    public void setLastUserEvent(long lastUserEvent) {
+        this.lastUserEvent = lastUserEvent;
     }
 }

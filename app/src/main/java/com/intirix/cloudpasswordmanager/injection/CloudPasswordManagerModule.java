@@ -3,6 +3,8 @@ package com.intirix.cloudpasswordmanager.injection;
 import android.content.Context;
 
 import com.intirix.cloudpasswordmanager.services.AuthenticationInterceptor;
+import com.intirix.cloudpasswordmanager.services.AutoLogoffService;
+import com.intirix.cloudpasswordmanager.services.AutoLogoffSessionImpl;
 import com.intirix.cloudpasswordmanager.services.ColorService;
 import com.intirix.cloudpasswordmanager.services.ColorServiceImpl;
 import com.intirix.cloudpasswordmanager.services.EventService;
@@ -68,6 +70,11 @@ public class CloudPasswordManagerModule {
 
     @Provides
     PasswordRequestService providePasswordRequestService(PasswordRequestServiceImpl impl) {
+        return impl;
+    }
+
+    @Provides
+    AutoLogoffService provideAutoLogoffService(AutoLogoffSessionImpl impl) {
         return impl;
     }
 }
