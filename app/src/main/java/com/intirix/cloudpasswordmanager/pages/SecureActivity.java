@@ -61,6 +61,7 @@ public abstract class SecureActivity extends BaseActivity {
 
     }
 
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -99,6 +100,7 @@ public abstract class SecureActivity extends BaseActivity {
     @Override
     protected void addNavigationItems(LinkedList<NavigationItem> navItems) {
         super.addNavigationItems(navItems);
+        navItems.addFirst(new LogOffNavigationItem(this, sessionService));
         navItems.addLast(new PasswordListNavigationItem(this));
 
     }
