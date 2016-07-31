@@ -24,6 +24,7 @@
     <string name="example_category">Banking</string>
     <string name="example_password_masked">********{16}</string>
 
+    <string name="password_detail_website_label">Website:</string>
     <string name="password_detail_loginName_label">Login Name:</string>
     <string name="password_detail_password_label">Password:</string>
     <string name="password_detail_password_action_copy">Copy</string>

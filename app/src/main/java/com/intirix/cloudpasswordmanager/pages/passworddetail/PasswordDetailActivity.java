@@ -126,6 +126,22 @@ public class PasswordDetailActivity extends SecureActivity {
         return true;
     }
 
+    @OnLongClick(R.id.password_detail_loginName_value)
+    public boolean onLongClickLoginName(View v) {
+        clipboardService.copyStringToClipboard(getString(R.string.password_detail_loginName_label), passwordBean.getLoginName());
+        return true;
+    }
+
+    @OnLongClick(R.id.password_detail_website)
+    public boolean onLongClickWebsite(View v) {
+        String url = passwordBean.getAddress();
+        if (url==null) {
+            url = passwordBean.getWebsite();
+        }
+        clipboardService.copyStringToClipboard(getString(R.string.password_detail_website_label), url);
+        return true;
+    }
+
     private void updateForm() {
         website.setText(passwordBean.getWebsite());
         username.setText(passwordBean.getLoginName());

@@ -187,6 +187,73 @@ public class PasswordDetailsActivityActionSpec extends BaseTestCase {
         controller.pause().stop().destroy();
     }
 
+    @Test
+    public void verifyLongPressUsernameCopiesUsername() {
+        PasswordBean bean = startValidPasswordSession();
+
+        Intent intent = new Intent();
+        intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_INDEX, 0);
+
+        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class).withIntent(intent).create().start().resume();
+        PasswordDetailActivity activity = controller.get();
+
+        activity.username.performLongClick();
+
+        ClipboardManager clipboard = (ClipboardManager)activity.getSystemService(Context.CLIPBOARD_SERVICE);
+        ShadowClipboardManager shadowClipboardManager = Shadows.shadowOf(clipboard);
+        ClipData primaryClip = shadowClipboardManager.getPrimaryClip();
+        Assert.assertNotNull("Missing expected clipboard paste", primaryClip);
+        Assert.assertEquals(1, primaryClip.getItemCount());
+        Assert.assertEquals(bean.getLoginName(), primaryClip.getItemAt(0).getText().toString());
+
+        controller.pause().stop().destroy();
+    }
+
+    @Test
+    public void verifyLongPressWebsiteCopiesUrl() {
+        PasswordBean bean = startValidPasswordSession();
+        bean.setAddress("http://www.github.com/login");
+
+        Intent intent = new Intent();
+        intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_INDEX, 0);
+
+        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class).withIntent(intent).create().start().resume();
+        PasswordDetailActivity activity = controller.get();
+
+        activity.website.performLongClick();
+
+        ClipboardManager clipboard = (ClipboardManager)activity.getSystemService(Context.CLIPBOARD_SERVICE);
+        ShadowClipboardManager shadowClipboardManager = Shadows.shadowOf(clipboard);
+        ClipData primaryClip = shadowClipboardManager.getPrimaryClip();
+        Assert.assertNotNull("Missing expected clipboard paste", primaryClip);
+        Assert.assertEquals(1, primaryClip.getItemCount());
+        Assert.assertEquals(bean.getAddress(), primaryClip.getItemAt(0).getText().toString());
+
+        controller.pause().stop().destroy();
+    }
+
+    @Test
+    public void verifyLongPressWebsiteCopiesWebsiteWhenThereIsNoUrl() {
+        PasswordBean bean = startValidPasswordSession();
+
+        Intent intent = new Intent();
+        intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_INDEX, 0);
+
+        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class).withIntent(intent).create().start().resume();
+        PasswordDetailActivity activity = controller.get();
+
+        activity.website.performLongClick();
+
+        ClipboardManager clipboard = (ClipboardManager)activity.getSystemService(Context.CLIPBOARD_SERVICE);
+        ShadowClipboardManager shadowClipboardManager = Shadows.shadowOf(clipboard);
+        ClipData primaryClip = shadowClipboardManager.getPrimaryClip();
+        Assert.assertNotNull("Missing expected clipboard paste", primaryClip);
+        Assert.assertEquals(1, primaryClip.getItemCount());
+        Assert.assertEquals(bean.getWebsite(), primaryClip.getItemAt(0).getText().toString());
+
+        controller.pause().stop().destroy();
+    }
+
     @NonNull
     protected PasswordBean startValidPasswordSession() {
         SessionService sessionService = serviceRef.sessionService();
