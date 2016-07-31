@@ -9,12 +9,16 @@ import android.widget.TextView;
 import com.intirix.cloudpasswordmanager.PasswordApplication;
 import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.pages.SecureActivity;
+import com.intirix.cloudpasswordmanager.services.ClipboardService;
 import com.intirix.cloudpasswordmanager.services.beans.PasswordBean;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.OnClick;
+import butterknife.OnLongClick;
 
 public class PasswordDetailActivity extends SecureActivity {
 
@@ -58,6 +62,9 @@ public class PasswordDetailActivity extends SecureActivity {
     TextView notes;
 
     PasswordBean passwordBean;
+
+    @Inject
+    ClipboardService clipboardService;
 
     @Override
     protected int getLayoutId() {
@@ -106,6 +113,17 @@ public class PasswordDetailActivity extends SecureActivity {
         password.setText(passwordBean.getPass());
         passwordShowAction.setVisibility(View.INVISIBLE);
         passwordHideAction.setVisibility(View.VISIBLE);
+    }
+
+    @OnClick(R.id.password_detail_password_copy)
+    public void onClickCopyPassword(View v) {
+        clipboardService.copyStringToClipboard(getString(R.string.password_detail_password_label), passwordBean.getPass());
+    }
+
+    @OnLongClick(R.id.password_detail_password_value)
+    public boolean onLongClickPassword(View v) {
+        clipboardService.copyStringToClipboard(getString(R.string.password_detail_password_label), passwordBean.getPass());
+        return true;
     }
 
     private void updateForm() {

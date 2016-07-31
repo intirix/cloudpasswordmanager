@@ -1,7 +1,11 @@
 package com.intirix.cloudpasswordmanager.pages.passworddetail;
 
 import android.app.Activity;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.view.View;
 
 import com.intirix.cloudpasswordmanager.BaseTestCase;
@@ -21,6 +25,7 @@ import org.robolectric.Shadows;
 import org.robolectric.annotation.Config;
 import org.robolectric.fakes.RoboMenu;
 import org.robolectric.shadows.ShadowActivity;
+import org.robolectric.shadows.ShadowClipboardManager;
 import org.robolectric.util.ActivityController;
 
 import java.util.ArrayList;
@@ -110,26 +115,7 @@ public class PasswordDetailsActivityActionSpec extends BaseTestCase {
 
     @Test
     public void verifyHideShowPassword() {
-        SessionService sessionService = serviceRef.sessionService();
-
-        List<PasswordBean> passwords = new ArrayList<>();
-
-        PasswordBean bean = new PasswordBean();
-
-        bean.setWebsite("www.facebook.com");
-        bean.setLoginName("markz");
-        bean.setPass("ABCD!@#$");
-        bean.setHasLower(false);
-        bean.setHasUpper(true);
-        bean.setHasNumber(false);
-        bean.setHasSpecial(true);
-        bean.setCategoryName("Social");
-        bean.setNotes("My facebook login");
-
-        passwords.add(bean);
-
-        sessionService.start();
-        sessionService.getCurrentSession().setPasswordBeanList(passwords);
+        PasswordBean bean = startValidPasswordSession();
 
         Intent intent = new Intent();
         intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_INDEX, 0);
@@ -158,7 +144,51 @@ public class PasswordDetailsActivityActionSpec extends BaseTestCase {
     }
 
     @Test
-    public void verifyShowPasswordResetsOnRotate() {
+    public void verifyCopyButtonCopiesPassword() {
+        PasswordBean bean = startValidPasswordSession();
+
+        Intent intent = new Intent();
+        intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_INDEX, 0);
+
+        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class).withIntent(intent).create().start().resume();
+        PasswordDetailActivity activity = controller.get();
+
+        activity.passwordCopyAction.performClick();
+
+        ClipboardManager clipboard = (ClipboardManager)activity.getSystemService(Context.CLIPBOARD_SERVICE);
+        ShadowClipboardManager shadowClipboardManager = Shadows.shadowOf(clipboard);
+        ClipData primaryClip = shadowClipboardManager.getPrimaryClip();
+        Assert.assertNotNull("Missing expected clipboard paste", primaryClip);
+        Assert.assertEquals(1, primaryClip.getItemCount());
+        Assert.assertEquals(bean.getPass(), primaryClip.getItemAt(0).getText().toString());
+
+        controller.pause().stop().destroy();
+    }
+
+    @Test
+    public void verifyLongPressPasswordCopiesPassword() {
+        PasswordBean bean = startValidPasswordSession();
+
+        Intent intent = new Intent();
+        intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_INDEX, 0);
+
+        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class).withIntent(intent).create().start().resume();
+        PasswordDetailActivity activity = controller.get();
+
+        activity.password.performLongClick();
+
+        ClipboardManager clipboard = (ClipboardManager)activity.getSystemService(Context.CLIPBOARD_SERVICE);
+        ShadowClipboardManager shadowClipboardManager = Shadows.shadowOf(clipboard);
+        ClipData primaryClip = shadowClipboardManager.getPrimaryClip();
+        Assert.assertNotNull("Missing expected clipboard paste", primaryClip);
+        Assert.assertEquals(1, primaryClip.getItemCount());
+        Assert.assertEquals(bean.getPass(), primaryClip.getItemAt(0).getText().toString());
+
+        controller.pause().stop().destroy();
+    }
+
+    @NonNull
+    protected PasswordBean startValidPasswordSession() {
         SessionService sessionService = serviceRef.sessionService();
 
         List<PasswordBean> passwords = new ArrayList<>();
@@ -179,6 +209,12 @@ public class PasswordDetailsActivityActionSpec extends BaseTestCase {
 
         sessionService.start();
         sessionService.getCurrentSession().setPasswordBeanList(passwords);
+        return bean;
+    }
+
+    @Test
+    public void verifyShowPasswordResetsOnRotate() {
+        PasswordBean bean = startValidPasswordSession();
 
         Intent intent = new Intent();
         intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_INDEX, 0);
