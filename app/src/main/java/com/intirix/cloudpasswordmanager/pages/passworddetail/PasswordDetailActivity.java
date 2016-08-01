@@ -20,6 +20,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.intirix.cloudpasswordmanager.PasswordApplication;
 import com.intirix.cloudpasswordmanager.R;
@@ -133,17 +134,21 @@ public class PasswordDetailActivity extends SecureActivity {
     @OnClick(R.id.password_detail_password_copy)
     public void onClickCopyPassword(View v) {
         clipboardService.copyStringToClipboard(getString(R.string.password_detail_password_label), passwordBean.getPass());
+        Toast.makeText(this, R.string.password_detail_password_toast, Toast.LENGTH_LONG).show();
     }
 
     @OnLongClick(R.id.password_detail_password_value)
     public boolean onLongClickPassword(View v) {
         clipboardService.copyStringToClipboard(getString(R.string.password_detail_password_label), passwordBean.getPass());
+        Toast.makeText(this, R.string.password_detail_password_toast, Toast.LENGTH_LONG).show();
+
         return true;
     }
 
     @OnLongClick(R.id.password_detail_loginName_value)
     public boolean onLongClickLoginName(View v) {
         clipboardService.copyStringToClipboard(getString(R.string.password_detail_loginName_label), passwordBean.getLoginName());
+        Toast.makeText(this, R.string.password_detail_loginName_toast, Toast.LENGTH_LONG).show();
         return true;
     }
 
@@ -154,6 +159,7 @@ public class PasswordDetailActivity extends SecureActivity {
             url = passwordBean.getWebsite();
         }
         clipboardService.copyStringToClipboard(getString(R.string.password_detail_website_label), url);
+        Toast.makeText(this, R.string.password_detail_website_toast, Toast.LENGTH_LONG).show();
         return true;
     }
 

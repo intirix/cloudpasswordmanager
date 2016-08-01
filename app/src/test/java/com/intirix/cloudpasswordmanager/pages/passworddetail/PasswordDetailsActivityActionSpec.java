@@ -41,6 +41,8 @@ import org.robolectric.annotation.Config;
 import org.robolectric.fakes.RoboMenu;
 import org.robolectric.shadows.ShadowActivity;
 import org.robolectric.shadows.ShadowClipboardManager;
+import org.robolectric.shadows.ShadowLooper;
+import org.robolectric.shadows.ShadowToast;
 import org.robolectric.util.ActivityController;
 
 import java.util.ArrayList;
@@ -177,6 +179,9 @@ public class PasswordDetailsActivityActionSpec extends BaseTestCase {
         Assert.assertEquals(1, primaryClip.getItemCount());
         Assert.assertEquals(bean.getPass(), primaryClip.getItemAt(0).getText().toString());
 
+        ShadowLooper.idleMainLooper();
+        Assert.assertEquals(activity.getString(R.string.password_detail_password_toast), ShadowToast.getTextOfLatestToast());
+
         controller.pause().stop().destroy();
     }
 
@@ -199,6 +204,9 @@ public class PasswordDetailsActivityActionSpec extends BaseTestCase {
         Assert.assertEquals(1, primaryClip.getItemCount());
         Assert.assertEquals(bean.getPass(), primaryClip.getItemAt(0).getText().toString());
 
+        ShadowLooper.idleMainLooper();
+        Assert.assertEquals(activity.getString(R.string.password_detail_password_toast), ShadowToast.getTextOfLatestToast());
+
         controller.pause().stop().destroy();
     }
 
@@ -220,6 +228,9 @@ public class PasswordDetailsActivityActionSpec extends BaseTestCase {
         Assert.assertNotNull("Missing expected clipboard paste", primaryClip);
         Assert.assertEquals(1, primaryClip.getItemCount());
         Assert.assertEquals(bean.getLoginName(), primaryClip.getItemAt(0).getText().toString());
+
+        ShadowLooper.idleMainLooper();
+        Assert.assertEquals(activity.getString(R.string.password_detail_loginName_toast), ShadowToast.getTextOfLatestToast());
 
         controller.pause().stop().destroy();
     }
@@ -244,6 +255,9 @@ public class PasswordDetailsActivityActionSpec extends BaseTestCase {
         Assert.assertEquals(1, primaryClip.getItemCount());
         Assert.assertEquals(bean.getAddress(), primaryClip.getItemAt(0).getText().toString());
 
+        ShadowLooper.idleMainLooper();
+        Assert.assertEquals(activity.getString(R.string.password_detail_website_toast), ShadowToast.getTextOfLatestToast());
+
         controller.pause().stop().destroy();
     }
 
@@ -265,6 +279,9 @@ public class PasswordDetailsActivityActionSpec extends BaseTestCase {
         Assert.assertNotNull("Missing expected clipboard paste", primaryClip);
         Assert.assertEquals(1, primaryClip.getItemCount());
         Assert.assertEquals(bean.getWebsite(), primaryClip.getItemAt(0).getText().toString());
+
+        ShadowLooper.idleMainLooper();
+        Assert.assertEquals(activity.getString(R.string.password_detail_website_toast), ShadowToast.getTextOfLatestToast());
 
         controller.pause().stop().destroy();
     }

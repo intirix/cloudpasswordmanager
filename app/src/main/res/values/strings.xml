@@ -41,4 +41,8 @@
     <string name="password_detail_category_label">Category:</string>
     <string name="password_detail_notes_label">Notes:</string>
 
+    <string name="password_detail_website_toast">URL copied to clipboard</string>
+    <string name="password_detail_loginName_toast">Login name copied to clipboard</string>
+    <string name="password_detail_password_toast">Password copied to clipboard</string>
+
 </resources>
