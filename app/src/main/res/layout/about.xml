@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".pages.AboutActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/my_toolbar"
+        style="@style/toolbar_style"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+
+    <TextView
+        style="@style/about_label"
+        android:id="@+id/about_version_label"
+        android:layout_below="@id/my_toolbar"
+        android:layout_marginTop="20dp"
+        android:layout_alignLeft="@id/my_toolbar"
+        android:text="@string/about_version_label"/>
+
+    <TextView
+        style="@style/about_value"
+        android:id="@+id/about_version_value"
+        android:layout_toRightOf="@id/about_version_label"
+        android:layout_alignBottom="@id/about_version_label"
+        android:text="@string/about_version_example"/>
+
+    <TextView
+        style="@style/about_label"
+        android:id="@+id/about_githash_label"
+        android:layout_below="@id/about_version_label"
+        android:layout_marginTop="20dp"
+        android:layout_alignLeft="@id/my_toolbar"
+        android:text="@string/about_githash_label"/>
+
+    <TextView
+        style="@style/about_value"
+        android:id="@+id/about_githash_value"
+        android:layout_toRightOf="@id/about_githash_label"
+        android:layout_alignBottom="@id/about_githash_label"
+        android:text="@string/about_githash_example"/>
+
+    <TextView
+        style="@style/about_label"
+        android:id="@+id/about_buildtype_label"
+        android:layout_below="@id/about_githash_label"
+        android:layout_marginTop="20dp"
+        android:layout_alignLeft="@id/my_toolbar"
+        android:text="@string/about_buildtype_label"/>
+
+    <TextView
+        style="@style/about_value"
+        android:id="@+id/about_buildtype_value"
+        android:layout_toRightOf="@id/about_buildtype_label"
+        android:layout_alignBottom="@id/about_buildtype_label"
+        android:text="@string/about_buildtype_example"/>
+
+    <TextView
+        style="@style/about_label"
+        android:id="@+id/about_buildtime_label"
+        android:layout_below="@id/about_buildtype_label"
+        android:layout_marginTop="20dp"
+        android:layout_alignLeft="@id/my_toolbar"
+        android:text="@string/about_buildtime_label"/>
+
+    <TextView
+        style="@style/about_value"
+        android:id="@+id/about_buildtime_value"
+        android:layout_toRightOf="@id/about_buildtime_label"
+        android:layout_alignBottom="@id/about_buildtime_label"
+        android:text="@string/about_buildtime_example"/>
+
+
+</RelativeLayout>

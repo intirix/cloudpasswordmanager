@@ -45,4 +45,14 @@
     <string name="password_detail_loginName_toast">Login name copied to clipboard</string>
     <string name="password_detail_password_toast">Password copied to clipboard</string>
 
+    <string name="about_nav_label">About</string>
+    <string name="about_version_label">Version:</string>
+    <string name="about_version_example">1.0</string>
+    <string name="about_githash_label">Git Hash:</string>
+    <string name="about_githash_example">4efe780</string>
+    <string name="about_buildtime_label">Built:</string>
+    <string name="about_buildtime_example">2016/01/01 00:00:00 EST</string>
+    <string name="about_buildtype_label">Build Type:</string>
+    <string name="about_buildtype_example">debug</string>
+
 </resources>

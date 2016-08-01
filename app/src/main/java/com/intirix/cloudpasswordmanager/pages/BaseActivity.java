@@ -92,6 +92,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     protected void addNavigationItems(LinkedList<NavigationItem> navItems) {
         // do nothing
+        navItems.addLast(new AboutNavigationItem(this));
     }
 
     @Override

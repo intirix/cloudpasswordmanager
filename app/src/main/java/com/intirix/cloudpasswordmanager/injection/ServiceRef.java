@@ -15,6 +15,7 @@
  */
 package com.intirix.cloudpasswordmanager.injection;
 
+import com.intirix.cloudpasswordmanager.pages.AboutActivity;
 import com.intirix.cloudpasswordmanager.pages.BaseActivity;
 import com.intirix.cloudpasswordmanager.pages.LoginActivity;
 import com.intirix.cloudpasswordmanager.pages.SecureActivity;
@@ -41,4 +42,5 @@ public interface ServiceRef {
     void inject(SecureActivity activity);
     void inject(PasswordListActivity activity);
     void inject(PasswordDetailActivity activity);
+    void inject(AboutActivity activity);
 }
