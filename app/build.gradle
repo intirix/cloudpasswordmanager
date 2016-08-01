@@ -1,6 +1,16 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.neenbedankt.android-apt'
 
+def getGitHash = { ->
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'rev-parse', '--short', 'HEAD'
+        standardOutput = stdout
+    }
+    return stdout.toString().trim()
+}
+
+
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.2"
@@ -12,9 +22,24 @@ android {
         versionCode 1
         versionName "1.0"
     }
+    signingConfigs {
+        myrelease {
+            storeFile file(System.getProperty("user.home")+"/.keys/keystore")
+            storePassword project.hasProperty("KEYSTORE_PASSWORD") ? KEYSTORE_PASSWORD : ""
+            keyAlias "myalias"
+            keyPassword project.hasProperty("KEYSTORE_PASSWORD") ? KEYSTORE_PASSWORD : ""
+        }
+    }
     buildTypes {
+        debug {
+            buildConfigField "java.util.Date", "BUILD_TIME", "new java.util.Date("+System.currentTimeMillis()+"L)"
+            buildConfigField "String", "GIT_HASH", "\"${getGitHash()}\""
+        }
         release {
             minifyEnabled false
+            signingConfig signingConfigs.myrelease
+            buildConfigField "java.util.Date", "BUILD_TIME", "new java.util.Date("+System.currentTimeMillis()+"L)"
+            buildConfigField "String", "GIT_HASH", "\"${getGitHash()}\""
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
