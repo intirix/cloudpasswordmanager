@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 
+import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.pages.navigation.NavigationItem;
 
 /**
@@ -16,7 +17,7 @@ public class PasswordListNavigationItem extends NavigationItem {
 
     @Override
     public String getLabel(Context context) {
-        return "Password List";
+        return context.getString(R.string.password_list_nav_label);
     }
 
     @Override

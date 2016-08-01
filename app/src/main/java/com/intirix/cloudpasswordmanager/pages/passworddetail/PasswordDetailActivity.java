@@ -103,7 +103,7 @@ public class PasswordDetailActivity extends SecureActivity {
 
     @OnClick(R.id.password_detail_password_hide)
     public void onClickHide(View view) {
-        password.setText("********{"+passwordBean.getPass().length()+'}');
+        password.setText(getString(R.string.password_detail_password_masked, passwordBean.getPass().length()));
         passwordShowAction.setVisibility(View.VISIBLE);
         passwordHideAction.setVisibility(View.INVISIBLE);
     }
@@ -145,7 +145,7 @@ public class PasswordDetailActivity extends SecureActivity {
     private void updateForm() {
         website.setText(passwordBean.getWebsite());
         username.setText(passwordBean.getLoginName());
-        password.setText("********{"+passwordBean.getPass().length()+'}');
+        password.setText(getString(R.string.password_detail_password_masked, passwordBean.getPass().length()));
         category.setText(passwordBean.getCategoryName());
         notes.setText(passwordBean.getNotes());
 

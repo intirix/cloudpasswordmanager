@@ -7,6 +7,7 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:src="@drawable/menu_header"
-        android:layout_gravity="center_horizontal"/>
+        android:layout_gravity="center_horizontal"
+        android:contentDescription="@string/drawer_logo_description"/>
 
 </LinearLayout>

@@ -21,7 +21,7 @@
         <activity
             android:name=".pages.passwordlist.PasswordListActivity"
             android:label="@string/title_activity_password_list" />
-        <activity android:name=".pages.passworddetail.PasswordDetailActivity"></activity>
+        <activity android:name=".pages.passworddetail.PasswordDetailActivity"/>
     </application>
 
 </manifest>

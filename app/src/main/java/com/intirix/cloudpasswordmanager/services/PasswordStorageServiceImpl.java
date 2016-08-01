@@ -72,7 +72,7 @@ public class PasswordStorageServiceImpl implements PasswordStorageService {
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {
                     if (response.code()==401) {
-                        cb.onError(context.getString(R.string.error_invalid_username_password).toString());
+                        cb.onError(context.getString(R.string.error_invalid_username_password));
                     } else if (response.code()==200) {
                         cb.onReturn(response.body());
                     } else {
@@ -93,7 +93,7 @@ public class PasswordStorageServiceImpl implements PasswordStorageService {
         call.enqueue(new Callback<List<Category>>() {
             @Override
             public void onResponse(Call<List<Category>> call, Response<List<Category>> response) {
-                final List<Category> list = new ArrayList<Category>(response.body().size());
+                final List<Category> list = new ArrayList<>(response.body().size());
                 for (final Category c: response.body()) {
                     if (sessionService.getUsername().equals(c.getUser_id())) {
                         list.add(c);
@@ -116,7 +116,7 @@ public class PasswordStorageServiceImpl implements PasswordStorageService {
             @Override
             public void onResponse(Call<List<PasswordResponse>> call, Response<List<PasswordResponse>> response) {
                 try {
-                    List<PasswordInfo> list = new ArrayList<PasswordInfo>();
+                    List<PasswordInfo> list = new ArrayList<>();
                     for (final PasswordResponse pr : response.body()) {
                         if (sessionService.getUsername().equals(pr.getUser_id()) && "0".equals(pr.getDeleted())) {
                             list.add(createPasswordInfo(pr));
