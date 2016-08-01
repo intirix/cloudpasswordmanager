@@ -7,6 +7,7 @@
 
     <string name="logout_nav_label">Logout</string>
     <string name="logout_menu_label">Logout</string>
+    <string name="login_nav_label">Login</string>
     <string name="login_url_hint">https://mycloud.example.com/owncloud</string>
     <string name="login_user_hint">Username</string>
     <string name="login_pass_hint">Password</string>

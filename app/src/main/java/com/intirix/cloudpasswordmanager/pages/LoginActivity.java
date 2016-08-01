@@ -27,7 +27,7 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-public class LoginActivity extends BaseActivity {
+public class LoginActivity extends PublicActivity {
 
     @Inject
     SessionService session;
