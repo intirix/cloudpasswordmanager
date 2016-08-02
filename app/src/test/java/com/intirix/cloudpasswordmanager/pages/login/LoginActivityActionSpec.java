@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.intirix.cloudpasswordmanager.pages;
+package com.intirix.cloudpasswordmanager.pages.login;
 
 import android.content.Intent;
 import android.view.View;
@@ -50,6 +50,8 @@ public class LoginActivityActionSpec extends BaseTestCase {
 
     @Test
     public void verifyFailedLogin() throws Exception {
+        MockSessionService sessionService = (MockSessionService)serviceRef.sessionService();
+
         // given the user is on the login page
         ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class).create();
         LoginActivity activity = controller.get();
@@ -86,11 +88,10 @@ public class LoginActivityActionSpec extends BaseTestCase {
         Assert.assertTrue("ProgressDialog should not be cancellable", activity.progressDialog.isShowing());
 
         // The form elements are saved in the sessionService
-        Assert.assertEquals(MOCK_URL, activity.session.getUrl());
-        Assert.assertEquals(MOCK_USER, activity.session.getUsername());
+        Assert.assertEquals(MOCK_URL, sessionService.getUrl());
+        Assert.assertEquals(MOCK_USER, sessionService.getUsername());
 
         // the sessionService was started, but hasn't ended yet
-        MockSessionService sessionService = (MockSessionService)activity.session;
         Assert.assertTrue(sessionService.isStarted());
         Assert.assertFalse(sessionService.isEnded());
 
@@ -111,6 +112,8 @@ public class LoginActivityActionSpec extends BaseTestCase {
 
     @Test
     public void verifySuccessfulLogin() throws Exception {
+        MockSessionService sessionService = (MockSessionService)serviceRef.sessionService();
+
         // given the user is on the login page
         ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class).create();
         LoginActivity activity = controller.get();
@@ -152,11 +155,10 @@ public class LoginActivityActionSpec extends BaseTestCase {
         Assert.assertTrue("ProgressDialog should not be cancellable", activity.progressDialog.isShowing());
 
         // The form elements are saved in the sessionService
-        Assert.assertEquals(MOCK_URL, activity.session.getUrl());
-        Assert.assertEquals(MOCK_USER, activity.session.getUsername());
-        Assert.assertEquals(MOCK_PASS, activity.session.getCurrentSession().getPassword());
+        Assert.assertEquals(MOCK_URL, sessionService.getUrl());
+        Assert.assertEquals(MOCK_USER, sessionService.getUsername());
+        Assert.assertEquals(MOCK_PASS, sessionService.getCurrentSession().getPassword());
 
-        MockSessionService sessionService = (MockSessionService)activity.session;
         Assert.assertTrue(sessionService.isStarted());
         Assert.assertFalse(sessionService.isEnded());
 
@@ -219,14 +221,16 @@ public class LoginActivityActionSpec extends BaseTestCase {
 
     @Test
     public void verifyFormIsPrepopulatedWhenRelaunched() {
+        MockSessionService sessionService = (MockSessionService)serviceRef.sessionService();
+
         final String TESTURL = "https://www.example.com/owncloud";
         final String TESTUSER = "testuser";
 
         ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class).create();
         LoginActivity activity = controller.get();
 
-        activity.session.setUrl(TESTURL);
-        activity.session.setUsername(TESTUSER);
+        sessionService.setUrl(TESTURL);
+        sessionService.setUsername(TESTUSER);
 
         controller.start().resume();
 
@@ -239,6 +243,8 @@ public class LoginActivityActionSpec extends BaseTestCase {
 
     @Test
     public void verifyFormDoesNotOverrideValuesWhenBackgrounded() {
+        MockSessionService sessionService = (MockSessionService)serviceRef.sessionService();
+
         final String TESTURL1 = "https://www.example.com/owncloud";
         final String TESTURL2 = "https://www.example.com/nextcloud";
         final String TESTUSER1 = "testuser";
@@ -252,8 +258,8 @@ public class LoginActivityActionSpec extends BaseTestCase {
         EasyMock.replay(passwordRequestService);
 
 
-        activity.session.setUrl(TESTURL1);
-        activity.session.setUsername(TESTUSER1);
+        sessionService.setUrl(TESTURL1);
+        sessionService.setUsername(TESTUSER1);
 
         controller.start().resume();
 

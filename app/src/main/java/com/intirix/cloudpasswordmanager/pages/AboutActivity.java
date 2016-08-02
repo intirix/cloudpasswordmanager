@@ -14,7 +14,7 @@ import butterknife.BindView;
 /**
  * Created by jeff on 8/1/16.
  */
-public class AboutActivity extends PublicActivity {
+public class AboutActivity extends BaseActivity {
 
     @BindView(R.id.about_version_value)
     TextView version;

@@ -13,10 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.intirix.cloudpasswordmanager.pages;
+package com.intirix.cloudpasswordmanager.pages.login;
+
+import android.view.View;
 
 import com.intirix.cloudpasswordmanager.BaseTestCase;
 import com.intirix.cloudpasswordmanager.BuildConfig;
+import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.TestPasswordApplication;
 
 import org.junit.Assert;
@@ -28,20 +31,24 @@ import org.robolectric.annotation.Config;
 import org.robolectric.util.ActivityController;
 
 /**
- * To work on unit tests, switch the Test Artifact in the Build Variants view.
+ * Created by jeff on 6/19/16.
  */
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class,
         application = TestPasswordApplication.class)
-public class DependencyInjectionUnitTest extends BaseTestCase {
+public class LoginActivityLayoutSpec extends BaseTestCase {
 
     @Test
-    public void verifyDependencyInjection() throws Exception {
+    public void verifyFormElementsExist() throws Exception {
         ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class).create().start().resume();
         LoginActivity activity = controller.get();
 
-        Assert.assertNotNull(activity.passwordRequestService);
-        Assert.assertNotNull(activity.session);
+        Assert.assertNotNull(activity.urlInput);
+        Assert.assertNotNull(activity.userInput);
+        Assert.assertNotNull(activity.passInput);
+        Assert.assertNotNull(activity.errorMessageView);
+        Assert.assertEquals(View.GONE, activity.errorMessageView.getVisibility());
+        Assert.assertNotNull(activity.findViewById(R.id.login_login_button));
 
         controller.pause().stop().destroy();
     }

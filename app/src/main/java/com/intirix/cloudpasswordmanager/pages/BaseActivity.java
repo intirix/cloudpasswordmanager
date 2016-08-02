@@ -28,11 +28,18 @@ import android.widget.ListView;
 
 import com.intirix.cloudpasswordmanager.PasswordApplication;
 import com.intirix.cloudpasswordmanager.R;
+import com.intirix.cloudpasswordmanager.pages.login.LogOffNavigationItem;
+import com.intirix.cloudpasswordmanager.pages.login.LoginNavigationItem;
 import com.intirix.cloudpasswordmanager.pages.navigation.NavigationAdapter;
 import com.intirix.cloudpasswordmanager.pages.navigation.NavigationClickListener;
 import com.intirix.cloudpasswordmanager.pages.navigation.NavigationItem;
+import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordListNavigationItem;
+import com.intirix.cloudpasswordmanager.services.AutoLogoffService;
+import com.intirix.cloudpasswordmanager.services.SessionService;
 
 import java.util.LinkedList;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -55,6 +62,13 @@ public abstract class BaseActivity extends AppCompatActivity {
     ListView drawerListView;
 
     private ActionBarDrawerToggle drawerToggle;
+
+    @Inject
+    protected AutoLogoffService autoLogoffService;
+
+    @Inject
+    protected SessionService sessionService;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -91,7 +105,13 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     protected void addNavigationItems(LinkedList<NavigationItem> navItems) {
-        // do nothing
+        if (autoLogoffService.isSessionStillValid()) {
+            navItems.addFirst(new LogOffNavigationItem(this, sessionService));
+            navItems.addLast(new PasswordListNavigationItem(this));
+
+        } else {
+            navItems.addFirst(new LoginNavigationItem(this));
+        }
         navItems.addLast(new AboutNavigationItem(this));
     }
 

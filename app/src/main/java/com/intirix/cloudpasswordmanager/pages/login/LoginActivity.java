@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.intirix.cloudpasswordmanager.pages;
+package com.intirix.cloudpasswordmanager.pages.login;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -29,9 +29,9 @@ import com.intirix.cloudpasswordmanager.PasswordApplication;
 import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.events.FatalErrorEvent;
 import com.intirix.cloudpasswordmanager.events.LoginSuccessfulEvent;
+import com.intirix.cloudpasswordmanager.pages.BaseActivity;
 import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordListActivity;
 import com.intirix.cloudpasswordmanager.services.PasswordRequestService;
-import com.intirix.cloudpasswordmanager.services.SessionService;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -42,10 +42,7 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-public class LoginActivity extends PublicActivity {
-
-    @Inject
-    SessionService session;
+public class LoginActivity extends BaseActivity {
 
     @Inject
     PasswordRequestService passwordRequestService;
@@ -88,11 +85,11 @@ public class LoginActivity extends PublicActivity {
         super.onResume();
 
         if (urlInput.getText().toString().length()==0) {
-            urlInput.setText(session.getUrl());
+            urlInput.setText(sessionService.getUrl());
         }
 
         if (userInput.getText().toString().length()==0) {
-            userInput.setText(session.getUsername());
+            userInput.setText(sessionService.getUsername());
         }
 
         // only show the error message if the view is populated
@@ -120,10 +117,10 @@ public class LoginActivity extends PublicActivity {
     public void onLogin(View view) {
 
         Log.d(LoginActivity.class.getSimpleName(),"onLogin()");
-        session.setUrl(urlInput.getText().toString());
-        session.setUsername(userInput.getText().toString());
-        session.start();
-        session.getCurrentSession().setPassword(passInput.getText().toString());
+        sessionService.setUrl(urlInput.getText().toString());
+        sessionService.setUsername(userInput.getText().toString());
+        sessionService.start();
+        sessionService.getCurrentSession().setPassword(passInput.getText().toString());
 
         passwordRequestService.login();
         updateProgressDialog();
@@ -144,7 +141,7 @@ public class LoginActivity extends PublicActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onFatalError(FatalErrorEvent event) {
         updateProgressDialog();
-        session.end();
+        sessionService.end();
         errorMessageView.setText(event.getMessage());
         updateErrorMessageVisibility();
     }
