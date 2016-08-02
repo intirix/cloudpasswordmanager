@@ -153,6 +153,23 @@ public class PasswordRestServiceUnitSpec {
     }
 
     @Test
+    public void testListPasswordsWithNotes() throws IOException {
+        setMockResponseJson("/password-list-example2.json");
+        List<PasswordResponse> passwordList = impl.listPasswords().execute().body();
+
+        Assert.assertEquals(1, passwordList.size());
+        PasswordResponse pr = passwordList.get(0);
+
+        Assert.assertEquals("5", pr.getId());
+        Assert.assertEquals(TESTUSER, pr.getUser_id());
+        Assert.assertEquals("www.github.com", pr.getWebsite());
+        Assert.assertEquals("password", pr.getPass());
+        Assert.assertEquals(224, pr.getProperties().length());
+        Assert.assertTrue(pr.isNotes());
+        Assert.assertEquals("0", pr.getDeleted());
+    }
+
+    @Test
     public void testListPasswordsWithNulls() throws IOException {
         setMockResponseJson("/password-list-example-with-nulls.json");
         List<PasswordResponse> passwordList = impl.listPasswords().execute().body();
