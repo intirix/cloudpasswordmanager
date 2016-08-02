@@ -54,5 +54,6 @@
     <string name="about_buildtime_example">2016/01/01 00:00:00 EST</string>
     <string name="about_buildtype_label">Build Type:</string>
     <string name="about_buildtype_example">debug</string>
+    <string name="about_ack">Icons provided by Google Material Design Site\n\nPasswords is developed by fcturner\n\nOwncloud is developed by Owncloud, Inc.</string>
 
 </resources>
