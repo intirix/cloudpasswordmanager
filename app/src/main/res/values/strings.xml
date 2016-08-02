@@ -47,7 +47,7 @@
 
     <string name="about_nav_label">About</string>
     <string name="about_version_label">Version:</string>
-    <string name="about_version_example">1.0</string>
+    <string name="about_version_example">0.9</string>
     <string name="about_githash_label">Git Hash:</string>
     <string name="about_githash_example">4efe780</string>
     <string name="about_buildtime_label">Built:</string>

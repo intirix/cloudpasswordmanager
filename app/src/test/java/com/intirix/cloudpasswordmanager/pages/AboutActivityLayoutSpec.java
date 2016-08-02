@@ -27,6 +27,8 @@ import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 import org.robolectric.util.ActivityController;
 
+import java.text.SimpleDateFormat;
+
 /**
  * Created by jeff on 6/19/16.
  */
@@ -41,9 +43,17 @@ public class AboutActivityLayoutSpec extends BaseTestCase {
         AboutActivity activity = controller.get();
 
         Assert.assertNotNull(activity.version);
+        Assert.assertEquals(BuildConfig.VERSION_NAME, activity.version.getText().toString());
+
         Assert.assertNotNull(activity.gitHash);
+        Assert.assertEquals(7, activity.gitHash.getText().length());
+
         Assert.assertNotNull(activity.buildType);
+        Assert.assertEquals(BuildConfig.BUILD_TYPE, activity.buildType.getText().toString());
+
         Assert.assertNotNull(activity.buildTime);
+        final SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss zzz");
+        Assert.assertEquals(sdf.format(BuildConfig.BUILD_TIME), activity.buildTime.getText().toString());
 
         controller.pause().stop().destroy();
     }
