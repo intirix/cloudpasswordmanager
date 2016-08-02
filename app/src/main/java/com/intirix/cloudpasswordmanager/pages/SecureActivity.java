@@ -22,6 +22,7 @@ import android.support.annotation.Nullable;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.WindowManager;
 
 import com.intirix.cloudpasswordmanager.PasswordApplication;
 import com.intirix.cloudpasswordmanager.R;
@@ -52,7 +53,7 @@ public abstract class SecureActivity extends BaseActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        //getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
         super.onCreate(savedInstanceState);
 
 
