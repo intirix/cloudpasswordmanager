@@ -183,6 +183,7 @@ public class PasswordDetailActivity extends SecureActivity {
             bg.setCornerRadius(16);
             category.setBackgroundDrawable(bg);
         }
+        category.setTextColor(passwordBean.getCategoryForeground());
     }
 
 }
