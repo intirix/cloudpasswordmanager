@@ -26,8 +26,8 @@ import javax.net.ssl.X509TrustManager;
  */
 public class SavingTrustManager implements X509TrustManager {
     private final X509TrustManager child;
-    private X509Certificate[] chain;
-    private boolean valid = false;
+    protected X509Certificate[] chain;
+    protected boolean valid = false;
 
     public SavingTrustManager(X509TrustManager child) {
         this.child = child;
@@ -62,4 +62,5 @@ public class SavingTrustManager implements X509TrustManager {
     public boolean isValid() {
         return valid;
     }
+
 }

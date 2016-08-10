@@ -54,6 +54,11 @@ public class CustomTrustManagerUnitSpec {
     }
 
     @Test
+    public void verifyDefaultTrustManager() throws KeyStoreException, NoSuchAlgorithmException {
+        Assert.assertNotNull(new CustomTrustManager().getDefaultTrustManager());
+    }
+
+    @Test
     public void verifyNotPinnedPassesThroughToDefault() throws CertificateException {
         defaultTrustManager.checkServerTrusted(certs, AUTH_TYPE);
         EasyMock.expectLastCall();

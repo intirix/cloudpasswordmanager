@@ -65,6 +65,10 @@ public class CustomTrustManager implements X509TrustManager {
         this.pinnedTrustManager = pinnedTrustManager;
     }
 
+    public X509TrustManager getPinnedTrustManager() {
+        return pinnedTrustManager;
+    }
+
     @Override
     public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
         if (pinnedTrustManager==null) {
