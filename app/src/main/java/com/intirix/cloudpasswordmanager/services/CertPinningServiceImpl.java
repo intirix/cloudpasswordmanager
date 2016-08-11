@@ -80,10 +80,12 @@ public class CertPinningServiceImpl implements CertPinningService {
 
     @Override
     public void init() {
+        Log.d(TAG,"init()");
         enabled = false;
         valid = false;
         customTrustManager.setPinnedTrustManager(null);
         try {
+            Log.d(TAG,"init() - Loading "+KEYSTORE_FILENAME);
             final FileInputStream fis = context.openFileInput(KEYSTORE_FILENAME);
             KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
             ks.load(fis, KEYSTORE_PASSWORD.toCharArray());
@@ -91,6 +93,7 @@ public class CertPinningServiceImpl implements CertPinningService {
             customTrustManager.setPinnedTrustManager(getTrustManagerForKeystore(ks));
             enabled = true;
             valid = preferences.getBoolean(PREF_PINNED_VALID_CERT, valid);
+            Log.i(TAG, "init() - found keystore, value="+valid);
         } catch (FileNotFoundException e) {
             Log.i(TAG, "No pinned keystore found");
         } catch (Exception e) {
@@ -149,6 +152,7 @@ public class CertPinningServiceImpl implements CertPinningService {
                 customTrustManager.setPinnedTrustManager(tm);
                 enabled = true;
                 valid = stm.isValid();
+                Log.i(TAG, "pinUrl() - successfully pinned "+url+", valid="+valid);
                 preferences.edit().putBoolean(PREF_PINNED_VALID_CERT, valid).commit();
             } finally {
                 // flag that the request is not running before we post any events
@@ -156,6 +160,7 @@ public class CertPinningServiceImpl implements CertPinningService {
             }
             eventService.postEvent(new PinSuccessfulEvent());
         } catch (Exception e) {
+            Log.w(TAG,"Failed to pin url", e);
             String message = e.getMessage();
             if (message==null) {
                 message = context.getString(R.string.error_unknown_error);

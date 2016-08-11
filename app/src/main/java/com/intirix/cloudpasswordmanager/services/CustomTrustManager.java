@@ -15,6 +15,8 @@
  */
 package com.intirix.cloudpasswordmanager.services;
 
+import android.util.Log;
+
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -31,6 +33,8 @@ import javax.net.ssl.X509TrustManager;
  * Created by jeff on 8/8/16.
  */
 public class CustomTrustManager implements X509TrustManager {
+
+    private static final String TAG = CustomTrustManager.class.getSimpleName();
 
     private final X509TrustManager defaultTrustManager;
 
@@ -80,9 +84,11 @@ public class CustomTrustManager implements X509TrustManager {
 
     @Override
     public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-        if (pinnedTrustManager==null) {
+        if (pinnedTrustManager == null) {
+            Log.d(TAG, "pinnedTrustManager is null, using default trust manager");
             defaultTrustManager.checkServerTrusted(chain, authType);
         } else {
+            Log.d(TAG, "pinnedTrustManager is not null, using pinned trust manager");
             pinnedTrustManager.checkServerTrusted(chain, authType);
         }
     }

@@ -65,9 +65,10 @@ public class CloudPasswordManagerModule {
         this.context = context;
     }
 
-    @Provides
+    @Provides @Singleton
     CustomTrustManager provideCustomTrustManager() {
         try {
+            Log.d(TAG,"provideCustomTrustManager()");
             return new CustomTrustManager();
         } catch (KeyStoreException e) {
             Log.e(TAG, "Failed to create CustomTrustManager", e);
@@ -80,6 +81,7 @@ public class CloudPasswordManagerModule {
 
     @Provides
     SSLSocketFactory provideSSL(CustomTrustManager customTrustManager) {
+        Log.d(TAG,"provideSSL()");
         try {
             SSLContext context = SSLContext.getInstance("TLS");
             context.init(null, new TrustManager[] {customTrustManager}, null);
@@ -95,8 +97,9 @@ public class CloudPasswordManagerModule {
 
     }
 
-    @Provides
+    @Provides @Singleton
     OkHttpClient provideHttpClient(SSLSocketFactory sslSocketFactory, CustomTrustManager customTrustManager, SessionService sessionService) {
+        Log.d(TAG,"provideHttpClient()");
 
         OkHttpClient.Builder builder = new OkHttpClient.Builder()
                 .addInterceptor(new AuthenticationInterceptor(sessionService));
@@ -107,8 +110,9 @@ public class CloudPasswordManagerModule {
         return okClient;
     }
 
-    @Provides
+    @Provides @Singleton
     CertPinningService provideCertPinningService(CertPinningServiceImpl impl) {
+        Log.d(TAG,"provideCertPinningService()");
         return impl;
     }
 
