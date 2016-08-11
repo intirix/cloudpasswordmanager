@@ -17,6 +17,7 @@ package com.intirix.cloudpasswordmanager.services;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
@@ -65,7 +66,9 @@ public class CertPinningServiceImpl implements CertPinningService {
 
     private static final String KEYSTORE_PASSWORD = "Vq2kgW{yc2Z%{7_<";
 
-    SharedPreferences preferences;
+    private SharedPreferences preferences;
+
+    private boolean requestRunning = false;
 
     @Inject
     public CertPinningServiceImpl(Context context, CustomTrustManager customTrustManager, EventService eventService) {
@@ -95,6 +98,12 @@ public class CertPinningServiceImpl implements CertPinningService {
         }
     }
 
+
+    @Override
+    public boolean isPinRequestRunning() {
+        return requestRunning;
+    }
+
     @Override
     public void disable() {
         enabled = false;
@@ -114,22 +123,37 @@ public class CertPinningServiceImpl implements CertPinningService {
 
     @Override
     public void pin(final String url) {
-        new Handler().post(new Runnable() {
+        requestRunning = true;
+
+        // Running the async task in a postDelayed is a hack to get around the
+        // unit test problem where AsyncTask.execute() actually runs right away
+        new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                pinUrl(url);
+                new AsyncTask<Void,Void,Void>() {
+                    @Override
+                    protected Void doInBackground(Void... params) {
+                        pinUrl(url);
+                        return null;
+                    }
+                }.execute();
             }
-        });
-    }
+        }, 1);
+   }
 
     private void pinUrl(String url) {
         try {
-            SavingTrustManager stm = downloadCert(url);
-            X509TrustManager tm = createKeystore(stm.getChain()[0]);
-            customTrustManager.setPinnedTrustManager(tm);
-            enabled = true;
-            valid = stm.isValid();
-            preferences.edit().putBoolean(PREF_PINNED_VALID_CERT, valid).commit();
+            try {
+                SavingTrustManager stm = downloadCert(url);
+                X509TrustManager tm = createKeystore(stm.getChain()[0]);
+                customTrustManager.setPinnedTrustManager(tm);
+                enabled = true;
+                valid = stm.isValid();
+                preferences.edit().putBoolean(PREF_PINNED_VALID_CERT, valid).commit();
+            } finally {
+                // flag that the request is not running before we post any events
+                requestRunning = false;
+            }
             eventService.postEvent(new PinSuccessfulEvent());
         } catch (Exception e) {
             String message = e.getMessage();

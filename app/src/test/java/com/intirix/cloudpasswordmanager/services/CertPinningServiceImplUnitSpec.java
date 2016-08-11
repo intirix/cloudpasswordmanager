@@ -115,8 +115,11 @@ public class CertPinningServiceImplUnitSpec {
         savingTrustManager.setValid(true);
 
         impl.init();
+        Assert.assertFalse(impl.isPinRequestRunning());
         impl.pin("https://www.google.com");
-        Robolectric.flushBackgroundThreadScheduler();
+        Assert.assertTrue(impl.isPinRequestRunning());
+        Robolectric.flushForegroundThreadScheduler();
+        Assert.assertFalse(impl.isPinRequestRunning());
         eventService.assertEventType(0, PinSuccessfulEvent.class);
         Assert.assertTrue(impl.isEnabled());
         Assert.assertTrue(impl.isValid());
@@ -129,8 +132,11 @@ public class CertPinningServiceImplUnitSpec {
         savingTrustManager.setValid(true);
 
         impl.init();
+        Assert.assertFalse(impl.isPinRequestRunning());
         impl.pin("https://www.google.com");
-        Robolectric.flushBackgroundThreadScheduler();
+        Assert.assertTrue(impl.isPinRequestRunning());
+        Robolectric.flushForegroundThreadScheduler();
+        Assert.assertFalse(impl.isPinRequestRunning());
         eventService.assertEventType(0, PinSuccessfulEvent.class);
         Assert.assertTrue(impl.isEnabled());
         Assert.assertTrue(impl.isValid());
@@ -150,8 +156,11 @@ public class CertPinningServiceImplUnitSpec {
         savingTrustManager.setValid(false);
 
         impl.init();
+        Assert.assertFalse(impl.isPinRequestRunning());
         impl.pin("https://www.google.com");
-        Robolectric.flushBackgroundThreadScheduler();
+        Assert.assertTrue(impl.isPinRequestRunning());
+        Robolectric.flushForegroundThreadScheduler();
+        Assert.assertFalse(impl.isPinRequestRunning());
         eventService.assertEventType(0, PinSuccessfulEvent.class);
         Assert.assertTrue(impl.isEnabled());
         Assert.assertFalse(impl.isValid());
@@ -164,8 +173,11 @@ public class CertPinningServiceImplUnitSpec {
         savingTrustManager.setValid(false);
 
         impl.init();
+        Assert.assertFalse(impl.isPinRequestRunning());
         impl.pin("https://www.google.com");
-        Robolectric.flushBackgroundThreadScheduler();
+        Assert.assertTrue(impl.isPinRequestRunning());
+        Robolectric.flushForegroundThreadScheduler();
+        Assert.assertFalse(impl.isPinRequestRunning());
         eventService.assertEventType(0, PinSuccessfulEvent.class);
         Assert.assertTrue(impl.isEnabled());
         Assert.assertFalse(impl.isValid());
@@ -183,8 +195,11 @@ public class CertPinningServiceImplUnitSpec {
         savingTrustManager.setValid(true);
 
         impl.init();
+        Assert.assertFalse(impl.isPinRequestRunning());
         impl.pin("https://www.google.com");
-        Robolectric.flushBackgroundThreadScheduler();
+        Assert.assertTrue(impl.isPinRequestRunning());
+        Robolectric.flushForegroundThreadScheduler();
+        Assert.assertFalse(impl.isPinRequestRunning());
         eventService.assertEventType(0, PinSuccessfulEvent.class);
         Assert.assertTrue(impl.isEnabled());
         Assert.assertTrue(impl.isValid());
@@ -204,8 +219,11 @@ public class CertPinningServiceImplUnitSpec {
         savingTrustManager.setValid(true);
 
         impl.init();
+        Assert.assertFalse(impl.isPinRequestRunning());
         impl.pin("https://www.google.com");
-        Robolectric.flushBackgroundThreadScheduler();
+        Assert.assertTrue(impl.isPinRequestRunning());
+        Robolectric.flushForegroundThreadScheduler();
+        Assert.assertFalse(impl.isPinRequestRunning());
         eventService.assertEventType(0, PinSuccessfulEvent.class);
         Assert.assertTrue(impl.isEnabled());
         Assert.assertTrue(impl.isValid());
@@ -227,8 +245,11 @@ public class CertPinningServiceImplUnitSpec {
         savingTrustManager.setValid(true);
 
         impl.init();
+        Assert.assertFalse(impl.isPinRequestRunning());
         impl.pin("https://www.google.com");
-        Robolectric.flushBackgroundThreadScheduler();
+        Assert.assertTrue(impl.isPinRequestRunning());
+        Robolectric.flushForegroundThreadScheduler();
+        Assert.assertFalse(impl.isPinRequestRunning());
         eventService.assertEventType(0, PinFailedEvent.class);
         Assert.assertEquals("An unknown error has occurred", eventService.getEvent(0, PinFailedEvent.class).getMessage());
 

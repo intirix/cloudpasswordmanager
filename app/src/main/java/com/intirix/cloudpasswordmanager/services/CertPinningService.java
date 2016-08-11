@@ -47,4 +47,10 @@ public interface CertPinningService {
      * @param url
      */
     public void pin(String url);
+
+    /**
+     * Is the Pin request running
+     * @return
+     */
+    public boolean isPinRequestRunning();
 }
