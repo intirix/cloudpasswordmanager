@@ -31,7 +31,10 @@ import com.intirix.cloudpasswordmanager.events.FatalErrorEvent;
 import com.intirix.cloudpasswordmanager.events.LoginSuccessfulEvent;
 import com.intirix.cloudpasswordmanager.pages.BaseActivity;
 import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordListActivity;
+import com.intirix.cloudpasswordmanager.services.CertPinningService;
 import com.intirix.cloudpasswordmanager.services.PasswordRequestService;
+import com.intirix.cloudpasswordmanager.services.PinFailedEvent;
+import com.intirix.cloudpasswordmanager.services.PinSuccessfulEvent;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -47,6 +50,9 @@ public class LoginActivity extends BaseActivity {
     @Inject
     PasswordRequestService passwordRequestService;
 
+    @Inject
+    CertPinningService certPinningService;
+
     @BindView(R.id.login_url)
     EditText urlInput;
 
@@ -59,6 +65,12 @@ public class LoginActivity extends BaseActivity {
     @BindView(R.id.login_error_message)
     TextView errorMessageView;
 
+    @BindView(R.id.login_pin_button)
+    View pinButton;
+
+    @BindView(R.id.login_unpin_button)
+    View unpinButton;
+
     ProgressDialog progressDialog;
 
     @Override
@@ -70,7 +82,7 @@ public class LoginActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         PasswordApplication.getSInjector(this).inject(this);
-
+        certPinningService.init();
         attachImeGo(passInput);
     }
 
@@ -113,6 +125,20 @@ public class LoginActivity extends BaseActivity {
         }
     }
 
+    void updateLoginForm() {
+        if (certPinningService.isEnabled()) {
+            pinButton.setVisibility(View.INVISIBLE);
+            pinButton.setEnabled(false);
+            unpinButton.setVisibility(View.VISIBLE);
+            unpinButton.setEnabled(true);
+        } else {
+            pinButton.setVisibility(View.VISIBLE);
+            pinButton.setEnabled(true);
+            unpinButton.setVisibility(View.INVISIBLE);
+            unpinButton.setEnabled(false);
+        }
+    }
+
     @OnClick(R.id.login_login_button)
     public void onLogin(View view) {
 
@@ -124,6 +150,33 @@ public class LoginActivity extends BaseActivity {
 
         passwordRequestService.login();
         updateProgressDialog();
+    }
+
+
+    @OnClick(R.id.login_pin_button)
+    public void onPin(View view) {
+        certPinningService.pin(urlInput.getText().toString());
+        updateProgressDialog();
+    }
+
+    @OnClick(R.id.login_unpin_button)
+    public void onUnpin(View view) {
+        certPinningService.disable();
+        updateLoginForm();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onPinSuccess(PinSuccessfulEvent event) {
+        updateProgressDialog();
+        updateLoginForm();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onPinFailure(PinFailedEvent event) {
+        updateProgressDialog();
+        errorMessageView.setText(event.getMessage());
+        updateErrorMessageVisibility();
+        updateLoginForm();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -152,8 +205,15 @@ public class LoginActivity extends BaseActivity {
     private void updateProgressDialog() {
         if (passwordRequestService.isLoginRunning()) {
             // if the progress dialog doesn't exist, then create it
-            if (progressDialog==null) {
+            if (progressDialog == null) {
                 progressDialog = ProgressDialog.show(this, "", getString(R.string.login_progress_message));
+            }
+            // show the dialog
+            progressDialog.show();
+        } else if (certPinningService.isPinRequestRunning()) {
+            // if the progress dialog doesn't exist, then create it
+            if (progressDialog == null) {
+                progressDialog = ProgressDialog.show(this, "", getString(R.string.login_pin_progress_message));
             }
             // show the dialog
             progressDialog.show();

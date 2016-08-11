@@ -16,11 +16,13 @@
 package com.intirix.cloudpasswordmanager.pages.login;
 
 import android.view.View;
+import android.widget.Button;
 
 import com.intirix.cloudpasswordmanager.BaseTestCase;
 import com.intirix.cloudpasswordmanager.BuildConfig;
 import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.TestPasswordApplication;
+import com.intirix.cloudpasswordmanager.services.MockCertPinningService;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -52,4 +54,44 @@ public class LoginActivityLayoutSpec extends BaseTestCase {
 
         controller.pause().stop().destroy();
     }
+
+    @Test
+    public void verifyPinButtonVisibleWhenNotPinned() {
+        ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class).create().start().resume();
+        LoginActivity activity = controller.get();
+        MockCertPinningService certPinningService = (MockCertPinningService)activity.certPinningService;
+        certPinningService.setEnabled(false);
+        activity.updateLoginForm();
+
+        Button pinButton = (Button)activity.findViewById(R.id.login_pin_button);
+        Assert.assertEquals(View.VISIBLE, pinButton.getVisibility());
+        Assert.assertTrue(pinButton.isEnabled());
+
+        Button unpinButton = (Button)activity.findViewById(R.id.login_unpin_button);
+        Assert.assertNotEquals(View.VISIBLE, unpinButton.getVisibility());
+        Assert.assertFalse(unpinButton.isEnabled());
+
+        controller.pause().stop().destroy();
+    }
+
+    @Test
+    public void verifyUnpinButtonVisibleWhenPinned() {
+        ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class).create().start().resume();
+        LoginActivity activity = controller.get();
+        MockCertPinningService certPinningService = (MockCertPinningService)activity.certPinningService;
+        certPinningService.setEnabled(true);
+        activity.updateLoginForm();
+
+        Button pinButton = (Button)activity.findViewById(R.id.login_pin_button);
+        Assert.assertNotEquals(View.VISIBLE, pinButton.getVisibility());
+        Assert.assertFalse(pinButton.isEnabled());
+
+        Button unpinButton = (Button)activity.findViewById(R.id.login_unpin_button);
+        Assert.assertEquals(View.VISIBLE, unpinButton.getVisibility());
+        Assert.assertTrue(unpinButton.isEnabled());
+
+        controller.pause().stop().destroy();
+    }
+
+
 }

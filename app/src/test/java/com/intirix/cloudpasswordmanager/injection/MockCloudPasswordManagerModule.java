@@ -17,6 +17,9 @@ package com.intirix.cloudpasswordmanager.injection;
 
 import android.content.Context;
 
+import com.intirix.cloudpasswordmanager.services.CertPinningService;
+import com.intirix.cloudpasswordmanager.services.CertPinningServiceImpl;
+import com.intirix.cloudpasswordmanager.services.MockCertPinningService;
 import com.intirix.cloudpasswordmanager.services.MockPasswordStorageService;
 import com.intirix.cloudpasswordmanager.services.MockSessionService;
 import com.intirix.cloudpasswordmanager.services.PasswordRequestService;
@@ -50,5 +53,10 @@ public class MockCloudPasswordManagerModule extends CloudPasswordManagerModule {
     @Override
     PasswordStorageService providePasswordStorageService(PasswordStorageServiceImpl impl) {
         return new MockPasswordStorageService();
+    }
+
+    @Override
+    CertPinningService provideCertPinningService(CertPinningServiceImpl impl) {
+        return new MockCertPinningService();
     }
 }
