@@ -31,7 +31,10 @@ import com.intirix.cloudpasswordmanager.events.FatalErrorEvent;
 import com.intirix.cloudpasswordmanager.events.LoginSuccessfulEvent;
 import com.intirix.cloudpasswordmanager.pages.BaseActivity;
 import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordListActivity;
+import com.intirix.cloudpasswordmanager.services.CertPinningService;
 import com.intirix.cloudpasswordmanager.services.PasswordRequestService;
+import com.intirix.cloudpasswordmanager.services.PinFailedEvent;
+import com.intirix.cloudpasswordmanager.services.PinSuccessfulEvent;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -41,11 +44,17 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import butterknife.OnTextChanged;
 
 public class LoginActivity extends BaseActivity {
 
+    private static final String TAG = LoginActivity.class.getSimpleName();
+
     @Inject
     PasswordRequestService passwordRequestService;
+
+    @Inject
+    CertPinningService certPinningService;
 
     @BindView(R.id.login_url)
     EditText urlInput;
@@ -59,6 +68,12 @@ public class LoginActivity extends BaseActivity {
     @BindView(R.id.login_error_message)
     TextView errorMessageView;
 
+    @BindView(R.id.login_pin_button)
+    View pinButton;
+
+    @BindView(R.id.login_unpin_button)
+    View unpinButton;
+
     ProgressDialog progressDialog;
 
     @Override
@@ -70,8 +85,9 @@ public class LoginActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         PasswordApplication.getSInjector(this).inject(this);
-
+        certPinningService.init();
         attachImeGo(passInput);
+
     }
 
     @Override
@@ -95,6 +111,9 @@ public class LoginActivity extends BaseActivity {
         // only show the error message if the view is populated
         updateErrorMessageVisibility();
 
+        // recheck the pinning flags
+        updateLoginForm();
+
         // when coming back from a rotate, re-show the progress dialog if needed
         updateProgressDialog();
     }
@@ -113,6 +132,37 @@ public class LoginActivity extends BaseActivity {
         }
     }
 
+    void updateLoginForm() {
+        if (certPinningService.isEnabled()) {
+            pinButton.setVisibility(View.INVISIBLE);
+            pinButton.setEnabled(false);
+            unpinButton.setVisibility(View.VISIBLE);
+            unpinButton.setEnabled(true);
+
+            if (certPinningService.isValid()) {
+                urlInput.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_enhanced_encryption_black_24dp,0,0,0);
+            } else {
+                urlInput.setCompoundDrawablesWithIntrinsicBounds(R.drawable.pin,0,0,0);
+            }
+        } else {
+            pinButton.setVisibility(View.VISIBLE);
+            pinButton.setEnabled(true);
+            unpinButton.setVisibility(View.INVISIBLE);
+            unpinButton.setEnabled(false);
+
+            if (urlInput.getText().toString().startsWith("https")) {
+                urlInput.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_lock_black_24dp,0,0,0);
+            } else {
+                urlInput.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_no_encryption_black_24dp,0,0,0);
+            }
+        }
+    }
+
+    @OnTextChanged(R.id.login_url)
+    public void onUrlChanged(CharSequence charSequence, int a, int b, int c) {
+        updateLoginForm();
+    }
+
     @OnClick(R.id.login_login_button)
     public void onLogin(View view) {
 
@@ -124,6 +174,33 @@ public class LoginActivity extends BaseActivity {
 
         passwordRequestService.login();
         updateProgressDialog();
+    }
+
+
+    @OnClick(R.id.login_pin_button)
+    public void onPin(View view) {
+        certPinningService.pin(urlInput.getText().toString());
+        updateProgressDialog();
+    }
+
+    @OnClick(R.id.login_unpin_button)
+    public void onUnpin(View view) {
+        certPinningService.disable();
+        updateLoginForm();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onPinSuccess(PinSuccessfulEvent event) {
+        updateProgressDialog();
+        updateLoginForm();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onPinFailure(PinFailedEvent event) {
+        updateProgressDialog();
+        errorMessageView.setText(event.getMessage());
+        updateErrorMessageVisibility();
+        updateLoginForm();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -152,8 +229,23 @@ public class LoginActivity extends BaseActivity {
     private void updateProgressDialog() {
         if (passwordRequestService.isLoginRunning()) {
             // if the progress dialog doesn't exist, then create it
-            if (progressDialog==null) {
+            if (progressDialog == null) {
+                Log.d(TAG, "Login request running, creating login dialog");
                 progressDialog = ProgressDialog.show(this, "", getString(R.string.login_progress_message));
+            } else {
+                Log.d(TAG, "Login request running, updating login dialog");
+                progressDialog.setMessage(getString(R.string.login_progress_message));
+            }
+            // show the dialog
+            progressDialog.show();
+        } else if (certPinningService.isPinRequestRunning()) {
+            // if the progress dialog doesn't exist, then create it
+            if (progressDialog == null) {
+                Log.d(TAG, "Pin request running, creating pin dialog");
+                progressDialog = ProgressDialog.show(this, "", getString(R.string.login_pin_progress_message));
+            } else {
+                Log.d(TAG, "Pin request running, updating pin dialog");
+                progressDialog.setMessage(getString(R.string.login_pin_progress_message));
             }
             // show the dialog
             progressDialog.show();

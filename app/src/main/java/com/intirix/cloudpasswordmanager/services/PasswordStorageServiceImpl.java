@@ -17,6 +17,7 @@ package com.intirix.cloudpasswordmanager.services;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -48,6 +49,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * Created by jeff on 6/18/16.
  */
 public class PasswordStorageServiceImpl implements PasswordStorageService {
+
+    private static final String TAG = PasswordStorageServiceImpl.class.getSimpleName();
 
     private Context context;
 
@@ -91,12 +94,14 @@ public class PasswordStorageServiceImpl implements PasswordStorageService {
                     } else if (response.code()==200) {
                         cb.onReturn(response.body());
                     } else {
-                        cb.onError(response.message());
+                        Log.w(TAG, "getServerVersion() - "+response.code()+":  "+response.message());
+                        cb.onError(response.code()+": "+response.message());
                     }
                 }
 
                 @Override
                 public void onFailure(Call<String> call, Throwable t) {
+                    Log.w(TAG, "getServerVersion() failed", t);
                     cb.onError("Failed: " + t);
                 }
             });
@@ -119,6 +124,7 @@ public class PasswordStorageServiceImpl implements PasswordStorageService {
 
             @Override
             public void onFailure(Call<List<Category>> call, Throwable t) {
+                Log.w(TAG, "listCategories() failed", t);
                 cb.onError("Failed: " + t);
             }
         });
@@ -145,6 +151,7 @@ public class PasswordStorageServiceImpl implements PasswordStorageService {
 
             @Override
             public void onFailure(Call<List<PasswordResponse>> call, Throwable t) {
+                Log.w(TAG, "listPasswords() failed", t);
                 cb.onError("Failed: " + t);
             }
         });
