@@ -24,6 +24,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.WindowManager;
 
+import com.intirix.cloudpasswordmanager.BuildConfig;
 import com.intirix.cloudpasswordmanager.PasswordApplication;
 import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.pages.login.LoginActivity;
@@ -53,7 +54,9 @@ public abstract class SecureActivity extends BaseActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
+        if (!BuildConfig.ALLOW_SCREENSHOTS) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
+        }
         super.onCreate(savedInstanceState);
 
 
