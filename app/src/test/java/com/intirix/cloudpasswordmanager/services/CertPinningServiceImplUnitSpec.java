@@ -75,6 +75,8 @@ public class CertPinningServiceImplUnitSpec {
 
     private X509TrustManager keystoreTrustManager;
 
+    private boolean hostnameMatches;
+
     private static X509Certificate randomCert;
 
     @BeforeClass
@@ -92,6 +94,7 @@ public class CertPinningServiceImplUnitSpec {
         eventService = new MockEventService();
         customTrustManager = new CustomTrustManager();
         customHostnameVerifier = new CustomHostnameVerifier(OkHostnameVerifier.INSTANCE);
+        hostnameMatches = true;
         keystoreTrustManager = EasyMock.createMock(X509TrustManager.class);
         impl = new CertPinningServiceImpl(RuntimeEnvironment.application, customTrustManager, customHostnameVerifier, eventService) {
             @Override
@@ -99,7 +102,11 @@ public class CertPinningServiceImplUnitSpec {
                 return savingTrustManager;
             }
 
-            /*
+            @Override
+            protected boolean doesCertMatchHost(String host, X509Certificate cert) {
+                return hostnameMatches;
+            }
+/*
             @Override
             protected X509TrustManager createKeystore(X509Certificate cert) {
                 return keystoreTrustManager;

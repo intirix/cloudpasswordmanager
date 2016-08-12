@@ -51,7 +51,6 @@ public class SavingTrustManager implements X509TrustManager {
         this.chain = chain;
         if (child!=null) {
             try {
-                Log.d(TAG, "checkServerTrusted() - "+chain[0].getSubjectDN().getName());
                 child.checkServerTrusted(chain, authType);
                 Log.d(TAG, "checkServerTrusted() child did not throw exception, flagging as valid cert");
                 valid = true;

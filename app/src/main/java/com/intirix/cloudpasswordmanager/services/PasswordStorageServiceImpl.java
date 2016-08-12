@@ -94,7 +94,8 @@ public class PasswordStorageServiceImpl implements PasswordStorageService {
                     } else if (response.code()==200) {
                         cb.onReturn(response.body());
                     } else {
-                        cb.onError(response.message());
+                        Log.w(TAG, "getServerVersion() - "+response.code()+":  "+response.message());
+                        cb.onError(response.code()+": "+response.message());
                     }
                 }
 

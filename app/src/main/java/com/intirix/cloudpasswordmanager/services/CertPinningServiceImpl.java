@@ -45,6 +45,8 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
+import okhttp3.internal.tls.OkHostnameVerifier;
+
 /**
  * Created by jeff on 8/8/16.
  */
@@ -153,11 +155,20 @@ public class CertPinningServiceImpl implements CertPinningService {
     private void pinUrl(String url) {
         try {
             try {
+                final String host = new URL(url).getHost();
                 SavingTrustManager stm = downloadCert(url);
-                X509TrustManager tm = createKeystore(stm.getChain()[0]);
+                X509Certificate cert = stm.getChain()[0];
+                X509TrustManager tm = createKeystore(cert);
                 customTrustManager.setPinnedTrustManager(tm);
                 enabled = true;
-                valid = stm.isValid();
+
+                boolean hostMatchesCert = doesCertMatchHost(host, cert);
+                if (!hostMatchesCert) {
+                    Log.w(TAG, "Hostname does not match cert, flagging as invalid");
+                }
+
+                valid = stm.isValid() && hostMatchesCert;
+
                 customHostnameVerifier.setEnabled(valid);
                 Log.i(TAG, "pinUrl() - successfully pinned "+url+", valid="+valid);
                 preferences.edit().putBoolean(PREF_PINNED_VALID_CERT, valid).commit();
@@ -174,6 +185,10 @@ public class CertPinningServiceImpl implements CertPinningService {
             }
             eventService.postEvent(new PinFailedEvent(message));
         }
+    }
+
+    protected boolean doesCertMatchHost(String host, X509Certificate cert) {
+        return OkHostnameVerifier.INSTANCE.verify(host, cert);
     }
 
     protected SavingTrustManager downloadCert(String aurl) throws IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException {

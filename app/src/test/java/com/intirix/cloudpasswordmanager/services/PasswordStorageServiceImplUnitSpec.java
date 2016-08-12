@@ -178,7 +178,7 @@ public class PasswordStorageServiceImplUnitSpec {
         // expect an exception to be sent to the callback
         final String MESSAGE = "Internal server error";
         VersionCallback callback = EasyMock.createMock(VersionCallback.class);
-        callback.onError(MESSAGE);
+        callback.onError("500: "+MESSAGE);
         EasyMock.expectLastCall();
 
         Call<String> call = new MockCall<String>() {

@@ -47,6 +47,8 @@ import butterknife.OnClick;
 
 public class LoginActivity extends BaseActivity {
 
+    private static final String TAG = LoginActivity.class.getSimpleName();
+
     @Inject
     PasswordRequestService passwordRequestService;
 
@@ -209,14 +211,22 @@ public class LoginActivity extends BaseActivity {
         if (passwordRequestService.isLoginRunning()) {
             // if the progress dialog doesn't exist, then create it
             if (progressDialog == null) {
+                Log.d(TAG, "Login request running, creating login dialog");
                 progressDialog = ProgressDialog.show(this, "", getString(R.string.login_progress_message));
+            } else {
+                Log.d(TAG, "Login request running, updating login dialog");
+                progressDialog.setMessage(getString(R.string.login_progress_message));
             }
             // show the dialog
             progressDialog.show();
         } else if (certPinningService.isPinRequestRunning()) {
             // if the progress dialog doesn't exist, then create it
             if (progressDialog == null) {
+                Log.d(TAG, "Pin request running, creating pin dialog");
                 progressDialog = ProgressDialog.show(this, "", getString(R.string.login_pin_progress_message));
+            } else {
+                Log.d(TAG, "Pin request running, updating pin dialog");
+                progressDialog.setMessage(getString(R.string.login_pin_progress_message));
             }
             // show the dialog
             progressDialog.show();

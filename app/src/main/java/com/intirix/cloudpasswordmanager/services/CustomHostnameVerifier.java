@@ -15,6 +15,8 @@
  */
 package com.intirix.cloudpasswordmanager.services;
 
+import android.util.Log;
+
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSession;
 
@@ -22,6 +24,8 @@ import javax.net.ssl.SSLSession;
  * Created by jeff on 8/11/16.
  */
 public class CustomHostnameVerifier implements HostnameVerifier {
+
+    private static final String TAG = CustomHostnameVerifier.class.getSimpleName();
 
     private boolean enabled;
 
@@ -37,6 +41,7 @@ public class CustomHostnameVerifier implements HostnameVerifier {
         if (enabled) {
             return child.verify(hostname, session);
         }
+        Log.d(TAG, "verify("+hostname+") - skipping verification");
         return true;
     }
 
