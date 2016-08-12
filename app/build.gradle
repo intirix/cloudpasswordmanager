@@ -34,12 +34,14 @@ android {
         debug {
             buildConfigField "java.util.Date", "BUILD_TIME", "new java.util.Date("+System.currentTimeMillis()+"L)"
             buildConfigField "String", "GIT_HASH", "\"${getGitHash()}\""
+            buildConfigField "boolean", "ALLOW_SCREENSHOTS", "true"
         }
         release {
             minifyEnabled false
             signingConfig signingConfigs.myrelease
             buildConfigField "java.util.Date", "BUILD_TIME", "new java.util.Date("+System.currentTimeMillis()+"L)"
             buildConfigField "String", "GIT_HASH", "\"${getGitHash()}\""
+            buildConfigField "boolean", "ALLOW_SCREENSHOTS", "false"
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
