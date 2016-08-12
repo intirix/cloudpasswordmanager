@@ -44,6 +44,7 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import butterknife.OnTextChanged;
 
 public class LoginActivity extends BaseActivity {
 
@@ -86,6 +87,7 @@ public class LoginActivity extends BaseActivity {
         PasswordApplication.getSInjector(this).inject(this);
         certPinningService.init();
         attachImeGo(passInput);
+
     }
 
     @Override
@@ -136,12 +138,29 @@ public class LoginActivity extends BaseActivity {
             pinButton.setEnabled(false);
             unpinButton.setVisibility(View.VISIBLE);
             unpinButton.setEnabled(true);
+
+            if (certPinningService.isValid()) {
+                urlInput.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_enhanced_encryption_black_24dp,0,0,0);
+            } else {
+                urlInput.setCompoundDrawablesWithIntrinsicBounds(R.drawable.pin,0,0,0);
+            }
         } else {
             pinButton.setVisibility(View.VISIBLE);
             pinButton.setEnabled(true);
             unpinButton.setVisibility(View.INVISIBLE);
             unpinButton.setEnabled(false);
+
+            if (urlInput.getText().toString().startsWith("https")) {
+                urlInput.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_lock_black_24dp,0,0,0);
+            } else {
+                urlInput.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_no_encryption_black_24dp,0,0,0);
+            }
         }
+    }
+
+    @OnTextChanged(R.id.login_url)
+    public void onUrlChanged(CharSequence charSequence, int a, int b, int c) {
+        updateLoginForm();
     }
 
     @OnClick(R.id.login_login_button)

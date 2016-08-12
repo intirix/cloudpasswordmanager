@@ -34,6 +34,7 @@
         <EditText
             style="@style/login_form_element"
             android:id="@+id/login_url"
+            android:drawableLeft="@drawable/ic_enhanced_encryption_black_24dp"
             android:hint="@string/login_url_hint"
             android:inputType="textUri"/>
 
