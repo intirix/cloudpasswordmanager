@@ -60,6 +60,8 @@ public class CertPinningServiceImpl implements CertPinningService {
 
     private CustomTrustManager customTrustManager;
 
+    private CustomHostnameVerifier customHostnameVerifier;
+
     private boolean valid = false;
 
     private boolean enabled = false;
@@ -71,9 +73,10 @@ public class CertPinningServiceImpl implements CertPinningService {
     private boolean requestRunning = false;
 
     @Inject
-    public CertPinningServiceImpl(Context context, CustomTrustManager customTrustManager, EventService eventService) {
+    public CertPinningServiceImpl(Context context, CustomTrustManager customTrustManager, CustomHostnameVerifier customHostnameVerifier, EventService eventService) {
         this.context = context;
         this.customTrustManager = customTrustManager;
+        this.customHostnameVerifier = customHostnameVerifier;
         this.eventService = eventService;
         preferences = PreferenceManager.getDefaultSharedPreferences(context);
     }
@@ -84,6 +87,7 @@ public class CertPinningServiceImpl implements CertPinningService {
         enabled = false;
         valid = false;
         customTrustManager.setPinnedTrustManager(null);
+        customHostnameVerifier.setEnabled(true);
         try {
             Log.d(TAG,"init() - Loading "+KEYSTORE_FILENAME);
             final FileInputStream fis = context.openFileInput(KEYSTORE_FILENAME);
@@ -93,6 +97,7 @@ public class CertPinningServiceImpl implements CertPinningService {
             customTrustManager.setPinnedTrustManager(getTrustManagerForKeystore(ks));
             enabled = true;
             valid = preferences.getBoolean(PREF_PINNED_VALID_CERT, valid);
+            customHostnameVerifier.setEnabled(valid);
             Log.i(TAG, "init() - found keystore, value="+valid);
         } catch (FileNotFoundException e) {
             Log.i(TAG, "No pinned keystore found");
@@ -111,6 +116,7 @@ public class CertPinningServiceImpl implements CertPinningService {
     public void disable() {
         enabled = false;
         customTrustManager.setPinnedTrustManager(null);
+        customHostnameVerifier.setEnabled(true);
         context.deleteFile(KEYSTORE_FILENAME);
     }
 
@@ -152,6 +158,7 @@ public class CertPinningServiceImpl implements CertPinningService {
                 customTrustManager.setPinnedTrustManager(tm);
                 enabled = true;
                 valid = stm.isValid();
+                customHostnameVerifier.setEnabled(valid);
                 Log.i(TAG, "pinUrl() - successfully pinned "+url+", valid="+valid);
                 preferences.edit().putBoolean(PREF_PINNED_VALID_CERT, valid).commit();
             } finally {

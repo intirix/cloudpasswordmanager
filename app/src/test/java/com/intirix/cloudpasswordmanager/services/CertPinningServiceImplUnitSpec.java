@@ -53,6 +53,8 @@ import java.util.Date;
 import javax.net.ssl.X509TrustManager;
 import javax.security.auth.x500.X500Principal;
 
+import okhttp3.internal.tls.OkHostnameVerifier;
+
 /**
  * Created by jeff on 8/9/16.
  */
@@ -66,6 +68,8 @@ public class CertPinningServiceImplUnitSpec {
     private MockEventService eventService;
 
     private CustomTrustManager customTrustManager;
+
+    private CustomHostnameVerifier customHostnameVerifier;
 
     private MockSavingTrustManager savingTrustManager;
 
@@ -87,8 +91,9 @@ public class CertPinningServiceImplUnitSpec {
         savingTrustManager = new MockSavingTrustManager(null);
         eventService = new MockEventService();
         customTrustManager = new CustomTrustManager();
+        customHostnameVerifier = new CustomHostnameVerifier(OkHostnameVerifier.INSTANCE);
         keystoreTrustManager = EasyMock.createMock(X509TrustManager.class);
-        impl = new CertPinningServiceImpl(RuntimeEnvironment.application, customTrustManager, eventService) {
+        impl = new CertPinningServiceImpl(RuntimeEnvironment.application, customTrustManager, customHostnameVerifier, eventService) {
             @Override
             protected SavingTrustManager downloadCert(String url) {
                 return savingTrustManager;
@@ -123,6 +128,7 @@ public class CertPinningServiceImplUnitSpec {
         eventService.assertEventType(0, PinSuccessfulEvent.class);
         Assert.assertTrue(impl.isEnabled());
         Assert.assertTrue(impl.isValid());
+        Assert.assertTrue(customHostnameVerifier.isEnabled());
         Assert.assertNotNull(customTrustManager.getPinnedTrustManager());
     }
 
@@ -140,12 +146,14 @@ public class CertPinningServiceImplUnitSpec {
         eventService.assertEventType(0, PinSuccessfulEvent.class);
         Assert.assertTrue(impl.isEnabled());
         Assert.assertTrue(impl.isValid());
+        Assert.assertTrue(customHostnameVerifier.isEnabled());
         Assert.assertNotNull(customTrustManager.getPinnedTrustManager());
 
         // reload
         impl.init();
         Assert.assertTrue(impl.isEnabled());
         Assert.assertTrue(impl.isValid());
+        Assert.assertTrue(customHostnameVerifier.isEnabled());
         Assert.assertNotNull(customTrustManager.getPinnedTrustManager());
 
     }
@@ -164,6 +172,7 @@ public class CertPinningServiceImplUnitSpec {
         eventService.assertEventType(0, PinSuccessfulEvent.class);
         Assert.assertTrue(impl.isEnabled());
         Assert.assertFalse(impl.isValid());
+        Assert.assertFalse("Hostname verifier should be disabled", customHostnameVerifier.isEnabled());
         Assert.assertNotNull(customTrustManager.getPinnedTrustManager());
     }
 
@@ -181,11 +190,13 @@ public class CertPinningServiceImplUnitSpec {
         eventService.assertEventType(0, PinSuccessfulEvent.class);
         Assert.assertTrue(impl.isEnabled());
         Assert.assertFalse(impl.isValid());
+        Assert.assertFalse(customHostnameVerifier.isEnabled());
         Assert.assertNotNull(customTrustManager.getPinnedTrustManager());
 
         impl.init();
         Assert.assertTrue(impl.isEnabled());
         Assert.assertFalse(impl.isValid());
+        Assert.assertFalse(customHostnameVerifier.isEnabled());
         Assert.assertNotNull(customTrustManager.getPinnedTrustManager());
     }
 
@@ -203,11 +214,13 @@ public class CertPinningServiceImplUnitSpec {
         eventService.assertEventType(0, PinSuccessfulEvent.class);
         Assert.assertTrue(impl.isEnabled());
         Assert.assertTrue(impl.isValid());
+        Assert.assertTrue(customHostnameVerifier.isEnabled());
         Assert.assertNotNull(customTrustManager.getPinnedTrustManager());
 
 
         impl.disable();
         Assert.assertFalse(impl.isEnabled());
+        Assert.assertTrue(customHostnameVerifier.isEnabled());
         Assert.assertNull("Disabling pinning should remove the pinned trust manager", customTrustManager.getPinnedTrustManager());
 
     }
@@ -227,15 +240,18 @@ public class CertPinningServiceImplUnitSpec {
         eventService.assertEventType(0, PinSuccessfulEvent.class);
         Assert.assertTrue(impl.isEnabled());
         Assert.assertTrue(impl.isValid());
+        Assert.assertTrue(customHostnameVerifier.isEnabled());
         Assert.assertNotNull(customTrustManager.getPinnedTrustManager());
 
 
         impl.disable();
         Assert.assertFalse(impl.isEnabled());
+        Assert.assertTrue(customHostnameVerifier.isEnabled());
         Assert.assertNull("Disabling pinning should remove the pinned trust manager", customTrustManager.getPinnedTrustManager());
 
         impl.init();
         Assert.assertFalse(impl.isEnabled());
+        Assert.assertTrue(customHostnameVerifier.isEnabled());
         Assert.assertNull("Disabling pinning should remove the pinned trust manager", customTrustManager.getPinnedTrustManager());
     }
 
@@ -251,6 +267,7 @@ public class CertPinningServiceImplUnitSpec {
         Robolectric.flushForegroundThreadScheduler();
         Assert.assertFalse(impl.isPinRequestRunning());
         eventService.assertEventType(0, PinFailedEvent.class);
+        Assert.assertTrue(customHostnameVerifier.isEnabled());
         Assert.assertEquals("An unknown error has occurred", eventService.getEvent(0, PinFailedEvent.class).getMessage());
 
     }

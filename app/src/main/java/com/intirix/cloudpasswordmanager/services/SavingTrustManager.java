@@ -15,6 +15,8 @@
  */
 package com.intirix.cloudpasswordmanager.services;
 
+import android.util.Log;
+
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
@@ -25,6 +27,8 @@ import javax.net.ssl.X509TrustManager;
  * Created by jeff on 8/8/16.
  */
 public class SavingTrustManager implements X509TrustManager {
+
+    private static final String TAG = SavingTrustManager.class.getSimpleName();
     private final X509TrustManager child;
     protected X509Certificate[] chain;
     protected boolean valid = false;
@@ -47,9 +51,13 @@ public class SavingTrustManager implements X509TrustManager {
         this.chain = chain;
         if (child!=null) {
             try {
+                Log.d(TAG, "checkServerTrusted() - "+chain[0].getSubjectDN().getName());
                 child.checkServerTrusted(chain, authType);
+                Log.d(TAG, "checkServerTrusted() child did not throw exception, flagging as valid cert");
                 valid = true;
             } catch (CertificateException e) {
+                Log.d(TAG, "checkServerTrusted() child throw exception, flagging as invalid cert");
+                valid = false;
                 // ignore
             }
         }

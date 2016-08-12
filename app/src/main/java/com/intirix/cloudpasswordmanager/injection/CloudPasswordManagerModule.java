@@ -27,6 +27,7 @@ import com.intirix.cloudpasswordmanager.services.ClipboardService;
 import com.intirix.cloudpasswordmanager.services.ClipboardServiceImpl;
 import com.intirix.cloudpasswordmanager.services.ColorService;
 import com.intirix.cloudpasswordmanager.services.ColorServiceImpl;
+import com.intirix.cloudpasswordmanager.services.CustomHostnameVerifier;
 import com.intirix.cloudpasswordmanager.services.CustomTrustManager;
 import com.intirix.cloudpasswordmanager.services.EventService;
 import com.intirix.cloudpasswordmanager.services.EventServiceImpl;
@@ -49,6 +50,7 @@ import javax.net.ssl.TrustManager;
 import dagger.Module;
 import dagger.Provides;
 import okhttp3.OkHttpClient;
+import okhttp3.internal.tls.OkHostnameVerifier;
 
 /**
  * Created by jeff on 6/18/16.
@@ -79,6 +81,11 @@ public class CloudPasswordManagerModule {
         }
     }
 
+    @Provides @Singleton
+    CustomHostnameVerifier provideCustomHostnameVerifier() {
+        return new CustomHostnameVerifier(OkHostnameVerifier.INSTANCE);
+    }
+
     @Provides
     SSLSocketFactory provideSSL(CustomTrustManager customTrustManager) {
         Log.d(TAG,"provideSSL()");
@@ -98,13 +105,14 @@ public class CloudPasswordManagerModule {
     }
 
     @Provides @Singleton
-    OkHttpClient provideHttpClient(SSLSocketFactory sslSocketFactory, CustomTrustManager customTrustManager, SessionService sessionService) {
+    OkHttpClient provideHttpClient(SSLSocketFactory sslSocketFactory, CustomTrustManager customTrustManager, CustomHostnameVerifier customHostnameVerifier, SessionService sessionService) {
         Log.d(TAG,"provideHttpClient()");
 
         OkHttpClient.Builder builder = new OkHttpClient.Builder()
                 .addInterceptor(new AuthenticationInterceptor(sessionService));
 
         builder.sslSocketFactory(sslSocketFactory, customTrustManager);
+        builder.hostnameVerifier(customHostnameVerifier);
 
         OkHttpClient okClient = builder.build();
         return okClient;

@@ -15,10 +15,16 @@
  */
 package com.intirix.cloudpasswordmanager.services;
 
+import com.intirix.cloudpasswordmanager.BuildConfig;
+import com.intirix.cloudpasswordmanager.TestPasswordApplication;
+
 import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.annotation.Config;
 
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -30,6 +36,9 @@ import javax.net.ssl.X509TrustManager;
 /**
  * Created by jeff on 8/9/16.
  */
+@RunWith(RobolectricGradleTestRunner.class)
+@Config(constants = BuildConfig.class,
+        application = TestPasswordApplication.class)
 public class CustomTrustManagerUnitSpec {
 
     private CustomTrustManager impl;
