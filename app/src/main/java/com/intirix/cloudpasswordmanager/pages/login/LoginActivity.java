@@ -166,14 +166,20 @@ public class LoginActivity extends BaseActivity {
     @OnClick(R.id.login_login_button)
     public void onLogin(View view) {
 
-        Log.d(LoginActivity.class.getSimpleName(),"onLogin()");
-        sessionService.setUrl(urlInput.getText().toString());
-        sessionService.setUsername(userInput.getText().toString());
-        sessionService.start();
-        sessionService.getCurrentSession().setPassword(passInput.getText().toString());
+        if (urlInput.getText().length()==0) {
+            errorMessageView.setText(R.string.error_empty_url);
+            updateErrorMessageVisibility();
+        } else {
 
-        passwordRequestService.login();
-        updateProgressDialog();
+            Log.d(LoginActivity.class.getSimpleName(), "onLogin()");
+            sessionService.setUrl(urlInput.getText().toString());
+            sessionService.setUsername(userInput.getText().toString());
+            sessionService.start();
+            sessionService.getCurrentSession().setPassword(passInput.getText().toString());
+
+            passwordRequestService.login();
+            updateProgressDialog();
+        }
     }
 
 

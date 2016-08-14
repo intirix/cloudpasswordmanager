@@ -21,6 +21,7 @@
 
     <string name="error_invalid_username_password">Invalid username and password</string>
     <string name="error_unknown_error">An unknown error has occurred</string>
+    <string name="error_empty_url">You must specify a URL</string>
     <string name="password_list_title">Passwords</string>
 
     <string name="password_list_nav_label">Password List</string>
