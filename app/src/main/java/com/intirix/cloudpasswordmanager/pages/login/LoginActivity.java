@@ -40,6 +40,8 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.net.URL;
+
 import javax.inject.Inject;
 
 import butterknife.BindView;
@@ -166,19 +168,27 @@ public class LoginActivity extends BaseActivity {
     @OnClick(R.id.login_login_button)
     public void onLogin(View view) {
 
-        if (urlInput.getText().length()==0) {
-            errorMessageView.setText(R.string.error_empty_url);
+        try {
+            if (urlInput.getText().length() == 0) {
+                errorMessageView.setText(R.string.error_empty_url);
+                updateErrorMessageVisibility();
+            } else if (!urlInput.getText().toString().startsWith("http")) {
+                errorMessageView.setText(R.string.error_bad_url);
+                updateErrorMessageVisibility();
+            } else {
+
+                Log.d(LoginActivity.class.getSimpleName(), "onLogin() - "+new URL(urlInput.getText().toString()));
+                sessionService.setUrl(urlInput.getText().toString());
+                sessionService.setUsername(userInput.getText().toString());
+                sessionService.start();
+                sessionService.getCurrentSession().setPassword(passInput.getText().toString());
+
+                passwordRequestService.login();
+                updateProgressDialog();
+            }
+        } catch (Exception e) {
+            errorMessageView.setText(e.getMessage());
             updateErrorMessageVisibility();
-        } else {
-
-            Log.d(LoginActivity.class.getSimpleName(), "onLogin()");
-            sessionService.setUrl(urlInput.getText().toString());
-            sessionService.setUsername(userInput.getText().toString());
-            sessionService.start();
-            sessionService.getCurrentSession().setPassword(passInput.getText().toString());
-
-            passwordRequestService.login();
-            updateProgressDialog();
         }
     }
 

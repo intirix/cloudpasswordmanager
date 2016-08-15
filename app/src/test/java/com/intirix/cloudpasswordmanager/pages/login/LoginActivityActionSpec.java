@@ -326,4 +326,94 @@ public class LoginActivityActionSpec extends BaseTestCase {
         EasyMock.verify(passwordRequestService);
     }
 
+    @Test
+    public void verifyNoCrashWhenUrlDoesNotStartWithHttp() throws Exception {
+        MockSessionService sessionService = (MockSessionService)serviceRef.sessionService();
+
+        // given the user is on the login page
+        ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class).create();
+        LoginActivity activity = controller.get();
+
+        PasswordRequestService passwordRequestService = activity.passwordRequestService;
+        EasyMock.expect(passwordRequestService.isLoginRunning()).andReturn(false).anyTimes();
+        EasyMock.replay(passwordRequestService);
+
+        controller.start().resume();
+
+        final String MOCK_URL = "cloud.example.com/owncloud";
+        final String MOCK_USER = "myusername";
+        final String MOCK_PASS = "mypassword";
+        final String MOCK_ERROR = "myerror";
+
+        // and the form is filled out with incorrect information
+        activity.urlInput.setText(MOCK_URL);
+        activity.userInput.setText(MOCK_USER);
+        activity.passInput.setText(MOCK_PASS);
+
+        // when the user hits the login button
+        Button button = (Button)activity.findViewById(R.id.login_login_button);
+        button.performClick();
+
+        // then
+        // the progress dialog is showing
+        Assert.assertTrue("ProgressDialog should not be visible", activity.progressDialog==null||!activity.progressDialog.isShowing());
+
+        // the sessionService should not have started
+        Assert.assertFalse(sessionService.isStarted());
+
+        Assert.assertEquals("You must specify a URL that starts with http:// or https://", activity.errorMessageView.getText().toString());
+        // verify that the error message is visible
+        Assert.assertEquals(View.VISIBLE, activity.errorMessageView.getVisibility());
+
+        controller.pause().stop().destroy();
+
+        // verify that login() was called
+        EasyMock.verify(passwordRequestService);
+    }
+
+    @Test
+    public void verifyNoCrashWhenUrlIsInvalid() throws Exception {
+        MockSessionService sessionService = (MockSessionService)serviceRef.sessionService();
+
+        // given the user is on the login page
+        ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class).create();
+        LoginActivity activity = controller.get();
+
+        PasswordRequestService passwordRequestService = activity.passwordRequestService;
+        EasyMock.expect(passwordRequestService.isLoginRunning()).andReturn(false).anyTimes();
+        EasyMock.replay(passwordRequestService);
+
+        controller.start().resume();
+
+        final String MOCK_URL = "httpcloud.example.com/owncloud";
+        final String MOCK_USER = "myusername";
+        final String MOCK_PASS = "mypassword";
+        final String MOCK_ERROR = "myerror";
+
+        // and the form is filled out with incorrect information
+        activity.urlInput.setText(MOCK_URL);
+        activity.userInput.setText(MOCK_USER);
+        activity.passInput.setText(MOCK_PASS);
+
+        // when the user hits the login button
+        Button button = (Button)activity.findViewById(R.id.login_login_button);
+        button.performClick();
+
+        // then
+        // the progress dialog is showing
+        Assert.assertTrue("ProgressDialog should not be visible", activity.progressDialog==null||!activity.progressDialog.isShowing());
+
+        // the sessionService should not have started
+        Assert.assertFalse(sessionService.isStarted());
+
+        Assert.assertEquals("no protocol: "+MOCK_URL, activity.errorMessageView.getText().toString());
+        // verify that the error message is visible
+        Assert.assertEquals(View.VISIBLE, activity.errorMessageView.getVisibility());
+
+        controller.pause().stop().destroy();
+
+        // verify that login() was called
+        EasyMock.verify(passwordRequestService);
+    }
+
 }
