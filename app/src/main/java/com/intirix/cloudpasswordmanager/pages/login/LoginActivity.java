@@ -140,12 +140,13 @@ public class LoginActivity extends BaseActivity {
     void updateLoginForm() {
         String url = urlInput.getText().toString();
         try {
-            // default to hiding the error message
+            // default hiding error messages and enabling everything
             errorMessageView.setText("");
             errorMessageView.setVisibility(View.GONE);
             loginButton.setEnabled(true);
             pinButton.setEnabled(true);
             unpinButton.setEnabled(true);
+            urlInput.setEnabled(true);
 
 
             if (url.length()==0) {
@@ -156,6 +157,7 @@ public class LoginActivity extends BaseActivity {
                 // validate that the url is valid
                 new URL(url);
 
+                urlInput.setEnabled(false);
                 pinButton.setVisibility(View.INVISIBLE);
                 pinButton.setEnabled(false);
                 unpinButton.setVisibility(View.VISIBLE);

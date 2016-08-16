@@ -84,6 +84,8 @@ public class LoginActivityLayoutSpec extends BaseTestCase {
         activity.urlInput.setText("https://cloud.example.com");
         activity.updateLoginForm();
 
+        Assert.assertFalse("Url input should be disabled", activity.urlInput.isEnabled());
+
         Button pinButton = (Button)activity.findViewById(R.id.login_pin_button);
         Assert.assertNotEquals(View.VISIBLE, pinButton.getVisibility());
         Assert.assertFalse(pinButton.isEnabled());
