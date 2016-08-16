@@ -199,12 +199,16 @@ public class LoginActivity extends BaseActivity {
     @OnClick(R.id.login_pin_button)
     public void onPin(View view) {
         certPinningService.pin(urlInput.getText().toString());
+        errorMessageView.setText("");
+        updateErrorMessageVisibility();
         updateProgressDialog();
     }
 
     @OnClick(R.id.login_unpin_button)
     public void onUnpin(View view) {
         certPinningService.disable();
+        errorMessageView.setText("");
+        updateErrorMessageVisibility();
         updateLoginForm();
     }
 

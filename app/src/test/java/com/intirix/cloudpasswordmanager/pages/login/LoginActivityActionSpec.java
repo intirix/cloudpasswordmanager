@@ -466,4 +466,48 @@ public class LoginActivityActionSpec extends BaseTestCase {
         //EasyMock.verify(passwordRequestService);
     }
 
+    @Test
+    public void verifyErrorMessageClearsOnPinButtonClick() throws Exception {
+        MockSessionService sessionService = (MockSessionService)serviceRef.sessionService();
+
+        // given the user is on the login page
+        ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class).create();
+        LoginActivity activity = controller.get();
+
+        PasswordRequestService passwordRequestService = activity.passwordRequestService;
+        EasyMock.expect(passwordRequestService.isLoginRunning()).andReturn(false).anyTimes();
+        EasyMock.replay(passwordRequestService);
+
+        controller.start().resume();
+
+        activity.onFatalError(new FatalErrorEvent("Random error"));
+
+        final String MOCK_URL = "https://www.example.com/owncloud";
+        final String MOCK_USER = "myusername";
+        final String MOCK_PASS = "mypassword";
+        final String MOCK_ERROR = "myerror";
+        final String VERSION = "19.0";
+
+        // the user has entered correct information in the form
+        activity.urlInput.setText(MOCK_URL);
+        activity.userInput.setText(MOCK_USER);
+        activity.passInput.setText(MOCK_PASS);
+        Assert.assertNull("ProgressDialog shouldn't be created yet", activity.progressDialog);
+
+        // when the user taps the login button
+        Button button = (Button)activity.findViewById(R.id.login_pin_button);
+        button.performClick();
+
+        // then
+
+        Assert.assertEquals("", activity.errorMessageView.getText().toString());
+        // verify that the error message is not visible
+        Assert.assertEquals(View.GONE, activity.errorMessageView.getVisibility());
+
+        controller.pause().stop().destroy();
+
+        // verify that login() was called
+        //EasyMock.verify(passwordRequestService);
+    }
+
 }
