@@ -177,6 +177,9 @@ public class LoginActivity extends BaseActivity {
                 updateErrorMessageVisibility();
             } else {
 
+                errorMessageView.setText("");
+                updateErrorMessageVisibility();
+
                 Log.d(LoginActivity.class.getSimpleName(), "onLogin() - "+new URL(urlInput.getText().toString()));
                 sessionService.setUrl(urlInput.getText().toString());
                 sessionService.setUsername(userInput.getText().toString());
