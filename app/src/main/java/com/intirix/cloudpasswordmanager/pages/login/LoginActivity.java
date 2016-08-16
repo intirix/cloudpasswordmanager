@@ -70,6 +70,9 @@ public class LoginActivity extends BaseActivity {
     @BindView(R.id.login_error_message)
     TextView errorMessageView;
 
+    @BindView(R.id.login_login_button)
+    View loginButton;
+
     @BindView(R.id.login_pin_button)
     View pinButton;
 
@@ -135,28 +138,64 @@ public class LoginActivity extends BaseActivity {
     }
 
     void updateLoginForm() {
-        if (certPinningService.isEnabled()) {
-            pinButton.setVisibility(View.INVISIBLE);
-            pinButton.setEnabled(false);
-            unpinButton.setVisibility(View.VISIBLE);
-            unpinButton.setEnabled(true);
-
-            if (certPinningService.isValid()) {
-                urlInput.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_enhanced_encryption_black_24dp,0,0,0);
-            } else {
-                urlInput.setCompoundDrawablesWithIntrinsicBounds(R.drawable.pin,0,0,0);
-            }
-        } else {
-            pinButton.setVisibility(View.VISIBLE);
+        String url = urlInput.getText().toString();
+        try {
+            // default hiding error messages and enabling everything
+            errorMessageView.setText("");
+            errorMessageView.setVisibility(View.GONE);
+            loginButton.setEnabled(true);
             pinButton.setEnabled(true);
+            unpinButton.setEnabled(true);
+            urlInput.setEnabled(true);
+
+
+            if (url.length()==0) {
+                urlInput.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_highlight_off_black_24dp, 0, 0, 0);
+                loginButton.setEnabled(false);
+                pinButton.setEnabled(false);
+            } else if (certPinningService.isEnabled()) {
+                // validate that the url is valid
+                new URL(url);
+
+                urlInput.setEnabled(false);
+                pinButton.setVisibility(View.INVISIBLE);
+                pinButton.setEnabled(false);
+                unpinButton.setVisibility(View.VISIBLE);
+                unpinButton.setEnabled(true);
+
+                if (certPinningService.isValid()) {
+                    urlInput.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_enhanced_encryption_black_24dp, 0, 0, 0);
+                } else {
+                    urlInput.setCompoundDrawablesWithIntrinsicBounds(R.drawable.pin, 0, 0, 0);
+                }
+            } else {
+                // validate that the url is valid
+                new URL(url);
+
+                if (url.startsWith("https")) {
+                    pinButton.setVisibility(View.VISIBLE);
+                    pinButton.setEnabled(true);
+                    unpinButton.setVisibility(View.INVISIBLE);
+                    unpinButton.setEnabled(false);
+
+                    urlInput.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_lock_black_24dp, 0, 0, 0);
+                } else {
+                    pinButton.setVisibility(View.VISIBLE);
+                    pinButton.setEnabled(false);
+                    unpinButton.setVisibility(View.INVISIBLE);
+                    unpinButton.setEnabled(false);
+                    urlInput.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_no_encryption_black_24dp, 0, 0, 0);
+                }
+            }
+        } catch (Exception e) {
+            errorMessageView.setText(e.getMessage());
+            errorMessageView.setVisibility(View.VISIBLE);
+            loginButton.setEnabled(false);
+            pinButton.setVisibility(View.VISIBLE);
+            pinButton.setEnabled(false);
             unpinButton.setVisibility(View.INVISIBLE);
             unpinButton.setEnabled(false);
-
-            if (urlInput.getText().toString().startsWith("https")) {
-                urlInput.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_lock_black_24dp,0,0,0);
-            } else {
-                urlInput.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_no_encryption_black_24dp,0,0,0);
-            }
+            urlInput.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_highlight_off_black_24dp, 0, 0, 0);
         }
     }
 
@@ -177,6 +216,9 @@ public class LoginActivity extends BaseActivity {
                 updateErrorMessageVisibility();
             } else {
 
+                errorMessageView.setText("");
+                updateErrorMessageVisibility();
+
                 Log.d(LoginActivity.class.getSimpleName(), "onLogin() - "+new URL(urlInput.getText().toString()));
                 sessionService.setUrl(urlInput.getText().toString());
                 sessionService.setUsername(userInput.getText().toString());
@@ -196,12 +238,16 @@ public class LoginActivity extends BaseActivity {
     @OnClick(R.id.login_pin_button)
     public void onPin(View view) {
         certPinningService.pin(urlInput.getText().toString());
+        errorMessageView.setText("");
+        updateErrorMessageVisibility();
         updateProgressDialog();
     }
 
     @OnClick(R.id.login_unpin_button)
     public void onUnpin(View view) {
         certPinningService.disable();
+        errorMessageView.setText("");
+        updateErrorMessageVisibility();
         updateLoginForm();
     }
 

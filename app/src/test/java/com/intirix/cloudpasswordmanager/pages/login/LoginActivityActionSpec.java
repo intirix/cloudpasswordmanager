@@ -207,81 +207,6 @@ public class LoginActivityActionSpec extends BaseTestCase {
     }
 
     @Test
-    public void verifyFormIsBlankOnFirstStart() {
-        ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class).create().start().resume();
-        LoginActivity activity = controller.get();
-
-        Assert.assertEquals("", activity.urlInput.getText().toString());
-        Assert.assertEquals("", activity.userInput.getText().toString());
-        Assert.assertEquals("", activity.passInput.getText().toString());
-
-        controller.pause().stop().destroy();
-    }
-
-
-    @Test
-    public void verifyFormIsPrepopulatedWhenRelaunched() {
-        MockSessionService sessionService = (MockSessionService)serviceRef.sessionService();
-
-        final String TESTURL = "https://www.example.com/owncloud";
-        final String TESTUSER = "testuser";
-
-        ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class).create();
-        LoginActivity activity = controller.get();
-
-        sessionService.setUrl(TESTURL);
-        sessionService.setUsername(TESTUSER);
-
-        controller.start().resume();
-
-        Assert.assertEquals(TESTURL, activity.urlInput.getText().toString());
-        Assert.assertEquals(TESTUSER, activity.userInput.getText().toString());
-        Assert.assertEquals("", activity.passInput.getText().toString());
-
-        controller.pause().stop().destroy();
-    }
-
-    @Test
-    public void verifyFormDoesNotOverrideValuesWhenBackgrounded() {
-        MockSessionService sessionService = (MockSessionService)serviceRef.sessionService();
-
-        final String TESTURL1 = "https://www.example.com/owncloud";
-        final String TESTURL2 = "https://www.example.com/nextcloud";
-        final String TESTUSER1 = "testuser";
-        final String TESTUSER2 = "testuser2";
-
-        ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class).create();
-        LoginActivity activity = controller.get();
-
-        PasswordRequestService passwordRequestService = activity.passwordRequestService;
-        EasyMock.expect(passwordRequestService.isLoginRunning()).andReturn(false).anyTimes();
-        EasyMock.replay(passwordRequestService);
-
-
-        sessionService.setUrl(TESTURL1);
-        sessionService.setUsername(TESTUSER1);
-
-        controller.start().resume();
-
-        Assert.assertEquals(TESTURL1, activity.urlInput.getText().toString());
-        Assert.assertEquals(TESTUSER1, activity.userInput.getText().toString());
-        Assert.assertEquals("", activity.passInput.getText().toString());
-
-        activity.urlInput.setText(TESTURL2);
-        activity.userInput.setText(TESTUSER2);
-
-        controller.pause().resume();
-
-        Assert.assertEquals(TESTURL2, activity.urlInput.getText().toString());
-        Assert.assertEquals(TESTUSER2, activity.userInput.getText().toString());
-        Assert.assertEquals("", activity.passInput.getText().toString());
-
-        controller.pause().stop().destroy();
-
-        EasyMock.verify(passwordRequestService);
-    }
-
-    @Test
     public void verifyNoCrashWhenUrlIsEmpty() throws Exception {
         MockSessionService sessionService = (MockSessionService)serviceRef.sessionService();
 
@@ -414,6 +339,100 @@ public class LoginActivityActionSpec extends BaseTestCase {
 
         // verify that login() was called
         EasyMock.verify(passwordRequestService);
+    }
+
+    @Test
+    public void verifyErrorMessageClearsOnLoginButtonClick() throws Exception {
+        MockSessionService sessionService = (MockSessionService)serviceRef.sessionService();
+
+        // given the user is on the login page
+        ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class).create();
+        LoginActivity activity = controller.get();
+
+        PasswordRequestService passwordRequestService = activity.passwordRequestService;
+        passwordRequestService.login();
+        EasyMock.expectLastCall();
+        EasyMock.expect(passwordRequestService.isLoginRunning()).andReturn(false).andReturn(false).andReturn(true);
+        passwordRequestService.listPasswords();
+        EasyMock.expectLastCall();
+        passwordRequestService.listCategories();
+        EasyMock.expectLastCall();
+        EasyMock.replay(passwordRequestService);
+
+        controller.start().resume();
+
+        activity.onFatalError(new FatalErrorEvent("Random error"));
+
+        final String MOCK_URL = "https://www.example.com/owncloud";
+        final String MOCK_USER = "myusername";
+        final String MOCK_PASS = "mypassword";
+        final String MOCK_ERROR = "myerror";
+        final String VERSION = "19.0";
+
+        // the user has entered correct information in the form
+        activity.urlInput.setText(MOCK_URL);
+        activity.userInput.setText(MOCK_USER);
+        activity.passInput.setText(MOCK_PASS);
+        Assert.assertNull("ProgressDialog shouldn't be created yet", activity.progressDialog);
+
+        // when the user taps the login button
+        Button button = (Button)activity.findViewById(R.id.login_login_button);
+        button.performClick();
+
+        // then
+
+        Assert.assertEquals("", activity.errorMessageView.getText().toString());
+        // verify that the error message is not visible
+        Assert.assertEquals(View.GONE, activity.errorMessageView.getVisibility());
+
+        controller.pause().stop().destroy();
+
+        // verify that login() was called
+        //EasyMock.verify(passwordRequestService);
+    }
+
+    @Test
+    public void verifyErrorMessageClearsOnPinButtonClick() throws Exception {
+        MockSessionService sessionService = (MockSessionService)serviceRef.sessionService();
+
+        // given the user is on the login page
+        ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class).create();
+        LoginActivity activity = controller.get();
+
+        PasswordRequestService passwordRequestService = activity.passwordRequestService;
+        EasyMock.expect(passwordRequestService.isLoginRunning()).andReturn(false).anyTimes();
+        EasyMock.replay(passwordRequestService);
+
+        controller.start().resume();
+
+        activity.onFatalError(new FatalErrorEvent("Random error"));
+
+        final String MOCK_URL = "https://www.example.com/owncloud";
+        final String MOCK_USER = "myusername";
+        final String MOCK_PASS = "mypassword";
+        final String MOCK_ERROR = "myerror";
+        final String VERSION = "19.0";
+
+        // the user has entered correct information in the form
+        activity.urlInput.setText(MOCK_URL);
+        activity.userInput.setText(MOCK_USER);
+        activity.passInput.setText(MOCK_PASS);
+        Assert.assertNull("ProgressDialog shouldn't be created yet", activity.progressDialog);
+
+        // when the user taps the login button
+        Button button = (Button)activity.findViewById(R.id.login_pin_button);
+        button.performClick();
+
+        // then
+
+        Assert.assertEquals("", activity.errorMessageView.getText().toString());
+        // verify that the error message is not visible
+        Assert.assertEquals(View.GONE, activity.errorMessageView.getVisibility());
+
+        controller.pause().stop().destroy();
+
+        // verify that login() was called
+        //EasyMock.verify(passwordRequestService);
     }
 
 }
