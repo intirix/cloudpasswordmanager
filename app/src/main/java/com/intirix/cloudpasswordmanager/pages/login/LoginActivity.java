@@ -135,28 +135,47 @@ public class LoginActivity extends BaseActivity {
     }
 
     void updateLoginForm() {
-        if (certPinningService.isEnabled()) {
-            pinButton.setVisibility(View.INVISIBLE);
-            pinButton.setEnabled(false);
-            unpinButton.setVisibility(View.VISIBLE);
-            unpinButton.setEnabled(true);
+        String url = urlInput.getText().toString();
+        try {
+            // default to hiding the error message
+            errorMessageView.setText("");
+            errorMessageView.setVisibility(View.GONE);
 
-            if (certPinningService.isValid()) {
-                urlInput.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_enhanced_encryption_black_24dp,0,0,0);
-            } else {
-                urlInput.setCompoundDrawablesWithIntrinsicBounds(R.drawable.pin,0,0,0);
-            }
-        } else {
-            pinButton.setVisibility(View.VISIBLE);
-            pinButton.setEnabled(true);
-            unpinButton.setVisibility(View.INVISIBLE);
-            unpinButton.setEnabled(false);
+            if (url.length()==0) {
+                urlInput.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_highlight_off_black_24dp, 0, 0, 0);
+            } else if (certPinningService.isEnabled()) {
+                // validate that the url is valid
+                new URL(url);
 
-            if (urlInput.getText().toString().startsWith("https")) {
-                urlInput.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_lock_black_24dp,0,0,0);
+                pinButton.setVisibility(View.INVISIBLE);
+                pinButton.setEnabled(false);
+                unpinButton.setVisibility(View.VISIBLE);
+                unpinButton.setEnabled(true);
+
+                if (certPinningService.isValid()) {
+                    urlInput.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_enhanced_encryption_black_24dp, 0, 0, 0);
+                } else {
+                    urlInput.setCompoundDrawablesWithIntrinsicBounds(R.drawable.pin, 0, 0, 0);
+                }
             } else {
-                urlInput.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_no_encryption_black_24dp,0,0,0);
+                // validate that the url is valid
+                new URL(url);
+
+                pinButton.setVisibility(View.VISIBLE);
+                pinButton.setEnabled(true);
+                unpinButton.setVisibility(View.INVISIBLE);
+                unpinButton.setEnabled(false);
+
+                if (url.startsWith("https")) {
+                    urlInput.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_lock_black_24dp, 0, 0, 0);
+                } else {
+                    urlInput.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_no_encryption_black_24dp, 0, 0, 0);
+                }
             }
+        } catch (Exception e) {
+            errorMessageView.setText(e.getMessage());
+            errorMessageView.setVisibility(View.VISIBLE);
+            urlInput.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_highlight_off_black_24dp, 0, 0, 0);
         }
     }
 
