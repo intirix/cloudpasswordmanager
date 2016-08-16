@@ -29,11 +29,13 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
@@ -54,7 +56,16 @@ public class CertPinningServiceImpl implements CertPinningService {
 
     private static final String TAG = CertPinningServiceImpl.class.getSimpleName();
     public static final String KEYSTORE_FILENAME = "keystore";
+
+    /**
+     * Key in shared preferences that stores whether the cert is valid or not
+     */
     public static final String PREF_PINNED_VALID_CERT = "PIN_VALID";
+
+    /**
+     * Key in shared preferences that stores the keystore password
+     */
+    public static final String PREF_KEYSTORE_PASSWORD = "KEYSTORE_PASSWORD";
 
     private Context context;
 
@@ -68,6 +79,9 @@ public class CertPinningServiceImpl implements CertPinningService {
 
     private boolean enabled = false;
 
+    /**
+     * The hardcoded default used for the original alpha users
+     */
     private static final String KEYSTORE_PASSWORD = "Vq2kgW{yc2Z%{7_<";
 
     private SharedPreferences preferences;
@@ -94,7 +108,13 @@ public class CertPinningServiceImpl implements CertPinningService {
             Log.d(TAG,"init() - Loading "+KEYSTORE_FILENAME);
             final FileInputStream fis = context.openFileInput(KEYSTORE_FILENAME);
             KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
-            ks.load(fis, KEYSTORE_PASSWORD.toCharArray());
+
+            // get the keystore password from shared preferences
+            // if the keystore password doesn't exist, but the keystore does, then
+            // the user was using an alhpa release of the app that used the same
+            // hardcoded password for everyone
+            final String keystorePassword = preferences.getString(PREF_KEYSTORE_PASSWORD, KEYSTORE_PASSWORD);
+            ks.load(fis, keystorePassword.toCharArray());
 
             customTrustManager.setPinnedTrustManager(getTrustManagerForKeystore(ks));
             enabled = true;
@@ -257,7 +277,10 @@ public class CertPinningServiceImpl implements CertPinningService {
 
         final FileOutputStream fos = context.openFileOutput(KEYSTORE_FILENAME, Context.MODE_PRIVATE);
         try {
-            ks.store(fos, KEYSTORE_PASSWORD.toCharArray());
+            // http://stackoverflow.com/questions/41107/how-to-generate-a-random-alpha-numeric-string
+            String keystorePassword = new BigInteger(130, new SecureRandom()).toString(32);
+            ks.store(fos, keystorePassword.toCharArray());
+            preferences.edit().putString(PREF_KEYSTORE_PASSWORD, keystorePassword).commit();
         } finally {
             fos.close();
         }
