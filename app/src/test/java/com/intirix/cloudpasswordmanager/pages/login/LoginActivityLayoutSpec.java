@@ -59,6 +59,7 @@ public class LoginActivityLayoutSpec extends BaseTestCase {
     public void verifyPinButtonVisibleWhenNotPinned() {
         ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class).create().start().resume();
         LoginActivity activity = controller.get();
+        activity.urlInput.setText("https://cloud.intirix.com");
         MockCertPinningService certPinningService = (MockCertPinningService)activity.certPinningService;
         certPinningService.setEnabled(false);
         activity.updateLoginForm();
@@ -80,6 +81,7 @@ public class LoginActivityLayoutSpec extends BaseTestCase {
         LoginActivity activity = controller.get();
         MockCertPinningService certPinningService = (MockCertPinningService)activity.certPinningService;
         certPinningService.setEnabled(true);
+        activity.urlInput.setText("https://cloud.example.com");
         activity.updateLoginForm();
 
         Button pinButton = (Button)activity.findViewById(R.id.login_pin_button);

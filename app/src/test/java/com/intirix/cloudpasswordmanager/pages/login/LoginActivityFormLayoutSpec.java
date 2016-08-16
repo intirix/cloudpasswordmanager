@@ -56,6 +56,21 @@ public class LoginActivityFormLayoutSpec extends BaseTestCase {
         Assert.assertEquals("", activity.urlInput.getText().toString());
         Assert.assertEquals("", activity.userInput.getText().toString());
         Assert.assertEquals("", activity.passInput.getText().toString());
+        Assert.assertFalse(activity.loginButton.isEnabled());
+        Assert.assertFalse(activity.pinButton.isEnabled());
+
+        controller.pause().stop().destroy();
+    }
+
+
+    @Test
+    public void verifyPinButtonIsDisabledForNonSSL() {
+        ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class).create().start().resume();
+        LoginActivity activity = controller.get();
+
+        activity.urlInput.setText("http://cloud.example.com");
+        Assert.assertTrue(activity.loginButton.isEnabled());
+        Assert.assertFalse(activity.pinButton.isEnabled());
 
         controller.pause().stop().destroy();
     }
@@ -138,6 +153,8 @@ public class LoginActivityFormLayoutSpec extends BaseTestCase {
         activity.urlInput.setText(INVALID_URL);
         Assert.assertEquals("no protocol: "+INVALID_URL, activity.errorMessageView.getText().toString());
         Assert.assertEquals("Error message should be visible", View.VISIBLE, activity.errorMessageView.getVisibility());
+        Assert.assertFalse(activity.loginButton.isEnabled());
+        Assert.assertFalse(activity.pinButton.isEnabled());
 
         controller.pause().stop().destroy();
     }
@@ -156,6 +173,8 @@ public class LoginActivityFormLayoutSpec extends BaseTestCase {
         activity.urlInput.setText(INVALID_URL);
         Assert.assertEquals("unknown protocol: htt", activity.errorMessageView.getText().toString());
         Assert.assertEquals("Error message should be visible", View.VISIBLE, activity.errorMessageView.getVisibility());
+        Assert.assertFalse(activity.loginButton.isEnabled());
+        Assert.assertFalse(activity.pinButton.isEnabled());
 
         controller.pause().stop().destroy();
     }

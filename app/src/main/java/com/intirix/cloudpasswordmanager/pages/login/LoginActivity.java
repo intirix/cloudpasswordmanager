@@ -70,6 +70,9 @@ public class LoginActivity extends BaseActivity {
     @BindView(R.id.login_error_message)
     TextView errorMessageView;
 
+    @BindView(R.id.login_login_button)
+    View loginButton;
+
     @BindView(R.id.login_pin_button)
     View pinButton;
 
@@ -140,9 +143,15 @@ public class LoginActivity extends BaseActivity {
             // default to hiding the error message
             errorMessageView.setText("");
             errorMessageView.setVisibility(View.GONE);
+            loginButton.setEnabled(true);
+            pinButton.setEnabled(true);
+            unpinButton.setEnabled(true);
+
 
             if (url.length()==0) {
                 urlInput.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_highlight_off_black_24dp, 0, 0, 0);
+                loginButton.setEnabled(false);
+                pinButton.setEnabled(false);
             } else if (certPinningService.isEnabled()) {
                 // validate that the url is valid
                 new URL(url);
@@ -161,20 +170,29 @@ public class LoginActivity extends BaseActivity {
                 // validate that the url is valid
                 new URL(url);
 
-                pinButton.setVisibility(View.VISIBLE);
-                pinButton.setEnabled(true);
-                unpinButton.setVisibility(View.INVISIBLE);
-                unpinButton.setEnabled(false);
-
                 if (url.startsWith("https")) {
+                    pinButton.setVisibility(View.VISIBLE);
+                    pinButton.setEnabled(true);
+                    unpinButton.setVisibility(View.INVISIBLE);
+                    unpinButton.setEnabled(false);
+
                     urlInput.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_lock_black_24dp, 0, 0, 0);
                 } else {
+                    pinButton.setVisibility(View.VISIBLE);
+                    pinButton.setEnabled(false);
+                    unpinButton.setVisibility(View.INVISIBLE);
+                    unpinButton.setEnabled(false);
                     urlInput.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_no_encryption_black_24dp, 0, 0, 0);
                 }
             }
         } catch (Exception e) {
             errorMessageView.setText(e.getMessage());
             errorMessageView.setVisibility(View.VISIBLE);
+            loginButton.setEnabled(false);
+            pinButton.setVisibility(View.VISIBLE);
+            pinButton.setEnabled(false);
+            unpinButton.setVisibility(View.INVISIBLE);
+            unpinButton.setEnabled(false);
             urlInput.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_highlight_off_black_24dp, 0, 0, 0);
         }
     }
