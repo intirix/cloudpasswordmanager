@@ -4,6 +4,10 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <!-- support for Chromebooks without touchscreens -->
+    <uses-feature android:name="android.hardware.touchscreen"
+        android:required="false" />
+
     <application
         android:name=".PasswordApplication"
         android:allowBackup="true"
