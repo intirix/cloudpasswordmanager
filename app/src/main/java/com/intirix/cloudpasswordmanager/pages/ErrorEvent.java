@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.intirix.cloudpasswordmanager.events;
+package com.intirix.cloudpasswordmanager.pages;
 
 /**
  * Created by jeff on 6/28/16.

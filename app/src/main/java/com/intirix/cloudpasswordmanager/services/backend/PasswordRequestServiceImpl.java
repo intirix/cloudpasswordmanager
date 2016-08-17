@@ -19,7 +19,7 @@ import android.content.Context;
 
 import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.pages.passwordlist.CategoryListUpdatedEvent;
-import com.intirix.cloudpasswordmanager.events.FatalErrorEvent;
+import com.intirix.cloudpasswordmanager.pages.FatalErrorEvent;
 import com.intirix.cloudpasswordmanager.pages.login.LoginSuccessfulEvent;
 import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordListUpdatedEvent;
 import com.intirix.cloudpasswordmanager.services.ui.ColorService;

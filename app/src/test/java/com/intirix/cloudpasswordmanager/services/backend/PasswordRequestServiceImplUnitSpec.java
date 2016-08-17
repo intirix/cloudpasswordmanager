@@ -18,7 +18,7 @@ package com.intirix.cloudpasswordmanager.services.backend;
 import com.intirix.cloudpasswordmanager.BuildConfig;
 import com.intirix.cloudpasswordmanager.TestPasswordApplication;
 import com.intirix.cloudpasswordmanager.pages.passwordlist.CategoryListUpdatedEvent;
-import com.intirix.cloudpasswordmanager.events.FatalErrorEvent;
+import com.intirix.cloudpasswordmanager.pages.FatalErrorEvent;
 import com.intirix.cloudpasswordmanager.pages.login.LoginSuccessfulEvent;
 import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordListUpdatedEvent;
 import com.intirix.cloudpasswordmanager.services.ui.ColorService;
