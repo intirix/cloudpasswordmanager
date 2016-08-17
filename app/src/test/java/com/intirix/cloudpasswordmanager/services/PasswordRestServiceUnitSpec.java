@@ -19,6 +19,8 @@ import com.intirix.cloudpasswordmanager.BuildConfig;
 import com.intirix.cloudpasswordmanager.TestPasswordApplication;
 import com.intirix.cloudpasswordmanager.services.beans.Category;
 import com.intirix.cloudpasswordmanager.services.beans.PasswordResponse;
+import com.intirix.cloudpasswordmanager.services.session.AuthenticationInterceptor;
+import com.intirix.cloudpasswordmanager.services.session.MockSessionService;
 
 import org.junit.Assert;
 import org.junit.Before;

@@ -28,7 +28,7 @@ import com.intirix.cloudpasswordmanager.BuildConfig;
 import com.intirix.cloudpasswordmanager.PasswordApplication;
 import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.pages.login.LoginActivity;
-import com.intirix.cloudpasswordmanager.services.AutoLogoffServiceImpl;
+import com.intirix.cloudpasswordmanager.services.session.AutoLogoffServiceImpl;
 
 import butterknife.ButterKnife;
 

@@ -18,9 +18,9 @@ package com.intirix.cloudpasswordmanager.injection;
 import android.content.Context;
 import android.util.Log;
 
-import com.intirix.cloudpasswordmanager.services.AuthenticationInterceptor;
-import com.intirix.cloudpasswordmanager.services.AutoLogoffService;
-import com.intirix.cloudpasswordmanager.services.AutoLogoffServiceImpl;
+import com.intirix.cloudpasswordmanager.services.session.AuthenticationInterceptor;
+import com.intirix.cloudpasswordmanager.services.session.AutoLogoffService;
+import com.intirix.cloudpasswordmanager.services.session.AutoLogoffServiceImpl;
 import com.intirix.cloudpasswordmanager.services.ssl.CertPinningService;
 import com.intirix.cloudpasswordmanager.services.ssl.CertPinningServiceImpl;
 import com.intirix.cloudpasswordmanager.services.ClipboardService;
@@ -35,8 +35,8 @@ import com.intirix.cloudpasswordmanager.services.PasswordRequestService;
 import com.intirix.cloudpasswordmanager.services.PasswordRequestServiceImpl;
 import com.intirix.cloudpasswordmanager.services.PasswordStorageService;
 import com.intirix.cloudpasswordmanager.services.PasswordStorageServiceImpl;
-import com.intirix.cloudpasswordmanager.services.SessionService;
-import com.intirix.cloudpasswordmanager.services.SessionServiceImpl;
+import com.intirix.cloudpasswordmanager.services.session.SessionService;
+import com.intirix.cloudpasswordmanager.services.session.SessionServiceImpl;
 
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;

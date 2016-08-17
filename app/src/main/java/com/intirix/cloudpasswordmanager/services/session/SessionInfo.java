@@ -13,7 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.intirix.cloudpasswordmanager.services.beans;
+package com.intirix.cloudpasswordmanager.services.session;
+
+import com.intirix.cloudpasswordmanager.services.beans.Category;
+import com.intirix.cloudpasswordmanager.services.beans.PasswordBean;
+import com.intirix.cloudpasswordmanager.services.beans.PasswordInfo;
 
 import java.util.List;
 

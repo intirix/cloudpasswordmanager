@@ -25,10 +25,11 @@ import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordListUpdatedEv
 import com.intirix.cloudpasswordmanager.services.beans.Category;
 import com.intirix.cloudpasswordmanager.services.beans.PasswordBean;
 import com.intirix.cloudpasswordmanager.services.beans.PasswordInfo;
-import com.intirix.cloudpasswordmanager.services.beans.SessionInfo;
+import com.intirix.cloudpasswordmanager.services.session.SessionInfo;
 import com.intirix.cloudpasswordmanager.services.callbacks.CategoryListCallback;
 import com.intirix.cloudpasswordmanager.services.callbacks.PasswordListCallback;
 import com.intirix.cloudpasswordmanager.services.callbacks.VersionCallback;
+import com.intirix.cloudpasswordmanager.services.session.SessionService;
 
 import java.util.ArrayList;
 import java.util.HashMap;

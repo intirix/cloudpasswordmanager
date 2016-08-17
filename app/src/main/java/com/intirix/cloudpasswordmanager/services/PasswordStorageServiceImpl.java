@@ -28,6 +28,7 @@ import com.intirix.cloudpasswordmanager.services.beans.PasswordResponse;
 import com.intirix.cloudpasswordmanager.services.callbacks.CategoryListCallback;
 import com.intirix.cloudpasswordmanager.services.callbacks.PasswordListCallback;
 import com.intirix.cloudpasswordmanager.services.callbacks.VersionCallback;
+import com.intirix.cloudpasswordmanager.services.session.SessionService;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
