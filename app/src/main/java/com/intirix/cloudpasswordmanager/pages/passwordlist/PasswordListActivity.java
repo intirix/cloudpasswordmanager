@@ -17,9 +17,12 @@ package com.intirix.cloudpasswordmanager.pages.passwordlist;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.view.Menu;
+import android.view.MenuItem;
 
 import com.intirix.cloudpasswordmanager.PasswordApplication;
 import com.intirix.cloudpasswordmanager.R;
@@ -31,7 +34,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import butterknife.BindView;
 
-public class PasswordListActivity extends SecureActivity {
+public class PasswordListActivity extends SecureActivity implements SearchView.OnQueryTextListener {
 
     @BindView(R.id.password_list_recycler)
     RecyclerView recyclerView;
@@ -57,6 +60,7 @@ public class PasswordListActivity extends SecureActivity {
             recyclerView.setLayoutManager(layoutManager);
             adapter = new PasswordListAdapter(this, sessionService.getCurrentSession());
             recyclerView.setAdapter(adapter);
+            adapter.refreshFromSession();
         }
 
     }
@@ -84,6 +88,11 @@ public class PasswordListActivity extends SecureActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.password_list_action, menu);
+
+        final MenuItem searchItem = menu.findItem(R.id.action_search);
+        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        searchView.setOnQueryTextListener(this);
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -101,6 +110,16 @@ public class PasswordListActivity extends SecureActivity {
         if (adapter!=null) {
             adapter.notifyDataSetChanged();
         }
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        return false;
     }
 
     private void updateProgressDialog() {

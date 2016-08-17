@@ -178,8 +178,8 @@ public class PasswordListActivityActionSpec extends BaseTestCase {
         EasyMock.verify(activity.adapter);
 
         controller.pause().stop().destroy();
-
     }
+
     @Test
     public void verifyCategoryListUpdateNotifiesRecyclerView() {
         SessionService sessionService = serviceRef.sessionService();
