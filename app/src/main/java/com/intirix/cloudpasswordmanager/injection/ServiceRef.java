@@ -15,7 +15,7 @@
  */
 package com.intirix.cloudpasswordmanager.injection;
 
-import com.intirix.cloudpasswordmanager.pages.AboutActivity;
+import com.intirix.cloudpasswordmanager.pages.about.AboutActivity;
 import com.intirix.cloudpasswordmanager.pages.BaseActivity;
 import com.intirix.cloudpasswordmanager.pages.SecureActivity;
 import com.intirix.cloudpasswordmanager.pages.login.LoginActivity;

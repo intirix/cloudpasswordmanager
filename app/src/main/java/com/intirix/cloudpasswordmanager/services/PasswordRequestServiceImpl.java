@@ -18,10 +18,10 @@ package com.intirix.cloudpasswordmanager.services;
 import android.content.Context;
 
 import com.intirix.cloudpasswordmanager.R;
-import com.intirix.cloudpasswordmanager.events.CategoryListUpdatedEvent;
+import com.intirix.cloudpasswordmanager.pages.passwordlist.CategoryListUpdatedEvent;
 import com.intirix.cloudpasswordmanager.events.FatalErrorEvent;
-import com.intirix.cloudpasswordmanager.events.LoginSuccessfulEvent;
-import com.intirix.cloudpasswordmanager.events.PasswordListUpdatedEvent;
+import com.intirix.cloudpasswordmanager.pages.login.LoginSuccessfulEvent;
+import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordListUpdatedEvent;
 import com.intirix.cloudpasswordmanager.services.beans.Category;
 import com.intirix.cloudpasswordmanager.services.beans.PasswordBean;
 import com.intirix.cloudpasswordmanager.services.beans.PasswordInfo;

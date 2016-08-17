@@ -28,6 +28,7 @@ import android.widget.ListView;
 
 import com.intirix.cloudpasswordmanager.PasswordApplication;
 import com.intirix.cloudpasswordmanager.R;
+import com.intirix.cloudpasswordmanager.pages.about.AboutNavigationItem;
 import com.intirix.cloudpasswordmanager.pages.login.LogOffNavigationItem;
 import com.intirix.cloudpasswordmanager.pages.login.LoginNavigationItem;
 import com.intirix.cloudpasswordmanager.pages.navigation.NavigationAdapter;

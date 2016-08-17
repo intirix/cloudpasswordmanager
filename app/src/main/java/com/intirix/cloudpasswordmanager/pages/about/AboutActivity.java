@@ -1,4 +1,4 @@
-package com.intirix.cloudpasswordmanager.pages;
+package com.intirix.cloudpasswordmanager.pages.about;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -6,6 +6,7 @@ import android.widget.TextView;
 
 import com.intirix.cloudpasswordmanager.BuildConfig;
 import com.intirix.cloudpasswordmanager.R;
+import com.intirix.cloudpasswordmanager.pages.BaseActivity;
 
 import java.text.SimpleDateFormat;
 
