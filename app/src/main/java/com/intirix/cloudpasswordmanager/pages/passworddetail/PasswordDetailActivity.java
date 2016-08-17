@@ -25,7 +25,7 @@ import android.widget.Toast;
 import com.intirix.cloudpasswordmanager.PasswordApplication;
 import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.pages.SecureActivity;
-import com.intirix.cloudpasswordmanager.services.ClipboardService;
+import com.intirix.cloudpasswordmanager.services.ui.ClipboardService;
 import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordBean;
 
 import java.util.List;

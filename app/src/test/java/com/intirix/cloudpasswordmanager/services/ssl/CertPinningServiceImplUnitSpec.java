@@ -17,7 +17,7 @@ package com.intirix.cloudpasswordmanager.services.ssl;
 
 import com.intirix.cloudpasswordmanager.BuildConfig;
 import com.intirix.cloudpasswordmanager.TestPasswordApplication;
-import com.intirix.cloudpasswordmanager.services.MockEventService;
+import com.intirix.cloudpasswordmanager.services.ui.MockEventService;
 
 import org.bouncycastle.asn1.x509.BasicConstraints;
 import org.bouncycastle.asn1.x509.ExtendedKeyUsage;

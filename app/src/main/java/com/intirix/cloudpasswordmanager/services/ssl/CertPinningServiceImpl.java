@@ -24,7 +24,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.intirix.cloudpasswordmanager.R;
-import com.intirix.cloudpasswordmanager.services.EventService;
+import com.intirix.cloudpasswordmanager.services.ui.EventService;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

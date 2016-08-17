@@ -21,8 +21,8 @@ import com.intirix.cloudpasswordmanager.pages.passwordlist.CategoryListUpdatedEv
 import com.intirix.cloudpasswordmanager.events.FatalErrorEvent;
 import com.intirix.cloudpasswordmanager.pages.login.LoginSuccessfulEvent;
 import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordListUpdatedEvent;
-import com.intirix.cloudpasswordmanager.services.ColorService;
-import com.intirix.cloudpasswordmanager.services.MockEventService;
+import com.intirix.cloudpasswordmanager.services.ui.ColorService;
+import com.intirix.cloudpasswordmanager.services.ui.MockEventService;
 import com.intirix.cloudpasswordmanager.services.backend.beans.Category;
 import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordBean;
 import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordInfo;

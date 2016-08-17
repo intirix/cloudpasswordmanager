@@ -13,16 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.intirix.cloudpasswordmanager.services;
+package com.intirix.cloudpasswordmanager.services.ui;
 
 /**
- * Created by jeff on 7/29/16.
+ * Created by jeff on 6/28/16.
  */
-public interface ClipboardService {
-    /**
-     * Copy text to clipboard
-     * @param label
-     * @param text
-     */
-    public void copyStringToClipboard(String label, String text);
+public interface EventService {
+
+    public void postEvent(Object event);
 }
