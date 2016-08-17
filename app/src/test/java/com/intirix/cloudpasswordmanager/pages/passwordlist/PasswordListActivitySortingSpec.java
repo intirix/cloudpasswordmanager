@@ -18,6 +18,7 @@ package com.intirix.cloudpasswordmanager.pages.passwordlist;
 import android.support.v7.widget.RecyclerView;
 import android.widget.TextView;
 
+import com.intirix.cloudpasswordmanager.ActivityLifecycleTestUtil;
 import com.intirix.cloudpasswordmanager.BaseTestCase;
 import com.intirix.cloudpasswordmanager.BuildConfig;
 import com.intirix.cloudpasswordmanager.R;
@@ -53,6 +54,12 @@ public class PasswordListActivitySortingSpec extends BaseTestCase {
 
     private SessionService sessionService;
 
+    private PasswordBean passC = new PasswordBean();
+
+    private PasswordBean passB = new PasswordBean();
+
+    private PasswordBean passA = new PasswordBean();
+
     @Before
     public void setUp() {
         sessionService = serviceRef.sessionService();
@@ -61,29 +68,33 @@ public class PasswordListActivitySortingSpec extends BaseTestCase {
         sessionService.setUsername(MOCK_USER);
         sessionService.start();
         sessionService.getCurrentSession().setPassword(MOCK_PASS);
+
+        passC = new PasswordBean();
+        passC.setWebsite("C");
+
+        passB = new PasswordBean();
+        passB.setWebsite("B");
+
+        passA = new PasswordBean();
+        passA.setWebsite("A");
+
     }
 
     @Test
     public void verfiyBasicSorting() {
         final List<PasswordBean> passwords = new ArrayList<>();
 
-        final PasswordBean pass1 = new PasswordBean();
-        pass1.setWebsite("C");
-        passwords.add(pass1);
 
-        final PasswordBean pass2 = new PasswordBean();
-        pass2.setWebsite("B");
-        passwords.add(pass2);
-
-        final PasswordBean pass3 = new PasswordBean();
-        pass3.setWebsite("A");
-        passwords.add(pass3);
+        passwords.add(passC);
+        passwords.add(passB);
+        passwords.add(passA);
 
         sessionService.getCurrentSession().setPasswordBeanList(passwords);
 
         ActivityController<PasswordListActivity> controller = Robolectric.buildActivity(PasswordListActivity.class).create().start().resume();
         PasswordListActivity activity = controller.get();
 
+        Assert.assertEquals(3, activity.adapter.getItemCount());
         activity.recyclerView.measure(0,0);
         activity.recyclerView.layout(0,0,100,1000);
         Shadows.shadowOf(activity.recyclerView).dump();
@@ -95,6 +106,107 @@ public class PasswordListActivitySortingSpec extends BaseTestCase {
 
         controller.pause().stop().destroy();
     }
+
+
+    @Test
+    public void verifyBasicFiltering() {
+        final List<PasswordBean> passwords = new ArrayList<>();
+
+
+        passwords.add(passC);
+        passwords.add(passB);
+        passwords.add(passA);
+
+        sessionService.getCurrentSession().setPasswordBeanList(passwords);
+
+        ActivityController<PasswordListActivity> controller = Robolectric.buildActivity(PasswordListActivity.class).create().start().resume();
+        PasswordListActivity activity = controller.get();
+
+        Assert.assertEquals(3, activity.adapter.getItemCount());
+
+        activity.onQueryTextSubmit("B");
+
+        Assert.assertEquals(1, activity.adapter.getItemCount());
+        activity.recyclerView.measure(0,0);
+        activity.recyclerView.layout(0,0,100,1000);
+        Shadows.shadowOf(activity.recyclerView).dump();
+
+        assertRowWebsite("B", activity.recyclerView, 0);
+
+        controller.pause().stop().destroy();
+    }
+
+
+    @Test
+    public void verifyBlankFilterGivesEverything() {
+        final List<PasswordBean> passwords = new ArrayList<>();
+
+
+        passwords.add(passC);
+        passwords.add(passB);
+        passwords.add(passA);
+
+        sessionService.getCurrentSession().setPasswordBeanList(passwords);
+
+        ActivityController<PasswordListActivity> controller = Robolectric.buildActivity(PasswordListActivity.class).create().start().resume();
+        PasswordListActivity activity = controller.get();
+
+        Assert.assertEquals(3, activity.adapter.getItemCount());
+
+        activity.onQueryTextSubmit("B");
+
+        Assert.assertEquals(1, activity.adapter.getItemCount());
+
+        activity.onQueryTextSubmit("");
+
+        Assert.assertEquals(3, activity.adapter.getItemCount());
+
+        activity.recyclerView.measure(0,0);
+        activity.recyclerView.layout(0,0,100,1000);
+        Shadows.shadowOf(activity.recyclerView).dump();
+
+        assertRowWebsite("A", activity.recyclerView, 0);
+        assertRowWebsite("B", activity.recyclerView, 1);
+        assertRowWebsite("C", activity.recyclerView, 2);
+
+        controller.pause().stop().destroy();
+    }
+
+
+    @Test
+    public void verifyFilterRemainsOnRotate() {
+        final List<PasswordBean> passwords = new ArrayList<>();
+
+
+        passwords.add(passC);
+        passwords.add(passB);
+        passwords.add(passA);
+
+        sessionService.getCurrentSession().setPasswordBeanList(passwords);
+
+        ActivityController<PasswordListActivity> controller = Robolectric.buildActivity(PasswordListActivity.class).create().start().resume();
+        PasswordListActivity activity = controller.get();
+
+        Assert.assertEquals(3, activity.adapter.getItemCount());
+
+        activity.onQueryTextSubmit("B");
+
+        Assert.assertEquals(1, activity.adapter.getItemCount());
+
+        controller = ActivityLifecycleTestUtil.recreateActivity(controller);
+        activity = controller.get();
+
+        Assert.assertEquals(1, activity.adapter.getItemCount());
+
+        activity.recyclerView.measure(0,0);
+        activity.recyclerView.layout(0,0,100,1000);
+        Shadows.shadowOf(activity.recyclerView).dump();
+
+        assertRowWebsite("B", activity.recyclerView, 0);
+
+        controller.pause().stop().destroy();
+    }
+
 
     private void assertRowWebsite(String expectedWebsite, RecyclerView recyclerView, int index){
         TextView websiteView = (TextView)recyclerView.getChildAt(index).findViewById(R.id.password_list_row_website);

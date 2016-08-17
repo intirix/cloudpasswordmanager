@@ -169,7 +169,7 @@ public class PasswordListActivityActionSpec extends BaseTestCase {
 
 
         activity.adapter = EasyMock.createMock(PasswordListAdapter.class);
-        activity.adapter.notifyDataSetChanged();
+        activity.adapter.refreshFromSession();
         EasyMock.expectLastCall();
         EasyMock.replay(activity.adapter);
 
@@ -198,7 +198,7 @@ public class PasswordListActivityActionSpec extends BaseTestCase {
 
 
         activity.adapter = EasyMock.createMock(PasswordListAdapter.class);
-        activity.adapter.notifyDataSetChanged();
+        activity.adapter.refreshFromSession();
         EasyMock.expectLastCall();
         EasyMock.replay(activity.adapter);
 

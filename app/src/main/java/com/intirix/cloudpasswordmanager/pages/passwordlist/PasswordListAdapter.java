@@ -54,6 +54,14 @@ public class PasswordListAdapter extends RecyclerView.Adapter<PasswordListViewHo
      */
     public void refreshFromSession() {
         List<PasswordBean> newList = session.getPasswordBeanList();
+        updateList(newList);
+    }
+
+    /**
+     * Update the list of passwords
+     * @param newList
+     */
+    public void updateList(List<PasswordBean> newList) {
         sortedList.beginBatchedUpdates();
         if (newList==null) {
             sortedList.clear();
