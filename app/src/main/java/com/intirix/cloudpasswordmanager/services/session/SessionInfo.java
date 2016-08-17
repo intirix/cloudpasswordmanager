@@ -15,9 +15,9 @@
  */
 package com.intirix.cloudpasswordmanager.services.session;
 
-import com.intirix.cloudpasswordmanager.services.beans.Category;
-import com.intirix.cloudpasswordmanager.services.beans.PasswordBean;
-import com.intirix.cloudpasswordmanager.services.beans.PasswordInfo;
+import com.intirix.cloudpasswordmanager.services.backend.beans.Category;
+import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordBean;
+import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordInfo;
 
 import java.util.List;
 

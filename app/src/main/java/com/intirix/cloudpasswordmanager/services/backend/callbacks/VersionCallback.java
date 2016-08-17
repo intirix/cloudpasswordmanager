@@ -13,31 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.intirix.cloudpasswordmanager.services;
+package com.intirix.cloudpasswordmanager.services.backend.callbacks;
 
 /**
- * Created by jeff on 6/29/16.
+ * Created by jeff on 6/18/16.
  */
-public interface PasswordRequestService {
+public interface VersionCallback extends BaseCallback {
 
-    /**
-     * Request a login to the password service
-     */
-    public void login();
-
-    /**
-     * Is the login request still running
-     * @return
-     */
-    public boolean isLoginRunning();
-
-    /**
-     * Request the list of categories
-     */
-    public void listCategories();
-
-    /**
-     * Request the list of passwords
-     */
-    public void listPasswords();
+    public void onReturn(String version);
 }

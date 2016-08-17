@@ -24,7 +24,7 @@ import android.widget.TextView;
 
 import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.pages.passworddetail.PasswordDetailActivity;
-import com.intirix.cloudpasswordmanager.services.beans.PasswordBean;
+import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordBean;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

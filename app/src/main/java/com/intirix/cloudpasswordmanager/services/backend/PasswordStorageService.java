@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.intirix.cloudpasswordmanager.services;
+package com.intirix.cloudpasswordmanager.services.backend;
 
-import com.intirix.cloudpasswordmanager.services.callbacks.CategoryListCallback;
-import com.intirix.cloudpasswordmanager.services.callbacks.PasswordListCallback;
-import com.intirix.cloudpasswordmanager.services.callbacks.VersionCallback;
+import com.intirix.cloudpasswordmanager.services.backend.callbacks.CategoryListCallback;
+import com.intirix.cloudpasswordmanager.services.backend.callbacks.PasswordListCallback;
+import com.intirix.cloudpasswordmanager.services.backend.callbacks.VersionCallback;
 
 /**
  * Created by jeff on 6/18/16.

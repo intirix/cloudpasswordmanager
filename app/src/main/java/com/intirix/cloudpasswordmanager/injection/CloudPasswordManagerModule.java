@@ -31,10 +31,10 @@ import com.intirix.cloudpasswordmanager.services.ssl.CustomHostnameVerifier;
 import com.intirix.cloudpasswordmanager.services.ssl.CustomTrustManager;
 import com.intirix.cloudpasswordmanager.services.EventService;
 import com.intirix.cloudpasswordmanager.services.EventServiceImpl;
-import com.intirix.cloudpasswordmanager.services.PasswordRequestService;
-import com.intirix.cloudpasswordmanager.services.PasswordRequestServiceImpl;
-import com.intirix.cloudpasswordmanager.services.PasswordStorageService;
-import com.intirix.cloudpasswordmanager.services.PasswordStorageServiceImpl;
+import com.intirix.cloudpasswordmanager.services.backend.PasswordRequestService;
+import com.intirix.cloudpasswordmanager.services.backend.PasswordRequestServiceImpl;
+import com.intirix.cloudpasswordmanager.services.backend.PasswordStorageService;
+import com.intirix.cloudpasswordmanager.services.backend.PasswordStorageServiceImpl;
 import com.intirix.cloudpasswordmanager.services.session.SessionService;
 import com.intirix.cloudpasswordmanager.services.session.SessionServiceImpl;
 

@@ -24,9 +24,9 @@ import com.intirix.cloudpasswordmanager.TestPasswordApplication;
 import com.intirix.cloudpasswordmanager.pages.login.LoginActivity;
 import com.intirix.cloudpasswordmanager.pages.passworddetail.PasswordDetailActivity;
 import com.intirix.cloudpasswordmanager.services.session.SessionService;
-import com.intirix.cloudpasswordmanager.services.beans.Category;
-import com.intirix.cloudpasswordmanager.services.beans.PasswordBean;
-import com.intirix.cloudpasswordmanager.services.beans.PasswordInfo;
+import com.intirix.cloudpasswordmanager.services.backend.beans.Category;
+import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordBean;
+import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordInfo;
 
 import org.easymock.EasyMock;
 import org.junit.Assert;

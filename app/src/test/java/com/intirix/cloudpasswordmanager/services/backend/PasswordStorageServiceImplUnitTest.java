@@ -13,15 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.intirix.cloudpasswordmanager.services;
+package com.intirix.cloudpasswordmanager.services.backend;
 
 import android.content.Context;
 
 import com.ibm.icu.text.SimpleDateFormat;
 import com.intirix.cloudpasswordmanager.BuildConfig;
 import com.intirix.cloudpasswordmanager.TestPasswordApplication;
-import com.intirix.cloudpasswordmanager.services.beans.PasswordInfo;
-import com.intirix.cloudpasswordmanager.services.beans.PasswordResponse;
+import com.intirix.cloudpasswordmanager.services.backend.PasswordStorageServiceImpl;
+import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordInfo;
+import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordResponse;
 import com.intirix.cloudpasswordmanager.services.session.MockSessionService;
 
 import org.junit.Assert;

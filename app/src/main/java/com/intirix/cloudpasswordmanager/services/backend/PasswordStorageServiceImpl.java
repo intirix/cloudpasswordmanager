@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.intirix.cloudpasswordmanager.services;
+package com.intirix.cloudpasswordmanager.services.backend;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -22,12 +22,12 @@ import android.util.Log;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.intirix.cloudpasswordmanager.R;
-import com.intirix.cloudpasswordmanager.services.beans.Category;
-import com.intirix.cloudpasswordmanager.services.beans.PasswordInfo;
-import com.intirix.cloudpasswordmanager.services.beans.PasswordResponse;
-import com.intirix.cloudpasswordmanager.services.callbacks.CategoryListCallback;
-import com.intirix.cloudpasswordmanager.services.callbacks.PasswordListCallback;
-import com.intirix.cloudpasswordmanager.services.callbacks.VersionCallback;
+import com.intirix.cloudpasswordmanager.services.backend.beans.Category;
+import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordInfo;
+import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordResponse;
+import com.intirix.cloudpasswordmanager.services.backend.callbacks.CategoryListCallback;
+import com.intirix.cloudpasswordmanager.services.backend.callbacks.PasswordListCallback;
+import com.intirix.cloudpasswordmanager.services.backend.callbacks.VersionCallback;
 import com.intirix.cloudpasswordmanager.services.session.SessionService;
 
 import java.text.ParseException;

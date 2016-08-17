@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.intirix.cloudpasswordmanager.services.callbacks;
+package com.intirix.cloudpasswordmanager.services.backend.callbacks;
 
-import com.intirix.cloudpasswordmanager.services.beans.Category;
+import com.intirix.cloudpasswordmanager.services.backend.beans.Category;
 
 import java.util.List;
 

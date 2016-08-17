@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.intirix.cloudpasswordmanager.services;
+package com.intirix.cloudpasswordmanager.services.backend;
 
 import com.intirix.cloudpasswordmanager.BuildConfig;
 import com.intirix.cloudpasswordmanager.TestPasswordApplication;
@@ -21,9 +21,11 @@ import com.intirix.cloudpasswordmanager.pages.passwordlist.CategoryListUpdatedEv
 import com.intirix.cloudpasswordmanager.events.FatalErrorEvent;
 import com.intirix.cloudpasswordmanager.pages.login.LoginSuccessfulEvent;
 import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordListUpdatedEvent;
-import com.intirix.cloudpasswordmanager.services.beans.Category;
-import com.intirix.cloudpasswordmanager.services.beans.PasswordBean;
-import com.intirix.cloudpasswordmanager.services.beans.PasswordInfo;
+import com.intirix.cloudpasswordmanager.services.ColorService;
+import com.intirix.cloudpasswordmanager.services.MockEventService;
+import com.intirix.cloudpasswordmanager.services.backend.beans.Category;
+import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordBean;
+import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordInfo;
 import com.intirix.cloudpasswordmanager.services.session.MockSessionService;
 
 import org.easymock.EasyMock;

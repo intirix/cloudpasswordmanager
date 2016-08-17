@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.intirix.cloudpasswordmanager.services.beans;
+package com.intirix.cloudpasswordmanager.services.backend.beans;
 
 import java.util.Calendar;
 
 /**
  * Created by jeff on 6/28/16.
  */
-public class PasswordInfo {
+public class PasswordBean {
 
     private String id;
 
@@ -51,6 +51,12 @@ public class PasswordInfo {
     private boolean hasSpecial;
 
     private String category;
+
+    private int categoryBackground;
+
+    private int categoryForeground;
+
+    private String categoryName;
 
     private Calendar dateChanged;
 
@@ -182,12 +188,36 @@ public class PasswordInfo {
         this.website = website;
     }
 
+    public int getCategoryBackground() {
+        return categoryBackground;
+    }
+
+    public void setCategoryBackground(int categoryBackground) {
+        this.categoryBackground = categoryBackground;
+    }
+
+    public int getCategoryForeground() {
+        return categoryForeground;
+    }
+
+    public void setCategoryForeground(int categoryForeground) {
+        this.categoryForeground = categoryForeground;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        PasswordInfo that = (PasswordInfo) o;
+        PasswordBean that = (PasswordBean) o;
 
         if (isHasNotes() != that.isHasNotes()) return false;
         if (getStrength() != that.getStrength()) return false;
@@ -196,6 +226,8 @@ public class PasswordInfo {
         if (isHasUpper() != that.isHasUpper()) return false;
         if (isHasNumber() != that.isHasNumber()) return false;
         if (isHasSpecial() != that.isHasSpecial()) return false;
+        if (getCategoryBackground() != that.getCategoryBackground()) return false;
+        if (getCategoryForeground() != that.getCategoryForeground()) return false;
         if (getId() != null ? !getId().equals(that.getId()) : that.getId() != null) return false;
         if (getUser_id() != null ? !getUser_id().equals(that.getUser_id()) : that.getUser_id() != null)
             return false;
@@ -210,6 +242,8 @@ public class PasswordInfo {
         if (getNotes() != null ? !getNotes().equals(that.getNotes()) : that.getNotes() != null)
             return false;
         if (getCategory() != null ? !getCategory().equals(that.getCategory()) : that.getCategory() != null)
+            return false;
+        if (getCategoryName() != null ? !getCategoryName().equals(that.getCategoryName()) : that.getCategoryName() != null)
             return false;
         return getDateChanged() != null ? getDateChanged().equals(that.getDateChanged()) : that.getDateChanged() == null;
 
@@ -232,6 +266,9 @@ public class PasswordInfo {
         result = 31 * result + (isHasNumber() ? 1 : 0);
         result = 31 * result + (isHasSpecial() ? 1 : 0);
         result = 31 * result + (getCategory() != null ? getCategory().hashCode() : 0);
+        result = 31 * result + getCategoryBackground();
+        result = 31 * result + getCategoryForeground();
+        result = 31 * result + (getCategoryName() != null ? getCategoryName().hashCode() : 0);
         result = 31 * result + (getDateChanged() != null ? getDateChanged().hashCode() : 0);
         return result;
     }

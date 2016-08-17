@@ -13,12 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.intirix.cloudpasswordmanager.services.callbacks;
+package com.intirix.cloudpasswordmanager.services.backend.callbacks;
 
 /**
  * Created by jeff on 6/18/16.
  */
-public interface VersionCallback extends BaseCallback {
-
-    public void onReturn(String version);
+public interface BaseCallback {
+    public void onError(String message);
 }

@@ -22,7 +22,7 @@ import com.intirix.cloudpasswordmanager.BaseTestCase;
 import com.intirix.cloudpasswordmanager.BuildConfig;
 import com.intirix.cloudpasswordmanager.TestPasswordApplication;
 import com.intirix.cloudpasswordmanager.services.session.SessionService;
-import com.intirix.cloudpasswordmanager.services.beans.PasswordBean;
+import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordBean;
 
 import org.junit.Assert;
 import org.junit.Test;
