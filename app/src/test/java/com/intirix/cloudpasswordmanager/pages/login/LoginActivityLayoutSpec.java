@@ -22,7 +22,7 @@ import com.intirix.cloudpasswordmanager.BaseTestCase;
 import com.intirix.cloudpasswordmanager.BuildConfig;
 import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.TestPasswordApplication;
-import com.intirix.cloudpasswordmanager.services.MockCertPinningService;
+import com.intirix.cloudpasswordmanager.services.ssl.MockCertPinningService;
 
 import org.junit.Assert;
 import org.junit.Test;

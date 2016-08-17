@@ -22,7 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.intirix.cloudpasswordmanager.R;
-import com.intirix.cloudpasswordmanager.services.beans.SessionInfo;
+import com.intirix.cloudpasswordmanager.services.session.SessionInfo;
 
 /**
  * Created by jeff on 7/12/16.

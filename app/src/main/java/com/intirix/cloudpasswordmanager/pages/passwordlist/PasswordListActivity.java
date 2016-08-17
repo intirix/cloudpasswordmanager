@@ -23,8 +23,6 @@ import android.view.Menu;
 
 import com.intirix.cloudpasswordmanager.PasswordApplication;
 import com.intirix.cloudpasswordmanager.R;
-import com.intirix.cloudpasswordmanager.events.CategoryListUpdatedEvent;
-import com.intirix.cloudpasswordmanager.events.PasswordListUpdatedEvent;
 import com.intirix.cloudpasswordmanager.pages.SecureActivity;
 
 import org.greenrobot.eventbus.EventBus;
