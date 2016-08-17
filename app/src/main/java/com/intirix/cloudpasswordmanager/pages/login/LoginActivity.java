@@ -30,10 +30,10 @@ import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.events.FatalErrorEvent;
 import com.intirix.cloudpasswordmanager.pages.BaseActivity;
 import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordListActivity;
-import com.intirix.cloudpasswordmanager.services.CertPinningService;
+import com.intirix.cloudpasswordmanager.services.ssl.CertPinningService;
 import com.intirix.cloudpasswordmanager.services.PasswordRequestService;
-import com.intirix.cloudpasswordmanager.services.PinFailedEvent;
-import com.intirix.cloudpasswordmanager.services.PinSuccessfulEvent;
+import com.intirix.cloudpasswordmanager.services.ssl.PinFailedEvent;
+import com.intirix.cloudpasswordmanager.services.ssl.PinSuccessfulEvent;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;

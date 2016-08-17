@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.intirix.cloudpasswordmanager.services;
+package com.intirix.cloudpasswordmanager.services.ssl;
+
+import com.intirix.cloudpasswordmanager.services.ssl.CertPinningService;
 
 /**
  * Created by jeff on 8/11/16.

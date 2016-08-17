@@ -13,10 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.intirix.cloudpasswordmanager.services;
+package com.intirix.cloudpasswordmanager.services.ssl;
 
 /**
- * Created by jeff on 8/9/16.
+ * Event that gets submitted when a pin fails
  */
-public class PinSuccessfulEvent {
+public class PinFailedEvent {
+
+    private String message;
+
+    public PinFailedEvent(String message) {
+        this.message = message;
+    }
+
+    public String getMessage() {
+        return message;
+    }
 }

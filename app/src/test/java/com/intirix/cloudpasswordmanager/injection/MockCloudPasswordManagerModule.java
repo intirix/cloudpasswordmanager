@@ -17,9 +17,9 @@ package com.intirix.cloudpasswordmanager.injection;
 
 import android.content.Context;
 
-import com.intirix.cloudpasswordmanager.services.CertPinningService;
-import com.intirix.cloudpasswordmanager.services.CertPinningServiceImpl;
-import com.intirix.cloudpasswordmanager.services.MockCertPinningService;
+import com.intirix.cloudpasswordmanager.services.ssl.CertPinningService;
+import com.intirix.cloudpasswordmanager.services.ssl.CertPinningServiceImpl;
+import com.intirix.cloudpasswordmanager.services.ssl.MockCertPinningService;
 import com.intirix.cloudpasswordmanager.services.MockPasswordStorageService;
 import com.intirix.cloudpasswordmanager.services.MockSessionService;
 import com.intirix.cloudpasswordmanager.services.PasswordRequestService;

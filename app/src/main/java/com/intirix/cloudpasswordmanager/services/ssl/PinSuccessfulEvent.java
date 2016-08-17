@@ -13,27 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.intirix.cloudpasswordmanager.services;
-
-import java.security.cert.X509Certificate;
-
-import javax.net.ssl.X509TrustManager;
+package com.intirix.cloudpasswordmanager.services.ssl;
 
 /**
  * Created by jeff on 8/9/16.
  */
-public class MockSavingTrustManager extends SavingTrustManager {
-
-    public MockSavingTrustManager(X509TrustManager child) {
-        super(child);
-    }
-
-
-    public void setChain(X509Certificate[] chain) {
-        this.chain = chain;
-    }
-
-    public void setValid(boolean valid) {
-        this.valid = valid;
-    }
+public class PinSuccessfulEvent {
 }

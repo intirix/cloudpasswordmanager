@@ -13,20 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.intirix.cloudpasswordmanager.services;
+package com.intirix.cloudpasswordmanager.services.ssl;
+
+import com.intirix.cloudpasswordmanager.services.ssl.SavingTrustManager;
+
+import java.security.cert.X509Certificate;
+
+import javax.net.ssl.X509TrustManager;
 
 /**
- * Event that gets submitted when a pin fails
+ * Created by jeff on 8/9/16.
  */
-public class PinFailedEvent {
+public class MockSavingTrustManager extends SavingTrustManager {
 
-    private String message;
-
-    public PinFailedEvent(String message) {
-        this.message = message;
+    public MockSavingTrustManager(X509TrustManager child) {
+        super(child);
     }
 
-    public String getMessage() {
-        return message;
+
+    public void setChain(X509Certificate[] chain) {
+        this.chain = chain;
+    }
+
+    public void setValid(boolean valid) {
+        this.valid = valid;
     }
 }

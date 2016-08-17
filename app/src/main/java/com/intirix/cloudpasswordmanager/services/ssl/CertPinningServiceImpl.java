@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.intirix.cloudpasswordmanager.services;
+package com.intirix.cloudpasswordmanager.services.ssl;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -24,6 +24,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.intirix.cloudpasswordmanager.R;
+import com.intirix.cloudpasswordmanager.services.EventService;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
