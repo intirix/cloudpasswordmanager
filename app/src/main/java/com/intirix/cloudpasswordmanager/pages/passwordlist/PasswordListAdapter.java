@@ -16,13 +16,17 @@
 package com.intirix.cloudpasswordmanager.pages.passwordlist;
 
 import android.app.Activity;
+import android.support.v7.util.SortedList;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.intirix.cloudpasswordmanager.R;
+import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordBean;
 import com.intirix.cloudpasswordmanager.services.session.SessionInfo;
+
+import java.util.List;
 
 /**
  * Created by jeff on 7/12/16.
@@ -33,6 +37,8 @@ public class PasswordListAdapter extends RecyclerView.Adapter<PasswordListViewHo
 
     private Activity activity;
 
+    private final SortedList<PasswordBean> sortedList = new SortedList<PasswordBean>(PasswordBean.class, new PasswordListSortedCallback(this));
+
     PasswordListAdapter(Activity activity, SessionInfo session) {
         this.session = session;
         this.activity = activity;
@@ -40,10 +46,35 @@ public class PasswordListAdapter extends RecyclerView.Adapter<PasswordListViewHo
 
     @Override
     public int getItemCount() {
-        if (session.getPasswordBeanList()==null) {
-            return 0;
+        return sortedList.size();
+    }
+
+    /**
+     * Refresh from the password list
+     */
+    public void refreshFromSession() {
+        List<PasswordBean> newList = session.getPasswordBeanList();
+        updateList(newList);
+    }
+
+    /**
+     * Update the list of passwords
+     * @param newList
+     */
+    public void updateList(List<PasswordBean> newList) {
+        sortedList.beginBatchedUpdates();
+        if (newList==null||newList.size()==0) {
+            sortedList.clear();
+        } else {
+            for (int i = sortedList.size() - 1; i >= 0; i--) {
+                final PasswordBean model = sortedList.get(i);
+                if (!newList.contains(model)) {
+                    sortedList.remove(model);
+                }
+            }
+            sortedList.addAll(newList);
         }
-        return session.getPasswordBeanList().size();
+        sortedList.endBatchedUpdates();
     }
 
     @Override
@@ -55,6 +86,6 @@ public class PasswordListAdapter extends RecyclerView.Adapter<PasswordListViewHo
 
     @Override
     public void onBindViewHolder(PasswordListViewHolder holder, int position) {
-        holder.applyItem(position, session.getPasswordBeanList().get(position));
+        holder.applyItem(position, sortedList.get(position));
     }
 }

@@ -169,7 +169,7 @@ public class PasswordListActivityActionSpec extends BaseTestCase {
 
 
         activity.adapter = EasyMock.createMock(PasswordListAdapter.class);
-        activity.adapter.notifyDataSetChanged();
+        activity.adapter.refreshFromSession();
         EasyMock.expectLastCall();
         EasyMock.replay(activity.adapter);
 
@@ -178,8 +178,8 @@ public class PasswordListActivityActionSpec extends BaseTestCase {
         EasyMock.verify(activity.adapter);
 
         controller.pause().stop().destroy();
-
     }
+
     @Test
     public void verifyCategoryListUpdateNotifiesRecyclerView() {
         SessionService sessionService = serviceRef.sessionService();
@@ -198,7 +198,7 @@ public class PasswordListActivityActionSpec extends BaseTestCase {
 
 
         activity.adapter = EasyMock.createMock(PasswordListAdapter.class);
-        activity.adapter.notifyDataSetChanged();
+        activity.adapter.refreshFromSession();
         EasyMock.expectLastCall();
         EasyMock.replay(activity.adapter);
 

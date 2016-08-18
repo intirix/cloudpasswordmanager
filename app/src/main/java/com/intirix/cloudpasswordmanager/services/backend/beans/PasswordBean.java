@@ -20,7 +20,7 @@ import java.util.Calendar;
 /**
  * Created by jeff on 6/28/16.
  */
-public class PasswordBean {
+public class PasswordBean implements Comparable<PasswordBean> {
 
     private String id;
 
@@ -271,5 +271,24 @@ public class PasswordBean {
         result = 31 * result + (getCategoryName() != null ? getCategoryName().hashCode() : 0);
         result = 31 * result + (getDateChanged() != null ? getDateChanged().hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public int compareTo(PasswordBean another) {
+        int code = 0;
+
+        if (getWebsite()!=null && another.getWebsite()!=null) {
+            code = getWebsite().compareToIgnoreCase(another.getWebsite());
+        }
+
+        if (code==0 && getAddress()!=null && another.getAddress()!=null) {
+            code = getAddress().compareToIgnoreCase(another.getAddress());
+        }
+
+        if (code==0 && getLoginName()!=null && another.getLoginName()!=null) {
+            code = getLoginName().compareToIgnoreCase(another.getLoginName());
+        }
+
+        return code;
     }
 }
