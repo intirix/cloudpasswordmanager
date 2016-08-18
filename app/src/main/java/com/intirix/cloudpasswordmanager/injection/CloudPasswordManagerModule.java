@@ -37,6 +37,8 @@ import com.intirix.cloudpasswordmanager.services.backend.PasswordStorageService;
 import com.intirix.cloudpasswordmanager.services.backend.PasswordStorageServiceImpl;
 import com.intirix.cloudpasswordmanager.services.session.SessionService;
 import com.intirix.cloudpasswordmanager.services.session.SessionServiceImpl;
+import com.intirix.cloudpasswordmanager.services.ui.FilterPasswordService;
+import com.intirix.cloudpasswordmanager.services.ui.FilterPasswordServiceImpl;
 
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
@@ -161,6 +163,11 @@ public class CloudPasswordManagerModule {
 
     @Provides
     ClipboardService provideClipboardService(ClipboardServiceImpl impl) {
+        return impl;
+    }
+
+    @Provides
+    FilterPasswordService provideFilterPasswordService(FilterPasswordServiceImpl impl) {
         return impl;
     }
 }

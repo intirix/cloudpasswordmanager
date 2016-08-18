@@ -63,7 +63,7 @@ public class PasswordListAdapter extends RecyclerView.Adapter<PasswordListViewHo
      */
     public void updateList(List<PasswordBean> newList) {
         sortedList.beginBatchedUpdates();
-        if (newList==null) {
+        if (newList==null||newList.size()==0) {
             sortedList.clear();
         } else {
             for (int i = sortedList.size() - 1; i >= 0; i--) {

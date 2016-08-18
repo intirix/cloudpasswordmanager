@@ -29,6 +29,7 @@ import com.intirix.cloudpasswordmanager.PasswordApplication;
 import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.pages.SecureActivity;
 import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordBean;
+import com.intirix.cloudpasswordmanager.services.ui.FilterPasswordService;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -36,6 +37,8 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 
@@ -50,6 +53,9 @@ public class PasswordListActivity extends SecureActivity implements SearchView.O
     ProgressDialog progressDialog;
 
     private String filterString = "";
+
+    @Inject
+    FilterPasswordService filterPasswordService;
 
     @Override
     protected int getLayoutId() {
@@ -74,7 +80,7 @@ public class PasswordListActivity extends SecureActivity implements SearchView.O
             recyclerView.setLayoutManager(layoutManager);
             adapter = new PasswordListAdapter(this, sessionService.getCurrentSession());
             recyclerView.setAdapter(adapter);
-            filter(filterString);
+            filter();
         }
 
     }
@@ -90,7 +96,7 @@ public class PasswordListActivity extends SecureActivity implements SearchView.O
         super.onResume();
 
         updateProgressDialog();
-        filter(filterString);
+        filter();
     }
 
 
@@ -127,7 +133,7 @@ public class PasswordListActivity extends SecureActivity implements SearchView.O
     public void onPasswordsUpdated(PasswordListUpdatedEvent event) {
         updateProgressDialog();
         if (adapter!=null) {
-            adapter.refreshFromSession();
+            filter();
         }
     }
 
@@ -135,14 +141,14 @@ public class PasswordListActivity extends SecureActivity implements SearchView.O
     public void onCategoriesUpdated(CategoryListUpdatedEvent event) {
         updateProgressDialog();
         if (adapter!=null) {
-            adapter.refreshFromSession();
+            filter();
         }
     }
 
     @Override
     public boolean onQueryTextSubmit(String query) {
         filterString = query;
-        filter(filterString);
+        filter();
         recyclerView.scrollToPosition(0);
         return true;
     }
@@ -150,46 +156,22 @@ public class PasswordListActivity extends SecureActivity implements SearchView.O
     @Override
     public boolean onQueryTextChange(String newText) {
         filterString = newText;
-        filter(filterString);
+        filter();
         recyclerView.scrollToPosition(0);
         return true;
     }
 
-    private void filter(String text) {
-        final String query = text.toLowerCase();
-        // be safe
-        if (sessionService.getCurrentSession()!=null) {
-
-            // get the full list to filter
-            final List<PasswordBean> fullList = sessionService.getCurrentSession().getPasswordBeanList();
-
-            // if the filter is empty, then show everything
-            if (text.length() == 0) {
+    private void filter() {
+        if (adapter!=null) {
+            if (filterString.length() == 0) {
                 adapter.refreshFromSession();
             } else {
-                final List<PasswordBean> filteredList = new ArrayList<>(fullList.size());
-                for (final PasswordBean bean : fullList) {
-                    boolean add = matchesFilter(query, bean);
-
-                    if (add) {
-                        filteredList.add(bean);
-                    }
-                }
-                adapter.updateList(filteredList);
+                adapter.updateList(filterPasswordService.filterPasswords(filterString));
             }
         }
     }
 
-    private boolean matchesFilter(String query, PasswordBean bean) {
-        boolean add = false;
 
-        add = add||bean.getWebsite()!=null && bean.getWebsite().toLowerCase().contains(query);
-        add = add||bean.getAddress()!=null && bean.getAddress().toLowerCase().contains(query);
-        add = add||bean.getLoginName()!=null && bean.getLoginName().toLowerCase().contains(query);
-        add = add||bean.getNotes()!=null && bean.getNotes().toLowerCase().contains(query);
-        add = add||bean.getCategoryName()!=null && bean.getCategoryName().toLowerCase().contains(query);
-        return add;
-    }
 
     private void updateProgressDialog() {
         if (sessionService.getCurrentSession()!=null) {
