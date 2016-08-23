@@ -70,7 +70,7 @@ public class PasswordDetailsActivityActionSpec extends BaseTestCase {
     @Test
     public void verifyEmptySessionLogsUserOff() throws Exception {
         Intent intent = new Intent();
-        intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_INDEX, 0);
+        intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_ID, "123");
         ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class).withIntent(intent).create().start().resume();
         PasswordDetailActivity activity = controller.get();
 
@@ -92,7 +92,7 @@ public class PasswordDetailsActivityActionSpec extends BaseTestCase {
         sessionService.getCurrentSession().setPasswordBeanList(passwords);
 
         Intent intent = new Intent();
-        intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_INDEX, 1);
+        intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_ID, "54645");
         ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class).withIntent(intent).create().start().resume();
         PasswordDetailActivity activity = controller.get();
 
@@ -112,13 +112,14 @@ public class PasswordDetailsActivityActionSpec extends BaseTestCase {
 
         PasswordBean bean = new PasswordBean();
         bean.setPass("12345678");
+        bean.setId("3423");
         passwords.add(bean);
 
         sessionService.start();
         sessionService.getCurrentSession().setPasswordBeanList(passwords);
 
         Intent intent = new Intent();
-        intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_INDEX, 0);
+        intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_ID, bean.getId());
         ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class).withIntent(intent).create().start().resume();
         PasswordDetailActivity activity = controller.get();
 
@@ -135,7 +136,7 @@ public class PasswordDetailsActivityActionSpec extends BaseTestCase {
         PasswordBean bean = startValidPasswordSession();
 
         Intent intent = new Intent();
-        intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_INDEX, 0);
+        intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_ID, bean.getId());
 
         ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class).withIntent(intent).create().start().resume();
         PasswordDetailActivity activity = controller.get();
@@ -165,7 +166,7 @@ public class PasswordDetailsActivityActionSpec extends BaseTestCase {
         PasswordBean bean = startValidPasswordSession();
 
         Intent intent = new Intent();
-        intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_INDEX, 0);
+        intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_ID, bean.getId());
 
         ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class).withIntent(intent).create().start().resume();
         PasswordDetailActivity activity = controller.get();
@@ -190,7 +191,7 @@ public class PasswordDetailsActivityActionSpec extends BaseTestCase {
         PasswordBean bean = startValidPasswordSession();
 
         Intent intent = new Intent();
-        intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_INDEX, 0);
+        intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_ID, bean.getId());
 
         ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class).withIntent(intent).create().start().resume();
         PasswordDetailActivity activity = controller.get();
@@ -215,7 +216,7 @@ public class PasswordDetailsActivityActionSpec extends BaseTestCase {
         PasswordBean bean = startValidPasswordSession();
 
         Intent intent = new Intent();
-        intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_INDEX, 0);
+        intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_ID, bean.getId());
 
         ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class).withIntent(intent).create().start().resume();
         PasswordDetailActivity activity = controller.get();
@@ -241,7 +242,7 @@ public class PasswordDetailsActivityActionSpec extends BaseTestCase {
         bean.setAddress("http://www.github.com/login");
 
         Intent intent = new Intent();
-        intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_INDEX, 0);
+        intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_ID, bean.getId());
 
         ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class).withIntent(intent).create().start().resume();
         PasswordDetailActivity activity = controller.get();
@@ -266,7 +267,7 @@ public class PasswordDetailsActivityActionSpec extends BaseTestCase {
         PasswordBean bean = startValidPasswordSession();
 
         Intent intent = new Intent();
-        intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_INDEX, 0);
+        intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_ID, bean.getId());
 
         ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class).withIntent(intent).create().start().resume();
         PasswordDetailActivity activity = controller.get();
@@ -294,6 +295,7 @@ public class PasswordDetailsActivityActionSpec extends BaseTestCase {
 
         PasswordBean bean = new PasswordBean();
 
+        bean.setId("543543");
         bean.setWebsite("www.facebook.com");
         bean.setLoginName("markz");
         bean.setPass("ABCD!@#$");
@@ -316,7 +318,7 @@ public class PasswordDetailsActivityActionSpec extends BaseTestCase {
         PasswordBean bean = startValidPasswordSession();
 
         Intent intent = new Intent();
-        intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_INDEX, 0);
+        intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_ID, bean.getId());
 
         ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class).withIntent(intent).create().start().resume();
         PasswordDetailActivity activity = controller.get();
@@ -349,6 +351,7 @@ public class PasswordDetailsActivityActionSpec extends BaseTestCase {
 
         PasswordBean bean = new PasswordBean();
 
+        bean.setId("3324324");
         bean.setWebsite("www.facebook.com");
         bean.setLoginName("markz");
         bean.setPass("ABCD!@#$");
@@ -365,7 +368,7 @@ public class PasswordDetailsActivityActionSpec extends BaseTestCase {
         sessionService.getCurrentSession().setPasswordBeanList(passwords);
 
         Intent intent = new Intent();
-        intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_INDEX, 0);
+        intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_ID, bean.getId());
 
         ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class).withIntent(intent).create().start().resume();
         PasswordDetailActivity activity = controller.get();
