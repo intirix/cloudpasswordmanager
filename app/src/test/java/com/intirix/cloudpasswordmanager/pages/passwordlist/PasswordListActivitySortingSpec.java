@@ -15,6 +15,7 @@
  */
 package com.intirix.cloudpasswordmanager.pages.passwordlist;
 
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.widget.TextView;
 
@@ -23,10 +24,10 @@ import com.intirix.cloudpasswordmanager.BaseTestCase;
 import com.intirix.cloudpasswordmanager.BuildConfig;
 import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.TestPasswordApplication;
+import com.intirix.cloudpasswordmanager.pages.passworddetail.PasswordDetailActivity;
 import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordBean;
 import com.intirix.cloudpasswordmanager.services.session.SessionService;
 
-import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,6 +36,7 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.Shadows;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowActivity;
 import org.robolectric.util.ActivityController;
 
 import java.util.ArrayList;
@@ -71,12 +73,15 @@ public class PasswordListActivitySortingSpec extends BaseTestCase {
 
         passC = new PasswordBean();
         passC.setWebsite("C");
+        passC.setId("543");
 
         passB = new PasswordBean();
         passB.setWebsite("B");
+        passB.setId("123");
 
         passA = new PasswordBean();
         passA.setWebsite("A");
+        passA.setId("3454");
 
     }
 
@@ -206,6 +211,48 @@ public class PasswordListActivitySortingSpec extends BaseTestCase {
 
         controller.pause().stop().destroy();
     }
+
+
+    @Test
+    public void verifyRowClick() {
+        final List<PasswordBean> passwords = new ArrayList<>();
+
+
+        passwords.add(passC);
+        passwords.add(passB);
+        passwords.add(passA);
+
+        sessionService.getCurrentSession().setPasswordBeanList(passwords);
+
+        ActivityController<PasswordListActivity> controller = Robolectric.buildActivity(PasswordListActivity.class).create().start().resume();
+        PasswordListActivity activity = controller.get();
+
+        Assert.assertEquals(3, activity.adapter.getItemCount());
+
+        activity.onQueryTextSubmit("C");
+
+        Assert.assertEquals(1, activity.adapter.getItemCount());
+        activity.recyclerView.measure(0,0);
+        activity.recyclerView.layout(0,0,100,1000);
+        Shadows.shadowOf(activity.recyclerView).dump();
+
+        assertRowWebsite("C", activity.recyclerView, 0);
+
+        final int ROW_TO_CLICK = 0;
+
+        Shadows.shadowOf(activity.recyclerView.getChildAt(ROW_TO_CLICK)).dump();
+        activity.recyclerView.getChildAt(ROW_TO_CLICK).performClick();
+
+        ShadowActivity sact = Shadows.shadowOf(activity);
+        Intent intent = sact.peekNextStartedActivity();
+        Assert.assertNotNull("We should be changing activity, but we are not", intent);
+        Assert.assertEquals("Changing to wrong activity", PasswordDetailActivity.class.getName(), intent.getComponent().getClassName());
+        Assert.assertEquals(passC.getId(), intent.getStringExtra(PasswordDetailActivity.KEY_PASSWORD_ID));
+
+
+        controller.pause().stop().destroy();
+    }
+
 
 
     private void assertRowWebsite(String expectedWebsite, RecyclerView recyclerView, int index){

@@ -38,6 +38,8 @@ public class PasswordListViewHolder extends RecyclerView.ViewHolder implements V
 
     private int index;
 
+    private String id;
+
     @BindView(R.id.password_list_row_website)
     TextView website;
 
@@ -57,12 +59,13 @@ public class PasswordListViewHolder extends RecyclerView.ViewHolder implements V
     @Override
     public void onClick(View v) {
         Intent intent = new Intent(activity, PasswordDetailActivity.class);
-        intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_INDEX, index);
+        intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_ID, id);
         activity.startActivity(intent);
     }
 
     void applyItem(int index, PasswordBean pass) {
         this.index = index;
+        this.id = pass.getId();
         website.setText(pass.getWebsite());
         loginName.setText(pass.getLoginName());
         if (pass.getCategoryName()==null||pass.getCategoryName().length()==0) {

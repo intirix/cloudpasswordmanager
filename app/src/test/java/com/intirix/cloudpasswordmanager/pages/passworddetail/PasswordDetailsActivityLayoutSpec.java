@@ -52,6 +52,7 @@ public class PasswordDetailsActivityLayoutSpec extends BaseTestCase {
         PasswordBean bean = new PasswordBean();
 
         bean.setWebsite("www.facebook.com");
+        bean.setId("4324");
         bean.setLoginName("markz");
         bean.setPass("ABCD!@#$");
         bean.setHasLower(false);
@@ -67,7 +68,7 @@ public class PasswordDetailsActivityLayoutSpec extends BaseTestCase {
         sessionService.getCurrentSession().setPasswordBeanList(passwords);
 
         Intent intent = new Intent();
-        intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_INDEX, 0);
+        intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_ID, bean.getId());
 
         ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class).withIntent(intent).create().start().resume();
         PasswordDetailActivity activity = controller.get();

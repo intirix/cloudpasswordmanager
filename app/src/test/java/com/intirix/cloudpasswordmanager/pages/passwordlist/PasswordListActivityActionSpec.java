@@ -246,10 +246,12 @@ public class PasswordListActivityActionSpec extends BaseTestCase {
         PasswordBean pass1 = new PasswordBean();
         pass1.setWebsite("www.gmail.com");
         pass1.setLoginName("myGmailUsername");
+        pass1.setId("23423");
 
         PasswordBean pass2 = new PasswordBean();
-        pass1.setWebsite("www.gmail.com");
-        pass1.setLoginName("myGmailUsername");
+        pass2.setId("5433");
+        pass2.setWebsite("www.yahoo.com");
+        pass2.setLoginName("myYahooUsername");
 
 
 
@@ -268,7 +270,7 @@ public class PasswordListActivityActionSpec extends BaseTestCase {
         activity.recyclerView.layout(0,0,100,1000);
         Shadows.shadowOf(activity.recyclerView).dump();
 
-        final int ROW_TO_CLICK = 1;
+        final int ROW_TO_CLICK = 0;
 
         activity.recyclerView.getChildAt(ROW_TO_CLICK).performClick();
 
@@ -276,7 +278,7 @@ public class PasswordListActivityActionSpec extends BaseTestCase {
         Intent intent = sact.peekNextStartedActivity();
         Assert.assertNotNull("We should be changing activity, but we are not", intent);
         Assert.assertEquals("Changing to wrong activity", PasswordDetailActivity.class.getName(), intent.getComponent().getClassName());
-        Assert.assertEquals(ROW_TO_CLICK, intent.getIntExtra(PasswordDetailActivity.KEY_PASSWORD_INDEX, 0));
+        Assert.assertEquals(pass1.getId(), intent.getStringExtra(PasswordDetailActivity.KEY_PASSWORD_ID));
 
         controller.pause().stop().destroy();
 
