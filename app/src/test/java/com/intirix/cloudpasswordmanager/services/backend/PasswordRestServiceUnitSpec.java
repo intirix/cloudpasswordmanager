@@ -189,6 +189,22 @@ public class PasswordRestServiceUnitSpec {
         Assert.assertEquals("0", pr.getDeleted());
     }
 
+    @Test
+    public void testListPasswordsWithShared() throws IOException {
+        setMockResponseJson("/password-list-example-with-shared.json");
+        List<PasswordResponse> passwordList = impl.listPasswords().execute().body();
+
+        Assert.assertEquals(2, passwordList.size());
+        PasswordResponse pr = passwordList.get(0);
+
+        Assert.assertEquals("1", pr.getId());
+        Assert.assertEquals("pwuser2", pr.getUser_id());
+        Assert.assertEquals("www.gmail.com", pr.getWebsite());
+        Assert.assertEquals("password", pr.getPass());
+        Assert.assertFalse(pr.isNotes());
+        Assert.assertEquals("0", pr.getDeleted());
+    }
+
 
     /**
      * Get the response from a file
