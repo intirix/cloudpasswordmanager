@@ -138,12 +138,7 @@ public class PasswordStorageServiceImpl implements PasswordStorageService {
             @Override
             public void onResponse(Call<List<PasswordResponse>> call, Response<List<PasswordResponse>> response) {
                 try {
-                    List<PasswordInfo> list = new ArrayList<>();
-                    for (final PasswordResponse pr : response.body()) {
-                        if (sessionService.getUsername().equals(pr.getUser_id()) && "0".equals(pr.getDeleted())) {
-                            list.add(createPasswordInfo(pr));
-                        }
-                    }
+                    List<PasswordInfo> list = translatePasswordList(response.body());
                     cb.onReturn(list);
                 } catch (Exception e) {
                     cb.onError("Error: "+e);
@@ -156,6 +151,17 @@ public class PasswordStorageServiceImpl implements PasswordStorageService {
                 cb.onError("Failed: " + t);
             }
         });
+    }
+
+    @NonNull
+    List<PasswordInfo> translatePasswordList(List<PasswordResponse> response) throws ParseException {
+        List<PasswordInfo> list = new ArrayList<>();
+        for (final PasswordResponse pr : response) {
+            if (pr.getProperties()!=null && "0".equals(pr.getDeleted())) {
+                list.add(createPasswordInfo(pr));
+            }
+        }
+        return list;
     }
 
     PasswordInfo createPasswordInfo(PasswordResponse pr) throws ParseException {

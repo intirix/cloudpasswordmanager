@@ -38,6 +38,7 @@ import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -345,10 +346,12 @@ public class PasswordStorageServiceImplUnitSpec {
         final PasswordResponse pr1 = new PasswordResponse();
         pr1.setId("1");
         pr1.setUser_id(TESTUSER);
+        pr1.setProperties("{}");
         pr1.setDeleted("1");
         final PasswordResponse pr2 = new PasswordResponse();
         pr2.setId("2");
         pr2.setUser_id(TESTUSER);
+        pr2.setProperties("{}");
         pr2.setDeleted("0");
 
         final PasswordInfo pi2 = new PasswordInfo();
@@ -407,6 +410,7 @@ public class PasswordStorageServiceImplUnitSpec {
         pr2.setId("2");
         pr2.setUser_id(TESTUSER);
         pr2.setDeleted("0");
+        pr2.setProperties("{}");
 
         final PasswordInfo pi2 = new PasswordInfo();
         pi2.setId("2");
@@ -445,6 +449,49 @@ public class PasswordStorageServiceImplUnitSpec {
         EasyMock.verify(restService);
         Assert.assertEquals(1,counter.get());
 
+    }
+
+
+
+
+    @Test
+    public void verifyOtherUserPasswordsAreRemovedDuringTranslation() throws ParseException {
+        List<PasswordResponse> resp = new ArrayList<>();
+
+        PasswordResponse resp1 = new PasswordResponse();
+        resp1.setUser_id("other_user");
+        resp.add(resp1);
+
+        List<PasswordInfo> result = impl.translatePasswordList(resp);
+        Assert.assertEquals(0, result.size());
+    }
+
+    @Test
+    public void verifyDeletedPasswordsAreRemovedDuringTranslation() throws ParseException {
+        List<PasswordResponse> resp = new ArrayList<>();
+
+        PasswordResponse resp1 = new PasswordResponse();
+        resp1.setUser_id("me");
+        resp1.setDeleted("1");
+        resp.add(resp1);
+
+        List<PasswordInfo> result = impl.translatePasswordList(resp);
+        Assert.assertEquals(0, result.size());
+    }
+
+
+    @Test
+    public void verifySharedPasswordsAreKeptDuringTranslation() throws ParseException {
+        List<PasswordResponse> resp = new ArrayList<>();
+
+        PasswordResponse resp1 = new PasswordResponse();
+        resp1.setUser_id("other");
+        resp1.setDeleted("0");
+        resp1.setProperties("{}");
+        resp.add(resp1);
+
+        List<PasswordInfo> result = impl.translatePasswordList(resp);
+        Assert.assertEquals(1, result.size());
     }
 
 
