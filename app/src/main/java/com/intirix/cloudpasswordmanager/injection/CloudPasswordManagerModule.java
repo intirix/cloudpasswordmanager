@@ -18,25 +18,27 @@ package com.intirix.cloudpasswordmanager.injection;
 import android.content.Context;
 import android.util.Log;
 
-import com.intirix.cloudpasswordmanager.services.AuthenticationInterceptor;
-import com.intirix.cloudpasswordmanager.services.AutoLogoffService;
-import com.intirix.cloudpasswordmanager.services.AutoLogoffServiceImpl;
-import com.intirix.cloudpasswordmanager.services.CertPinningService;
-import com.intirix.cloudpasswordmanager.services.CertPinningServiceImpl;
-import com.intirix.cloudpasswordmanager.services.ClipboardService;
-import com.intirix.cloudpasswordmanager.services.ClipboardServiceImpl;
-import com.intirix.cloudpasswordmanager.services.ColorService;
-import com.intirix.cloudpasswordmanager.services.ColorServiceImpl;
-import com.intirix.cloudpasswordmanager.services.CustomHostnameVerifier;
-import com.intirix.cloudpasswordmanager.services.CustomTrustManager;
-import com.intirix.cloudpasswordmanager.services.EventService;
-import com.intirix.cloudpasswordmanager.services.EventServiceImpl;
-import com.intirix.cloudpasswordmanager.services.PasswordRequestService;
-import com.intirix.cloudpasswordmanager.services.PasswordRequestServiceImpl;
-import com.intirix.cloudpasswordmanager.services.PasswordStorageService;
-import com.intirix.cloudpasswordmanager.services.PasswordStorageServiceImpl;
-import com.intirix.cloudpasswordmanager.services.SessionService;
-import com.intirix.cloudpasswordmanager.services.SessionServiceImpl;
+import com.intirix.cloudpasswordmanager.services.session.AuthenticationInterceptor;
+import com.intirix.cloudpasswordmanager.services.session.AutoLogoffService;
+import com.intirix.cloudpasswordmanager.services.session.AutoLogoffServiceImpl;
+import com.intirix.cloudpasswordmanager.services.ssl.CertPinningService;
+import com.intirix.cloudpasswordmanager.services.ssl.CertPinningServiceImpl;
+import com.intirix.cloudpasswordmanager.services.ui.ClipboardService;
+import com.intirix.cloudpasswordmanager.services.ui.ClipboardServiceImpl;
+import com.intirix.cloudpasswordmanager.services.ui.ColorService;
+import com.intirix.cloudpasswordmanager.services.ui.ColorServiceImpl;
+import com.intirix.cloudpasswordmanager.services.ssl.CustomHostnameVerifier;
+import com.intirix.cloudpasswordmanager.services.ssl.CustomTrustManager;
+import com.intirix.cloudpasswordmanager.services.ui.EventService;
+import com.intirix.cloudpasswordmanager.services.ui.EventServiceImpl;
+import com.intirix.cloudpasswordmanager.services.backend.PasswordRequestService;
+import com.intirix.cloudpasswordmanager.services.backend.PasswordRequestServiceImpl;
+import com.intirix.cloudpasswordmanager.services.backend.PasswordStorageService;
+import com.intirix.cloudpasswordmanager.services.backend.PasswordStorageServiceImpl;
+import com.intirix.cloudpasswordmanager.services.session.SessionService;
+import com.intirix.cloudpasswordmanager.services.session.SessionServiceImpl;
+import com.intirix.cloudpasswordmanager.services.ui.FilterPasswordService;
+import com.intirix.cloudpasswordmanager.services.ui.FilterPasswordServiceImpl;
 
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
@@ -161,6 +163,11 @@ public class CloudPasswordManagerModule {
 
     @Provides
     ClipboardService provideClipboardService(ClipboardServiceImpl impl) {
+        return impl;
+    }
+
+    @Provides
+    FilterPasswordService provideFilterPasswordService(FilterPasswordServiceImpl impl) {
         return impl;
     }
 }

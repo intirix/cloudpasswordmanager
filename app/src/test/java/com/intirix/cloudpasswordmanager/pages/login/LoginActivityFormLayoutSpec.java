@@ -15,19 +15,13 @@
  */
 package com.intirix.cloudpasswordmanager.pages.login;
 
-import android.content.Intent;
 import android.view.View;
-import android.widget.Button;
 
 import com.intirix.cloudpasswordmanager.BaseTestCase;
 import com.intirix.cloudpasswordmanager.BuildConfig;
-import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.TestPasswordApplication;
-import com.intirix.cloudpasswordmanager.events.FatalErrorEvent;
-import com.intirix.cloudpasswordmanager.events.LoginSuccessfulEvent;
-import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordListActivity;
-import com.intirix.cloudpasswordmanager.services.MockSessionService;
-import com.intirix.cloudpasswordmanager.services.PasswordRequestService;
+import com.intirix.cloudpasswordmanager.services.session.MockSessionService;
+import com.intirix.cloudpasswordmanager.services.backend.PasswordRequestService;
 
 import org.easymock.EasyMock;
 import org.junit.Assert;
@@ -35,9 +29,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
-import org.robolectric.Shadows;
 import org.robolectric.annotation.Config;
-import org.robolectric.shadows.ShadowActivity;
 import org.robolectric.util.ActivityController;
 
 /**
@@ -45,7 +37,7 @@ import org.robolectric.util.ActivityController;
  */
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class,
-        application = TestPasswordApplication.class)
+        application = TestPasswordApplication.class, sdk = 23)
 public class LoginActivityFormLayoutSpec extends BaseTestCase {
 
     @Test

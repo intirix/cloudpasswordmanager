@@ -32,7 +32,7 @@ import org.robolectric.util.ActivityController;
  */
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class,
-        application = TestPasswordApplication.class)
+        application = TestPasswordApplication.class, sdk = 23)
 public class DependencyInjectionUnitTest extends BaseTestCase {
 
     @Test

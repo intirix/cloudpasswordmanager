@@ -23,10 +23,10 @@ import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.TestPasswordApplication;
 import com.intirix.cloudpasswordmanager.pages.login.LoginActivity;
 import com.intirix.cloudpasswordmanager.pages.passworddetail.PasswordDetailActivity;
-import com.intirix.cloudpasswordmanager.services.SessionService;
-import com.intirix.cloudpasswordmanager.services.beans.Category;
-import com.intirix.cloudpasswordmanager.services.beans.PasswordBean;
-import com.intirix.cloudpasswordmanager.services.beans.PasswordInfo;
+import com.intirix.cloudpasswordmanager.services.session.SessionService;
+import com.intirix.cloudpasswordmanager.services.backend.beans.Category;
+import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordBean;
+import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordInfo;
 
 import org.easymock.EasyMock;
 import org.junit.Assert;
@@ -48,7 +48,7 @@ import java.util.List;
  */
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class,
-        application = TestPasswordApplication.class)
+        application = TestPasswordApplication.class, sdk = 23)
 public class PasswordListActivityActionSpec extends BaseTestCase {
 
     @Test
@@ -169,7 +169,7 @@ public class PasswordListActivityActionSpec extends BaseTestCase {
 
 
         activity.adapter = EasyMock.createMock(PasswordListAdapter.class);
-        activity.adapter.notifyDataSetChanged();
+        activity.adapter.refreshFromSession();
         EasyMock.expectLastCall();
         EasyMock.replay(activity.adapter);
 
@@ -178,8 +178,8 @@ public class PasswordListActivityActionSpec extends BaseTestCase {
         EasyMock.verify(activity.adapter);
 
         controller.pause().stop().destroy();
-
     }
+
     @Test
     public void verifyCategoryListUpdateNotifiesRecyclerView() {
         SessionService sessionService = serviceRef.sessionService();
@@ -198,7 +198,7 @@ public class PasswordListActivityActionSpec extends BaseTestCase {
 
 
         activity.adapter = EasyMock.createMock(PasswordListAdapter.class);
-        activity.adapter.notifyDataSetChanged();
+        activity.adapter.refreshFromSession();
         EasyMock.expectLastCall();
         EasyMock.replay(activity.adapter);
 
@@ -246,10 +246,12 @@ public class PasswordListActivityActionSpec extends BaseTestCase {
         PasswordBean pass1 = new PasswordBean();
         pass1.setWebsite("www.gmail.com");
         pass1.setLoginName("myGmailUsername");
+        pass1.setId("23423");
 
         PasswordBean pass2 = new PasswordBean();
-        pass1.setWebsite("www.gmail.com");
-        pass1.setLoginName("myGmailUsername");
+        pass2.setId("5433");
+        pass2.setWebsite("www.yahoo.com");
+        pass2.setLoginName("myYahooUsername");
 
 
 
@@ -268,7 +270,7 @@ public class PasswordListActivityActionSpec extends BaseTestCase {
         activity.recyclerView.layout(0,0,100,1000);
         Shadows.shadowOf(activity.recyclerView).dump();
 
-        final int ROW_TO_CLICK = 1;
+        final int ROW_TO_CLICK = 0;
 
         activity.recyclerView.getChildAt(ROW_TO_CLICK).performClick();
 
@@ -276,7 +278,7 @@ public class PasswordListActivityActionSpec extends BaseTestCase {
         Intent intent = sact.peekNextStartedActivity();
         Assert.assertNotNull("We should be changing activity, but we are not", intent);
         Assert.assertEquals("Changing to wrong activity", PasswordDetailActivity.class.getName(), intent.getComponent().getClassName());
-        Assert.assertEquals(ROW_TO_CLICK, intent.getIntExtra(PasswordDetailActivity.KEY_PASSWORD_INDEX, 0));
+        Assert.assertEquals(pass1.getId(), intent.getStringExtra(PasswordDetailActivity.KEY_PASSWORD_ID));
 
         controller.pause().stop().destroy();
 

@@ -25,8 +25,8 @@ import android.widget.Toast;
 import com.intirix.cloudpasswordmanager.PasswordApplication;
 import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.pages.SecureActivity;
-import com.intirix.cloudpasswordmanager.services.ClipboardService;
-import com.intirix.cloudpasswordmanager.services.beans.PasswordBean;
+import com.intirix.cloudpasswordmanager.services.ui.ClipboardService;
+import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordBean;
 
 import java.util.List;
 
@@ -38,7 +38,7 @@ import butterknife.OnLongClick;
 
 public class PasswordDetailActivity extends SecureActivity {
 
-    public static String KEY_PASSWORD_INDEX = "PasswordIndex";
+    public static String KEY_PASSWORD_ID = "PasswordID";
 
 
     @BindView(R.id.password_detail_website)
@@ -94,18 +94,28 @@ public class PasswordDetailActivity extends SecureActivity {
 
         PasswordApplication.getSInjector(this).inject(this);
 
-        int passwordIndex = getIntent().getIntExtra(KEY_PASSWORD_INDEX, 0);
+        String id = getIntent().getStringExtra(KEY_PASSWORD_ID);
 
         if (sessionService.getCurrentSession()==null) {
             logoff();
         } else {
             List<PasswordBean> passwordBeanList = sessionService.getCurrentSession().getPasswordBeanList();
-
-            if (passwordBeanList==null || passwordBeanList.size()<passwordIndex) {
+            if (passwordBeanList==null) {
                 logoff();
             } else {
-                passwordBean = passwordBeanList.get(passwordIndex);
-                updateForm();
+                PasswordBean bean = null;
+                for (final PasswordBean pb : passwordBeanList) {
+                    if (id.equals(pb.getId())) {
+                        bean = pb;
+                    }
+                }
+
+                if (bean==null) {
+                    logoff();
+                } else {
+                    passwordBean = bean;
+                    updateForm();
+                }
             }
         }
 

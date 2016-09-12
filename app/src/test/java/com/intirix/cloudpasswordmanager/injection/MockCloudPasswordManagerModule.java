@@ -17,17 +17,17 @@ package com.intirix.cloudpasswordmanager.injection;
 
 import android.content.Context;
 
-import com.intirix.cloudpasswordmanager.services.CertPinningService;
-import com.intirix.cloudpasswordmanager.services.CertPinningServiceImpl;
-import com.intirix.cloudpasswordmanager.services.MockCertPinningService;
-import com.intirix.cloudpasswordmanager.services.MockPasswordStorageService;
-import com.intirix.cloudpasswordmanager.services.MockSessionService;
-import com.intirix.cloudpasswordmanager.services.PasswordRequestService;
-import com.intirix.cloudpasswordmanager.services.PasswordRequestServiceImpl;
-import com.intirix.cloudpasswordmanager.services.PasswordStorageService;
-import com.intirix.cloudpasswordmanager.services.PasswordStorageServiceImpl;
-import com.intirix.cloudpasswordmanager.services.SessionService;
-import com.intirix.cloudpasswordmanager.services.SessionServiceImpl;
+import com.intirix.cloudpasswordmanager.services.ssl.CertPinningService;
+import com.intirix.cloudpasswordmanager.services.ssl.CertPinningServiceImpl;
+import com.intirix.cloudpasswordmanager.services.ssl.MockCertPinningService;
+import com.intirix.cloudpasswordmanager.services.backend.MockPasswordStorageService;
+import com.intirix.cloudpasswordmanager.services.session.MockSessionService;
+import com.intirix.cloudpasswordmanager.services.backend.PasswordRequestService;
+import com.intirix.cloudpasswordmanager.services.backend.PasswordRequestServiceImpl;
+import com.intirix.cloudpasswordmanager.services.backend.PasswordStorageService;
+import com.intirix.cloudpasswordmanager.services.backend.PasswordStorageServiceImpl;
+import com.intirix.cloudpasswordmanager.services.session.SessionService;
+import com.intirix.cloudpasswordmanager.services.session.SessionServiceImpl;
 
 import org.easymock.EasyMock;
 

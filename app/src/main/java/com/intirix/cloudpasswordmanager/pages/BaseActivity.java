@@ -28,14 +28,15 @@ import android.widget.ListView;
 
 import com.intirix.cloudpasswordmanager.PasswordApplication;
 import com.intirix.cloudpasswordmanager.R;
+import com.intirix.cloudpasswordmanager.pages.about.AboutNavigationItem;
 import com.intirix.cloudpasswordmanager.pages.login.LogOffNavigationItem;
 import com.intirix.cloudpasswordmanager.pages.login.LoginNavigationItem;
 import com.intirix.cloudpasswordmanager.pages.navigation.NavigationAdapter;
 import com.intirix.cloudpasswordmanager.pages.navigation.NavigationClickListener;
 import com.intirix.cloudpasswordmanager.pages.navigation.NavigationItem;
 import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordListNavigationItem;
-import com.intirix.cloudpasswordmanager.services.AutoLogoffService;
-import com.intirix.cloudpasswordmanager.services.SessionService;
+import com.intirix.cloudpasswordmanager.services.session.AutoLogoffService;
+import com.intirix.cloudpasswordmanager.services.session.SessionService;
 
 import java.util.LinkedList;
 

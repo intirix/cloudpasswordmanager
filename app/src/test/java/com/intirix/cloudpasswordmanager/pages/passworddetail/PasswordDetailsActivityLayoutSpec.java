@@ -21,8 +21,8 @@ import android.view.View;
 import com.intirix.cloudpasswordmanager.BaseTestCase;
 import com.intirix.cloudpasswordmanager.BuildConfig;
 import com.intirix.cloudpasswordmanager.TestPasswordApplication;
-import com.intirix.cloudpasswordmanager.services.SessionService;
-import com.intirix.cloudpasswordmanager.services.beans.PasswordBean;
+import com.intirix.cloudpasswordmanager.services.session.SessionService;
+import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordBean;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -40,7 +40,7 @@ import java.util.List;
  */
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class,
-        application = TestPasswordApplication.class)
+        application = TestPasswordApplication.class, sdk = 23)
 public class PasswordDetailsActivityLayoutSpec extends BaseTestCase {
 
     @Test
@@ -52,6 +52,7 @@ public class PasswordDetailsActivityLayoutSpec extends BaseTestCase {
         PasswordBean bean = new PasswordBean();
 
         bean.setWebsite("www.facebook.com");
+        bean.setId("4324");
         bean.setLoginName("markz");
         bean.setPass("ABCD!@#$");
         bean.setHasLower(false);
@@ -67,7 +68,7 @@ public class PasswordDetailsActivityLayoutSpec extends BaseTestCase {
         sessionService.getCurrentSession().setPasswordBeanList(passwords);
 
         Intent intent = new Intent();
-        intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_INDEX, 0);
+        intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_ID, bean.getId());
 
         ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class).withIntent(intent).create().start().resume();
         PasswordDetailActivity activity = controller.get();

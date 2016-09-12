@@ -4,6 +4,10 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <!-- support for Chromebooks without touchscreens -->
+    <uses-feature android:name="android.hardware.touchscreen"
+        android:required="false" />
+
     <application
         android:name=".PasswordApplication"
         android:allowBackup="true"
@@ -23,7 +27,7 @@
             android:label="@string/password_list_title" />
         <activity android:name=".pages.passworddetail.PasswordDetailActivity"
             android:label="@string/password_detail_title"/>
-        <activity android:name=".pages.AboutActivity"/>
+        <activity android:name=".pages.about.AboutActivity"/>
     </application>
 
 </manifest>
