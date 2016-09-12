@@ -50,7 +50,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class,
-        application = TestPasswordApplication.class)
+        application = TestPasswordApplication.class, sdk = 23)
 public class PasswordRestServiceUnitSpec {
 
     public static final String TESTUSER = "testuser";

@@ -45,7 +45,7 @@ import java.util.List;
  */
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class,
-        application = TestPasswordApplication.class)
+        application = TestPasswordApplication.class, sdk = 23)
 public class PasswordRequestServiceImplUnitSpec {
 
     private MockEventService eventService;

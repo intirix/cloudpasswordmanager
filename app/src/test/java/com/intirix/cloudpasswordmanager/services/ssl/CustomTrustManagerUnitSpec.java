@@ -39,7 +39,7 @@ import javax.net.ssl.X509TrustManager;
  */
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class,
-        application = TestPasswordApplication.class)
+        application = TestPasswordApplication.class, sdk = 23)
 public class CustomTrustManagerUnitSpec {
 
     private CustomTrustManager impl;

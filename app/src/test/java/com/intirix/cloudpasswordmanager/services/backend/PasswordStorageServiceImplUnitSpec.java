@@ -58,7 +58,7 @@ import retrofit2.Response;
  */
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class,
-        application = TestPasswordApplication.class)
+        application = TestPasswordApplication.class, sdk = 23)
 public class PasswordStorageServiceImplUnitSpec {
 
     public static final String TESTUSER = "testuser";
