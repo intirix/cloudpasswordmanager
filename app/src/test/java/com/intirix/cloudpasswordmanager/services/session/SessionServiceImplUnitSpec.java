@@ -33,7 +33,7 @@ import org.robolectric.annotation.Config;
  */
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class,
-        application = TestPasswordApplication.class)
+        application = TestPasswordApplication.class, sdk = 23)
 public class SessionServiceImplUnitSpec {
 
     public static final String TESTURL = "https://www.example.com/owncloud";

@@ -47,7 +47,7 @@ import java.util.List;
  */
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class,
-        application = TestPasswordApplication.class)
+        application = TestPasswordApplication.class, sdk = 23)
 public class PasswordListActivitySortingSpec extends BaseTestCase {
 
     private static final String MOCK_URL = "https://www.example.com/owncloud";

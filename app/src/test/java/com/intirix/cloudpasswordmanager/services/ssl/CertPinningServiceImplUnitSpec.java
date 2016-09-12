@@ -61,7 +61,7 @@ import okhttp3.internal.tls.OkHostnameVerifier;
  */
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class,
-        application = TestPasswordApplication.class)
+        application = TestPasswordApplication.class, sdk = 23)
 public class CertPinningServiceImplUnitSpec {
 
     private CertPinningServiceImpl impl;
