@@ -17,6 +17,7 @@ package com.intirix.cloudpasswordmanager.services.backend;
 
 import android.content.Context;
 
+import com.google.gson.JsonSyntaxException;
 import com.ibm.icu.text.SimpleDateFormat;
 import com.intirix.cloudpasswordmanager.BuildConfig;
 import com.intirix.cloudpasswordmanager.TestPasswordApplication;
@@ -165,6 +166,56 @@ public class PasswordStorageServiceImplUnitTest {
         Assert.assertEquals("1", pi.getCategory());
         Assert.assertEquals("2016-06-28", new SimpleDateFormat("yyyy-MM-dd").format(pi.getDateChanged().getTime()));
         Assert.assertEquals("my notes", pi.getNotes());
+    }
+
+
+    @Test
+    public void testCreatePasswordInfoWithBackslashInNotes() throws ParseException {
+        final PasswordResponse pr = new PasswordResponse();
+        pr.setId("1");
+        pr.setUser_id("user1");
+        pr.setWebsite("website");
+        pr.setPass("password");
+        pr.setDeleted("0");
+        pr.setNotes(true);
+        pr.setProperties("\"loginname\" : \"joebob2\", \"address\" : \"www.github.com/joe\", \"strength\" : \"2\", \"length\" : \"8\", \"lower\" : \"1\", \"upper\" : \"0\", \"number\" : \"0\", \"special\" : \"0\", \"category\" : \"1\", \"datechanged\" : \"2016-06-28\", \"notes\" : \"A \\\\ B\"");
+
+        final PasswordInfo pi = impl.createPasswordInfo(pr);
+        Assert.assertEquals(pr.getId(), pi.getId());
+        Assert.assertEquals(pr.getUser_id(), pi.getUser_id());
+        Assert.assertEquals(pr.getPass(), pi.getPass());
+        Assert.assertEquals(pr.isNotes(), pi.isHasNotes());
+
+        Assert.assertEquals("joebob2", pi.getLoginName());
+        Assert.assertEquals("www.github.com/joe", pi.getAddress());
+        Assert.assertEquals(2, pi.getStrength());
+        Assert.assertEquals(8, pi.getLength());
+        Assert.assertTrue(pi.isHasLower());
+        Assert.assertFalse(pi.isHasUpper());
+        Assert.assertFalse(pi.isHasNumber());
+        Assert.assertFalse(pi.isHasSpecial());
+        Assert.assertEquals("1", pi.getCategory());
+        Assert.assertEquals("2016-06-28", new SimpleDateFormat("yyyy-MM-dd").format(pi.getDateChanged().getTime()));
+        Assert.assertEquals("A \\ B", pi.getNotes());
+    }
+
+    @Test
+    public void testCreatePasswordInfoWithBadBackslashInNotes() throws ParseException {
+        final PasswordResponse pr = new PasswordResponse();
+        pr.setId("1");
+        pr.setUser_id("user1");
+        pr.setWebsite("website");
+        pr.setPass("password");
+        pr.setDeleted("0");
+        pr.setNotes(true);
+        pr.setProperties("\"loginname\" : \"joebob2\", \"address\" : \"www.github.com/joe\", \"strength\" : \"2\", \"length\" : \"8\", \"lower\" : \"1\", \"upper\" : \"0\", \"number\" : \"0\", \"special\" : \"0\", \"category\" : \"1\", \"datechanged\" : \"2016-06-28\", \"notes\" : \"A \\ B\"");
+
+        try {
+            final PasswordInfo pi = impl.createPasswordInfo(pr);
+            Assert.fail("Expected exception");
+        } catch (JsonSyntaxException e) {
+            // pass
+        }
     }
 
 

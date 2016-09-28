@@ -19,6 +19,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -36,6 +37,8 @@ import butterknife.ButterKnife;
  * Created by jeff on 7/27/16.
  */
 public abstract class SecureActivity extends BaseActivity {
+
+    private static final String TAG = SecureActivity.class.getSimpleName();
 
     private Handler handler;
 
@@ -105,6 +108,7 @@ public abstract class SecureActivity extends BaseActivity {
     }
 
     protected void logoff() {
+        Log.d(TAG, "logoff()");
         sessionService.end();
         Intent intent = new Intent(this, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
