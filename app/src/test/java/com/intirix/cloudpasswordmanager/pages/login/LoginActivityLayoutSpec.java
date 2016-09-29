@@ -62,7 +62,7 @@ public class LoginActivityLayoutSpec extends BaseTestCase {
         activity.urlInput.setText("https://cloud.intirix.com");
         MockCertPinningService certPinningService = (MockCertPinningService)activity.certPinningService;
         certPinningService.setEnabled(false);
-        activity.updateLoginForm();
+        activity.updateLoginForm(true);
 
         Button pinButton = (Button)activity.findViewById(R.id.login_pin_button);
         Assert.assertEquals(View.VISIBLE, pinButton.getVisibility());
@@ -82,7 +82,7 @@ public class LoginActivityLayoutSpec extends BaseTestCase {
         MockCertPinningService certPinningService = (MockCertPinningService)activity.certPinningService;
         certPinningService.setEnabled(true);
         activity.urlInput.setText("https://cloud.example.com");
-        activity.updateLoginForm();
+        activity.updateLoginForm(true);
 
         Assert.assertFalse("Url input should be disabled", activity.urlInput.isEnabled());
 
