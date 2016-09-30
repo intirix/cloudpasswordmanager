@@ -51,6 +51,8 @@ public class LoginActivity extends BaseActivity {
 
     private static final String TAG = LoginActivity.class.getSimpleName();
 
+    public static final String PARAM_ERROR_MESSAGE = "errorMessage";
+
     @Inject
     PasswordRequestService passwordRequestService;
 
@@ -112,11 +114,20 @@ public class LoginActivity extends BaseActivity {
             userInput.setText(sessionService.getUsername());
         }
 
+        // Only set the error message if the current view is empty
+        // If another error occurs, we won't want the originally passed in error
+        // to override the new error
+        Intent intent = getIntent();
+        String paramError = intent.getStringExtra(PARAM_ERROR_MESSAGE);
+        if (errorMessageView.getText().length()==0 && paramError !=null) {
+            errorMessageView.setText(paramError);
+        }
+
         // only show the error message if the view is populated
         updateErrorMessageVisibility();
 
         // recheck the pinning flags
-        updateLoginForm();
+        updateLoginForm(false);
 
         // when coming back from a rotate, re-show the progress dialog if needed
         updateProgressDialog();
@@ -136,12 +147,14 @@ public class LoginActivity extends BaseActivity {
         }
     }
 
-    void updateLoginForm() {
+    void updateLoginForm(boolean clearError) {
         String url = urlInput.getText().toString();
         try {
-            // default hiding error messages and enabling everything
-            errorMessageView.setText("");
-            errorMessageView.setVisibility(View.GONE);
+            if (clearError) {
+                // default hiding error messages and enabling everything
+                errorMessageView.setText("");
+                errorMessageView.setVisibility(View.GONE);
+            }
             loginButton.setEnabled(true);
             pinButton.setEnabled(true);
             unpinButton.setEnabled(true);
@@ -200,7 +213,7 @@ public class LoginActivity extends BaseActivity {
 
     @OnTextChanged(R.id.login_url)
     public void onUrlChanged(CharSequence charSequence, int a, int b, int c) {
-        updateLoginForm();
+        updateLoginForm(true);
     }
 
     @OnClick(R.id.login_login_button)
@@ -247,13 +260,13 @@ public class LoginActivity extends BaseActivity {
         certPinningService.disable();
         errorMessageView.setText("");
         updateErrorMessageVisibility();
-        updateLoginForm();
+        updateLoginForm(true);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onPinSuccess(PinSuccessfulEvent event) {
         updateProgressDialog();
-        updateLoginForm();
+        updateLoginForm(true);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -261,7 +274,7 @@ public class LoginActivity extends BaseActivity {
         updateProgressDialog();
         errorMessageView.setText(event.getMessage());
         updateErrorMessageVisibility();
-        updateLoginForm();
+        updateLoginForm(true);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

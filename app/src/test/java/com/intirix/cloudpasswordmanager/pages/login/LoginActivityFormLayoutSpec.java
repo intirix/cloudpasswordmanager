@@ -15,8 +15,10 @@
  */
 package com.intirix.cloudpasswordmanager.pages.login;
 
+import android.content.Intent;
 import android.view.View;
 
+import com.intirix.cloudpasswordmanager.ActivityLifecycleTestUtil;
 import com.intirix.cloudpasswordmanager.BaseTestCase;
 import com.intirix.cloudpasswordmanager.BuildConfig;
 import com.intirix.cloudpasswordmanager.TestPasswordApplication;
@@ -48,11 +50,61 @@ public class LoginActivityFormLayoutSpec extends BaseTestCase {
         Assert.assertEquals("", activity.urlInput.getText().toString());
         Assert.assertEquals("", activity.userInput.getText().toString());
         Assert.assertEquals("", activity.passInput.getText().toString());
+        Assert.assertEquals("", activity.errorMessageView.getText().toString());
         Assert.assertFalse(activity.loginButton.isEnabled());
         Assert.assertFalse(activity.pinButton.isEnabled());
 
         controller.pause().stop().destroy();
     }
+
+
+    @Test
+    public void verifyFormHasErrorMessageIfPassedIn() {
+
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.putExtra(LoginActivity.PARAM_ERROR_MESSAGE, "ERROR");
+
+        ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class).withIntent(intent).create().start().resume();
+        LoginActivity activity = controller.get();
+
+        Assert.assertEquals("", activity.urlInput.getText().toString());
+        Assert.assertEquals("", activity.userInput.getText().toString());
+        Assert.assertEquals("", activity.passInput.getText().toString());
+        Assert.assertEquals("ERROR", activity.errorMessageView.getText().toString());
+        Assert.assertFalse(activity.loginButton.isEnabled());
+        Assert.assertFalse(activity.pinButton.isEnabled());
+
+        controller.pause().stop().destroy();
+    }
+
+
+    /* this test isn't working yet
+    @Test
+    public void verifyPassedInErrorDoesNotOverrideNewErrors() {
+
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.putExtra(LoginActivity.PARAM_ERROR_MESSAGE, "ERROR");
+
+        ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class).withIntent(intent).create().start().resume();
+        LoginActivity activity = controller.get();
+
+        Assert.assertEquals("", activity.urlInput.getText().toString());
+        Assert.assertEquals("", activity.userInput.getText().toString());
+        Assert.assertEquals("", activity.passInput.getText().toString());
+        Assert.assertEquals("ERROR", activity.errorMessageView.getText().toString());
+        Assert.assertFalse(activity.loginButton.isEnabled());
+        Assert.assertFalse(activity.pinButton.isEnabled());
+
+        activity.errorMessageView.setText("NEW ERROR");
+
+        controller = ActivityLifecycleTestUtil.recreateActivity(controller);
+        activity = controller.get();
+
+        Assert.assertEquals("NEW ERROR", activity.errorMessageView.getText().toString());
+
+        controller.pause().stop().destroy();
+    }
+    */
 
 
     @Test

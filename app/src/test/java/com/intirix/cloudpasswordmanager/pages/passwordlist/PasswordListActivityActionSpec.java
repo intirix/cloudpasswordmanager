@@ -21,6 +21,7 @@ import com.intirix.cloudpasswordmanager.BaseTestCase;
 import com.intirix.cloudpasswordmanager.BuildConfig;
 import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.TestPasswordApplication;
+import com.intirix.cloudpasswordmanager.pages.FatalErrorEvent;
 import com.intirix.cloudpasswordmanager.pages.login.LoginActivity;
 import com.intirix.cloudpasswordmanager.pages.passworddetail.PasswordDetailActivity;
 import com.intirix.cloudpasswordmanager.services.session.SessionService;
@@ -88,6 +89,32 @@ public class PasswordListActivityActionSpec extends BaseTestCase {
         Shadows.shadowOf(activity.findViewById(R.id.my_toolbar)).dump();
         sact.clickMenuItem(R.id.menuitem_logout);
 
+
+        // verify that the sessionService was cleared out
+        Assert.assertNull(sessionService.getCurrentSession());
+        assertLogOff(activity);
+
+
+        controller.pause().stop().destroy();
+    }
+
+    @Test
+    public void verifyFatalErrorLogsOut() throws Exception {
+        SessionService sessionService = serviceRef.sessionService();
+
+        final String MOCK_URL = "https://www.example.com/owncloud";
+        final String MOCK_USER = "myusername";
+        final String MOCK_PASS = "mypassword";
+
+        sessionService.setUrl(MOCK_URL);
+        sessionService.setUsername(MOCK_USER);
+        sessionService.start();
+        sessionService.getCurrentSession().setPassword(MOCK_PASS);
+
+        ActivityController<PasswordListActivity> controller = Robolectric.buildActivity(PasswordListActivity.class).create().start().resume();
+        PasswordListActivity activity = controller.get();
+
+        activity.onFatalError(new FatalErrorEvent("ERROR"));
 
         // verify that the sessionService was cleared out
         Assert.assertNull(sessionService.getCurrentSession());

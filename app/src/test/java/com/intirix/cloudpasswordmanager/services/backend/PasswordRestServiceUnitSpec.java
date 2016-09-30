@@ -189,6 +189,23 @@ public class PasswordRestServiceUnitSpec {
         Assert.assertEquals("0", pr.getDeleted());
     }
 
+
+    @Test
+    public void testListPasswordsWithBackslashInNotes() throws IOException {
+        setMockResponseJson("/password-list-example-with-backslash-notes.json");
+        List<PasswordResponse> passwordList = impl.listPasswords().execute().body();
+
+        Assert.assertEquals(2, passwordList.size());
+        PasswordResponse pr = passwordList.get(1);
+
+        Assert.assertEquals("5", pr.getId());
+        Assert.assertEquals(TESTUSER, pr.getUser_id());
+        Assert.assertEquals("www.github.com", pr.getWebsite());
+        Assert.assertEquals("password", pr.getPass());
+        Assert.assertEquals(222, pr.getProperties().length());
+        Assert.assertEquals("0", pr.getDeleted());
+    }
+
     @Test
     public void testListPasswordsWithShared() throws IOException {
         setMockResponseJson("/password-list-example-with-shared.json");
