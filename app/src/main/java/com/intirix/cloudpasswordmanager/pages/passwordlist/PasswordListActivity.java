@@ -86,24 +86,11 @@ public class PasswordListActivity extends SecureActivity implements SearchView.O
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
 
         updateProgressDialog();
         filter();
-    }
-
-
-    @Override
-    protected void onStop() {
-        EventBus.getDefault().unregister(this);
-        super.onStop();
     }
 
     @Override
