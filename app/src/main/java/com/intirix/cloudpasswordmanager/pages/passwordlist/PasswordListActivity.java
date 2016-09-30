@@ -94,6 +94,16 @@ public class PasswordListActivity extends SecureActivity implements SearchView.O
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+
+        // prevent window leak if we go home while spinner is up
+        if (progressDialog!=null) {
+            progressDialog.dismiss();
+        }
+    }
+
+    @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(SAVED_SEARCH_QUERY, filterString);
