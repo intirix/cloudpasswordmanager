@@ -86,12 +86,6 @@ public class PasswordListActivity extends SecureActivity implements SearchView.O
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
 
@@ -99,11 +93,14 @@ public class PasswordListActivity extends SecureActivity implements SearchView.O
         filter();
     }
 
-
     @Override
     protected void onStop() {
-        EventBus.getDefault().unregister(this);
         super.onStop();
+
+        // prevent window leak if we go home while spinner is up
+        if (progressDialog!=null) {
+            progressDialog.dismiss();
+        }
     }
 
     @Override

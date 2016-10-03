@@ -141,6 +141,7 @@ public class PasswordStorageServiceImpl implements PasswordStorageService {
                     List<PasswordInfo> list = translatePasswordList(response.body());
                     cb.onReturn(list);
                 } catch (Exception e) {
+                    Log.w(TAG, "listPasswords() errored", e);
                     cb.onError("Error: "+e);
                 }
             }

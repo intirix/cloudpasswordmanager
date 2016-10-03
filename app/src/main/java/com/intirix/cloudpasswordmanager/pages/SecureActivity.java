@@ -19,6 +19,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -30,12 +31,18 @@ import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.pages.login.LoginActivity;
 import com.intirix.cloudpasswordmanager.services.session.AutoLogoffServiceImpl;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import butterknife.ButterKnife;
 
 /**
  * Created by jeff on 7/27/16.
  */
 public abstract class SecureActivity extends BaseActivity {
+
+    private static final String TAG = SecureActivity.class.getSimpleName();
 
     private Handler handler;
 
@@ -68,6 +75,17 @@ public abstract class SecureActivity extends BaseActivity {
 
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
+    }
 
     @Override
     protected void onDestroy() {
@@ -104,10 +122,23 @@ public abstract class SecureActivity extends BaseActivity {
         return super.onKeyDown(keyCode, event);
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onFatalError(FatalErrorEvent event) {
+        logoff(event.getMessage());
+    }
+
     protected void logoff() {
+        logoff(null);
+    }
+
+    protected void logoff(String errorMessage) {
+        Log.d(TAG, "logoff()");
         sessionService.end();
         Intent intent = new Intent(this, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+        if (errorMessage!=null) {
+            intent.putExtra(LoginActivity.PARAM_ERROR_MESSAGE, errorMessage);
+        }
         startActivity(intent);
     }
 }
