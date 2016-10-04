@@ -35,6 +35,7 @@ import com.intirix.cloudpasswordmanager.pages.navigation.NavigationAdapter;
 import com.intirix.cloudpasswordmanager.pages.navigation.NavigationClickListener;
 import com.intirix.cloudpasswordmanager.pages.navigation.NavigationItem;
 import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordListNavigationItem;
+import com.intirix.cloudpasswordmanager.pages.settings.SettingsNavigationItem;
 import com.intirix.cloudpasswordmanager.services.session.AutoLogoffService;
 import com.intirix.cloudpasswordmanager.services.session.SessionService;
 
@@ -109,6 +110,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         if (autoLogoffService.isSessionStillValid()) {
             navItems.addFirst(new LogOffNavigationItem(this, sessionService));
             navItems.addLast(new PasswordListNavigationItem(this));
+            navItems.addLast(new SettingsNavigationItem(this));
 
         } else {
             navItems.addFirst(new LoginNavigationItem(this));
@@ -148,5 +150,9 @@ public abstract class BaseActivity extends AppCompatActivity {
         // Handle your other action bar items...
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public ListView getDrawerListView() {
+        return drawerListView;
     }
 }
