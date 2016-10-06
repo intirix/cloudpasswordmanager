@@ -28,6 +28,8 @@
         <activity android:name=".pages.passworddetail.PasswordDetailActivity"
             android:label="@string/password_detail_title"/>
         <activity android:name=".pages.about.AboutActivity"/>
+        <activity android:name=".pages.settings.SettingsActivity"
+            android:label="@string/settings_title"/>
     </application>
 
 </manifest>

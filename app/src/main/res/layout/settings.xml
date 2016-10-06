@@ -16,71 +16,34 @@
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
 
     <TextView
-        style="@style/about_label"
-        android:id="@+id/about_version_label"
+        style="@style/settings_label"
+        android:id="@+id/settings_savepass_label"
         android:layout_below="@id/my_toolbar"
         android:layout_marginTop="20dp"
         android:layout_alignLeft="@id/my_toolbar"
-        android:text="@string/about_version_label"/>
+        android:text="@string/settings_savepass_label"/>
 
     <TextView
-        style="@style/about_value"
-        android:id="@+id/about_version_value"
-        android:layout_toRightOf="@id/about_version_label"
-        android:layout_alignBottom="@id/about_version_label"
-        android:text="@string/about_version_example"/>
+        style="@style/settings_value"
+        android:id="@+id/settings_savepass_value"
+        android:layout_toRightOf="@id/settings_savepass_label"
+        android:layout_alignBottom="@id/settings_savepass_label"
+        android:text="@string/settings_savepass_never_label"/>
 
     <TextView
-        style="@style/about_label"
-        android:id="@+id/about_githash_label"
-        android:layout_below="@id/about_version_label"
-        android:layout_marginTop="20dp"
-        android:layout_alignLeft="@id/my_toolbar"
-        android:text="@string/about_githash_label"/>
+        style="@style/settings_descr"
+        android:id="@+id/settings_savepass_descr"
+        android:layout_below="@id/settings_savepass_label"
+        android:layout_alignLeft="@id/settings_savepass_label"
+        android:text="@string/settings_savepass_descr"
+        />
 
     <TextView
-        style="@style/about_value"
-        android:id="@+id/about_githash_value"
-        android:layout_toRightOf="@id/about_githash_label"
-        android:layout_alignBottom="@id/about_githash_label"
-        android:text="@string/about_githash_example"/>
-
-    <TextView
-        style="@style/about_label"
-        android:id="@+id/about_buildtype_label"
-        android:layout_below="@id/about_githash_label"
-        android:layout_marginTop="20dp"
-        android:layout_alignLeft="@id/my_toolbar"
-        android:text="@string/about_buildtype_label"/>
-
-    <TextView
-        style="@style/about_value"
-        android:id="@+id/about_buildtype_value"
-        android:layout_toRightOf="@id/about_buildtype_label"
-        android:layout_alignBottom="@id/about_buildtype_label"
-        android:text="@string/about_buildtype_example"/>
-
-    <TextView
-        style="@style/about_label"
-        android:id="@+id/about_buildtime_label"
-        android:layout_below="@id/about_buildtype_label"
-        android:layout_marginTop="20dp"
-        android:layout_alignLeft="@id/my_toolbar"
-        android:text="@string/about_buildtime_label"/>
-
-    <TextView
-        style="@style/about_value"
-        android:id="@+id/about_buildtime_value"
-        android:layout_toRightOf="@id/about_buildtime_label"
-        android:layout_alignBottom="@id/about_buildtime_label"
-        android:text="@string/about_buildtime_example"/>
-
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/about_buildtime_label"
-        android:layout_marginTop="30dp"
-        android:text="@string/about_ack"/>
+        style="@style/settings_value_descr"
+        android:id="@+id/settings_savepass_value_descr"
+        android:layout_below="@id/settings_savepass_descr"
+        android:layout_alignLeft="@id/settings_savepass_label"
+        android:text="@string/settings_savepass_never_descr"
+        />
 
 </RelativeLayout>

@@ -53,7 +53,13 @@
     <string name="password_detail_loginName_toast">Login name copied to clipboard</string>
     <string name="password_detail_password_toast">Password copied to clipboard</string>
 
+    <string name="settings_title">Settings</string>
     <string name="settings_nav_label">Settings</string>
+    <string name="settings_savepass_label">Save Password:</string>
+    <string name="settings_savepass_descr">Which scenarios will your password be saved?</string>
+
+    <string name="settings_savepass_never_label">Never</string>
+    <string name="settings_savepass_never_descr">Your password will never be saved</string>
 
     <string name="about_nav_label">About</string>
     <string name="about_version_label">Version:</string>
