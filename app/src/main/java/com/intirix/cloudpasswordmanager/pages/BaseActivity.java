@@ -18,10 +18,12 @@ package com.intirix.cloudpasswordmanager.pages;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 import android.widget.ListView;
@@ -50,6 +52,8 @@ import butterknife.ButterKnife;
  * Created by jeff on 7/27/16.
  */
 public abstract class BaseActivity extends AppCompatActivity {
+
+    private static final String TAG = BaseActivity.class.getSimpleName();
 
     private NavigationAdapter adapter;
 
@@ -83,6 +87,24 @@ public abstract class BaseActivity extends AppCompatActivity {
         // attach the activity's actual layout to the page
         getLayoutInflater().inflate(getLayoutId(), contentFrame, true);
 
+        if (findViewById(R.id.frame_main)!=null) {
+            if (savedInstanceState==null) {
+                Log.d(TAG, "Layout has a fragment frame, creating initial fragment");
+                Fragment frag = createInitialFragment();
+                if (frag!=null) {
+                    Log.d(TAG, "Adding fragment "+frag.getClass().getSimpleName());
+
+                    frag.setArguments(getIntent().getExtras());
+                    getSupportFragmentManager().beginTransaction().add(R.id.frame_main, frag).commit();
+                } else {
+                    Log.d(TAG, "No fragment created");
+                }
+            } else {
+                Log.d(TAG, "Layout has a fragment frame, restoring previous fragment");
+            }
+        }
+
+
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
 
@@ -105,6 +127,16 @@ public abstract class BaseActivity extends AppCompatActivity {
         PasswordApplication.getSInjector(this).inject(this);
 
     }
+
+    /**
+     * Create the initial fragment
+     * @return
+     */
+    protected Fragment createInitialFragment() {
+        return null;
+    }
+
+
 
     protected void addNavigationItems(LinkedList<NavigationItem> navItems) {
         if (autoLogoffService.isSessionStillValid()) {

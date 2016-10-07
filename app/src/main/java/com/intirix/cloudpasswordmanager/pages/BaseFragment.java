@@ -13,25 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.intirix.cloudpasswordmanager.pages.settings;
+package com.intirix.cloudpasswordmanager.pages;
+
 
 import android.support.v4.app.Fragment;
 
-import com.intirix.cloudpasswordmanager.R;
-import com.intirix.cloudpasswordmanager.pages.SecureActivity;
-
 /**
- * Created by jeff on 10/3/16.
+ * Created by jeff on 10/6/16.
  */
-public class SettingsActivity extends SecureActivity {
-
-    @Override
-    protected int getLayoutId() {
-        return R.layout.fragment;
-    }
-
-    @Override
-    protected Fragment createInitialFragment() {
-        return new SettingsFragment();
-    }
+public class BaseFragment extends Fragment {
 }

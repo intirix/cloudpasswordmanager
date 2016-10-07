@@ -15,23 +15,24 @@
  */
 package com.intirix.cloudpasswordmanager.pages.settings;
 
-import android.support.v4.app.Fragment;
+import android.app.Fragment;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import com.intirix.cloudpasswordmanager.R;
-import com.intirix.cloudpasswordmanager.pages.SecureActivity;
+import com.intirix.cloudpasswordmanager.pages.BaseFragment;
 
 /**
- * Created by jeff on 10/3/16.
+ * Created by jeff on 10/6/16.
  */
-public class SettingsActivity extends SecureActivity {
+public class SettingsFragment extends BaseFragment {
 
+    @Nullable
     @Override
-    protected int getLayoutId() {
-        return R.layout.fragment;
-    }
-
-    @Override
-    protected Fragment createInitialFragment() {
-        return new SettingsFragment();
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.settings_list, container, false);
     }
 }
