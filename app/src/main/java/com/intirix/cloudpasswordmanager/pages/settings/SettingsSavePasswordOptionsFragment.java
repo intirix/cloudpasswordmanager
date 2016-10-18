@@ -24,28 +24,14 @@ import android.view.ViewGroup;
 import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.pages.BaseFragment;
 
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-
 /**
- * Created by jeff on 10/6/16.
+ * Created by jeff on 10/17/16.
  */
-public class SettingsFragment extends BaseFragment {
+public class SettingsSavePasswordOptionsFragment extends BaseFragment {
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.settings_list, container, false);
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        ButterKnife.bind(this, getActivity());
-    }
-
-    @OnClick(R.id.settings_savepass_value)
-    public void onClickChangeSavePassword(View view) {
-        baseActivity.navigateRightPane(new SettingsSavePasswordOptionsFragment());
+        return inflater.inflate(R.layout.settings_savepassword_options, container, false);
     }
 }

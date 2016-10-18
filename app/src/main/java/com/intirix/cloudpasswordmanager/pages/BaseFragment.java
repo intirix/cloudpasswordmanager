@@ -16,10 +16,24 @@
 package com.intirix.cloudpasswordmanager.pages;
 
 
+import android.content.Context;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 
 /**
  * Created by jeff on 10/6/16.
  */
 public class BaseFragment extends Fragment {
+
+    private static final String TAG = BaseFragment.class.getSimpleName();
+
+    protected BaseActivity baseActivity;
+
+    @Override
+    public void onAttach(Context context) {
+        Log.d(TAG, getClass().getSimpleName()+" onAttach()");
+        super.onAttach(context);
+
+        baseActivity = (BaseActivity)getActivity();
+    }
 }

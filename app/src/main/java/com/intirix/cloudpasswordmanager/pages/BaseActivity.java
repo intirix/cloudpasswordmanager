@@ -42,6 +42,7 @@ import com.intirix.cloudpasswordmanager.services.session.AutoLogoffService;
 import com.intirix.cloudpasswordmanager.services.session.SessionService;
 
 import java.util.LinkedList;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -75,6 +76,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Inject
     protected SessionService sessionService;
 
+    protected boolean twoPane = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -186,5 +188,20 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     public ListView getDrawerListView() {
         return drawerListView;
+    }
+
+
+    /**
+     * Change the right pane
+     * @param frag
+     */
+    public void navigateRightPane(Fragment frag) {
+        if (twoPane) {
+            Log.d(TAG, "Navigating right pane to fragment "+frag.getClass().getSimpleName());
+
+        } else {
+            Log.d(TAG, "Navigating page to fragment "+frag.getClass().getSimpleName());
+            getSupportFragmentManager().beginTransaction().replace(R.id.frame_main, frag).addToBackStack(null).commit();
+        }
     }
 }
