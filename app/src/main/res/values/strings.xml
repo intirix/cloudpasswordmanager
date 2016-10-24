@@ -60,6 +60,10 @@
 
     <string name="settings_savepass_never_label">Never</string>
     <string name="settings_savepass_never_descr">Your password will never be saved</string>
+    <string name="settings_savepass_always_label">Always</string>
+    <string name="settings_savepass_always_descr">Your password will be stored on your device.
+        Anyone with access to your device will be able to get your password and log into your
+        password manager.  This can be a very serious security risk.</string>
 
     <string name="about_nav_label">About</string>
     <string name="about_version_label">Version:</string>

@@ -58,6 +58,7 @@ public class SettingsSavePasswordOptionsFragment extends BaseFragment {
         adapter = new SavePasswordOptionsAdapter();
 
         adapter.addOption(getContext(), new SavePasswordOptionNever(getContext()));
+        adapter.addOption(getContext(), new SavePasswordOptionAlways(getContext()));
 
         recyclerView.setAdapter(adapter);
 
