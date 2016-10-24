@@ -15,6 +15,8 @@
  */
 package com.intirix.cloudpasswordmanager.pages.settings;
 
+import android.support.v7.widget.RecyclerView;
+
 import com.intirix.cloudpasswordmanager.BaseTestCase;
 import com.intirix.cloudpasswordmanager.BuildConfig;
 import com.intirix.cloudpasswordmanager.R;
@@ -26,6 +28,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.Shadows;
 import org.robolectric.annotation.Config;
 import org.robolectric.util.ActivityController;
 
@@ -39,7 +42,7 @@ public class SettingsActivityActionSpec extends BaseTestCase {
 
 
     @Test
-    public void verifyBaseLayout() throws Exception {
+    public void verifySavePasswordOptions() throws Exception {
         SessionService sessionService = serviceRef.sessionService();
 
 
@@ -53,6 +56,16 @@ public class SettingsActivityActionSpec extends BaseTestCase {
         activity.findViewById(R.id.settings_savepass_value).performClick();
 
         Assert.assertNotNull(activity.findViewById(R.id.settings_savepass_options_recycler));
+
+        RecyclerView rv = (RecyclerView)activity.findViewById(R.id.settings_savepass_options_recycler);
+
+        // verify that there is an entry in the list
+        Assert.assertEquals(1, rv.getAdapter().getItemCount());
+
+        rv.measure(0,0);
+        rv.layout(0,0,100,1000);
+        Shadows.shadowOf(rv).dump();
+
 
         controller.pause().stop().destroy();
     }

@@ -17,21 +17,50 @@ package com.intirix.cloudpasswordmanager.pages.settings;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.pages.BaseFragment;
+import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordListAdapter;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by jeff on 10/17/16.
  */
 public class SettingsSavePasswordOptionsFragment extends BaseFragment {
 
+    @BindView(R.id.settings_savepass_options_recycler)
+    RecyclerView recyclerView;
+
+    SavePasswordOptionsAdapter adapter;
+
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.settings_savepassword_options, container, false);
     }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        ButterKnife.bind(this, getActivity());
+
+        recyclerView.setHasFixedSize(true);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        recyclerView.setLayoutManager(layoutManager);
+        adapter = new SavePasswordOptionsAdapter();
+
+        adapter.addOption(getContext(), new SavePasswordOptionNever(getContext()));
+
+        recyclerView.setAdapter(adapter);
+
+    }
+
 }
