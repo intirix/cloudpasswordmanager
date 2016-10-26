@@ -18,6 +18,8 @@ package com.intirix.cloudpasswordmanager.injection;
 import android.content.Context;
 import android.util.Log;
 
+import com.intirix.cloudpasswordmanager.services.SavePasswordService;
+import com.intirix.cloudpasswordmanager.services.SavePasswordServiceImpl;
 import com.intirix.cloudpasswordmanager.services.session.AuthenticationInterceptor;
 import com.intirix.cloudpasswordmanager.services.session.AutoLogoffService;
 import com.intirix.cloudpasswordmanager.services.session.AutoLogoffServiceImpl;
@@ -168,6 +170,11 @@ public class CloudPasswordManagerModule {
 
     @Provides
     FilterPasswordService provideFilterPasswordService(FilterPasswordServiceImpl impl) {
+        return impl;
+    }
+
+    @Provides
+    SavePasswordService provideSavePasswordService(SavePasswordServiceImpl impl) {
         return impl;
     }
 }

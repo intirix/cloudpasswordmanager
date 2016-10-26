@@ -60,7 +60,7 @@ public class SettingsActivityActionSpec extends BaseTestCase {
         RecyclerView rv = (RecyclerView)activity.findViewById(R.id.settings_savepass_options_recycler);
 
         // verify that there is an entry in the list
-        Assert.assertEquals(1, rv.getAdapter().getItemCount());
+        Assert.assertEquals(2, rv.getAdapter().getItemCount());
 
         rv.measure(0,0);
         rv.layout(0,0,100,1000);
