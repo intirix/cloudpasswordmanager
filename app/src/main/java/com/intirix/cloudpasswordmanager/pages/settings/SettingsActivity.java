@@ -15,15 +15,31 @@
  */
 package com.intirix.cloudpasswordmanager.pages.settings;
 
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 
+import com.intirix.cloudpasswordmanager.PasswordApplication;
 import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.pages.SecureActivity;
+import com.intirix.cloudpasswordmanager.services.SavePasswordService;
+
+import javax.inject.Inject;
 
 /**
  * Created by jeff on 10/3/16.
  */
 public class SettingsActivity extends SecureActivity {
+
+    @Inject
+    SavePasswordService savePasswordService;
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        PasswordApplication.getSInjector(this).inject(this);
+
+    }
 
     @Override
     protected int getLayoutId() {

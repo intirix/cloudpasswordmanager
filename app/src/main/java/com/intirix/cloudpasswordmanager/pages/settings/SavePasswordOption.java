@@ -16,15 +16,24 @@
 package com.intirix.cloudpasswordmanager.pages.settings;
 
 import android.content.Context;
+import android.view.View;
+
+import com.intirix.cloudpasswordmanager.services.SavePasswordService;
 
 /**
  * Created by jeff on 10/22/16.
  */
 public abstract class SavePasswordOption {
 
+    protected SavePasswordService savePasswordService;
+
     protected String label;
 
     protected String description;
+
+    public SavePasswordOption(SavePasswordService savePasswordService) {
+        this.savePasswordService = savePasswordService;
+    }
 
     /**
      * Is the option valid for this device
@@ -40,4 +49,6 @@ public abstract class SavePasswordOption {
     public String getLabel() {
         return label;
     }
+
+    public abstract void onClick(View v);
 }

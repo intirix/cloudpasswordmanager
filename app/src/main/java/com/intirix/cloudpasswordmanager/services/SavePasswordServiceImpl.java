@@ -55,6 +55,9 @@ public class SavePasswordServiceImpl implements SavePasswordService {
         }
     }
 
+    public SavePasswordEnum getCurrentSetting() {
+        return currentSetting;
+    }
 
     @Override
     public boolean isPasswordSaved() {
@@ -73,6 +76,7 @@ public class SavePasswordServiceImpl implements SavePasswordService {
 
     @Override
     public void changeSavePasswordSetting(SavePasswordEnum value) {
-
+        preferences.edit().putString(PREF_SAVE_PASSWORD_SETTING, value.name()).commit();
+        currentSetting = value;
     }
 }

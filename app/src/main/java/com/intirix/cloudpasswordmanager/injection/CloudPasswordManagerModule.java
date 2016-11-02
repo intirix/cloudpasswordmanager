@@ -173,7 +173,7 @@ public class CloudPasswordManagerModule {
         return impl;
     }
 
-    @Provides
+    @Provides @Singleton
     SavePasswordService provideSavePasswordService(SavePasswordServiceImpl impl) {
         return impl;
     }

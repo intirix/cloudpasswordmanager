@@ -21,6 +21,12 @@ package com.intirix.cloudpasswordmanager.services;
 public interface SavePasswordService {
 
     /**
+     * Get the current save password setting
+     * @return
+     */
+    public SavePasswordEnum getCurrentSetting();
+
+    /**
      * Is the password currently saved on the device
      * @return
      */

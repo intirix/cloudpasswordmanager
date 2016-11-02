@@ -16,15 +16,18 @@
 package com.intirix.cloudpasswordmanager.pages.settings;
 
 import android.content.Context;
+import android.view.View;
 
 import com.intirix.cloudpasswordmanager.R;
+import com.intirix.cloudpasswordmanager.services.SavePasswordService;
 
 /**
  * Created by jeff on 10/22/16.
  */
 public class SavePasswordOptionNever extends SavePasswordOption {
 
-    public SavePasswordOptionNever(Context ctx) {
+    public SavePasswordOptionNever(Context ctx, SavePasswordService savePasswordService) {
+        super(savePasswordService);
         label = ctx.getString(R.string.settings_savepass_never_label);
         description = ctx.getString(R.string.settings_savepass_never_descr);
     }
@@ -33,4 +36,11 @@ public class SavePasswordOptionNever extends SavePasswordOption {
     public boolean isValid(Context ctx) {
         return true;
     }
+
+    @Override
+    public void onClick(View v) {
+
+    }
+
+
 }

@@ -15,22 +15,43 @@
  */
 package com.intirix.cloudpasswordmanager.pages.settings;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.view.View;
 
 import com.intirix.cloudpasswordmanager.R;
+import com.intirix.cloudpasswordmanager.pages.login.LoginActivity;
+import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordListActivity;
+import com.intirix.cloudpasswordmanager.services.SavePasswordEnum;
+import com.intirix.cloudpasswordmanager.services.SavePasswordService;
 
 /**
  * Created by jeff on 10/22/16.
  */
 public class SavePasswordOptionAlways extends SavePasswordOption {
 
-    public SavePasswordOptionAlways(Context ctx) {
-        label = ctx.getString(R.string.settings_savepass_always_label);
-        description = ctx.getString(R.string.settings_savepass_always_descr);
+    private Activity activity;
+
+    public SavePasswordOptionAlways(Activity activity, SavePasswordService savePasswordService) {
+        super(savePasswordService);
+        this.activity = activity;
+        label = activity.getString(R.string.settings_savepass_always_label);
+        description = activity.getString(R.string.settings_savepass_always_descr);
     }
 
     @Override
     public boolean isValid(Context ctx) {
         return true;
+    }
+
+    @Override
+    public void onClick(View v) {
+        savePasswordService.changeSavePasswordSetting(SavePasswordEnum.ALWAYS);
+
+        Intent intent = new Intent(activity, SettingsActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        activity.startActivity(intent);
+
     }
 }

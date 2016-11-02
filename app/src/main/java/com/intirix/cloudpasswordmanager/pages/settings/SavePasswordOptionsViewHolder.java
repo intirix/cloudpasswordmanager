@@ -36,20 +36,24 @@ public class SavePasswordOptionsViewHolder extends RecyclerView.ViewHolder imple
     @BindView(R.id.savepassword_option_row_descr)
     TextView descr;
 
+    private SavePasswordOption bean;
+
     public SavePasswordOptionsViewHolder(View itemView) {
         super(itemView);
+        itemView.setClickable(true);
         itemView.setOnClickListener(this);
         ButterKnife.bind(this, itemView);
 
     }
 
     void applyItem(int index, SavePasswordOption bean) {
+        this.bean = bean;
         label.setText(bean.getLabel());
         descr.setText(bean.getDescription());
     }
 
     @Override
     public void onClick(View v) {
-
+        bean.onClick(v);
     }
 }

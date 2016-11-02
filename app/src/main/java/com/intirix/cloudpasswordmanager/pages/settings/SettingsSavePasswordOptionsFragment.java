@@ -23,9 +23,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.intirix.cloudpasswordmanager.PasswordApplication;
 import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.pages.BaseFragment;
 import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordListAdapter;
+import com.intirix.cloudpasswordmanager.services.SavePasswordService;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -40,6 +44,8 @@ public class SettingsSavePasswordOptionsFragment extends BaseFragment {
 
     SavePasswordOptionsAdapter adapter;
 
+    @Inject
+    SavePasswordService savePasswordService;
 
     @Nullable
     @Override
@@ -50,6 +56,8 @@ public class SettingsSavePasswordOptionsFragment extends BaseFragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        PasswordApplication.getSInjector(getActivity()).inject(this);
+
         ButterKnife.bind(this, getActivity());
 
         recyclerView.setHasFixedSize(true);
@@ -57,8 +65,8 @@ public class SettingsSavePasswordOptionsFragment extends BaseFragment {
         recyclerView.setLayoutManager(layoutManager);
         adapter = new SavePasswordOptionsAdapter();
 
-        adapter.addOption(getContext(), new SavePasswordOptionNever(getContext()));
-        adapter.addOption(getContext(), new SavePasswordOptionAlways(getContext()));
+        adapter.addOption(getContext(), new SavePasswordOptionNever(getContext(), savePasswordService));
+        adapter.addOption(getContext(), new SavePasswordOptionAlways(getActivity(), savePasswordService));
 
         recyclerView.setAdapter(adapter);
 
