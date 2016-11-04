@@ -29,28 +29,15 @@ import com.intirix.cloudpasswordmanager.services.SavePasswordService;
  */
 public class SavePasswordOptionNever extends SavePasswordOption {
 
-    private Activity activity;
-
     public SavePasswordOptionNever(Activity activity, SavePasswordService savePasswordService) {
-        super(savePasswordService, SavePasswordEnum.NEVER);
-        this.activity = activity;
+        super(activity, savePasswordService, SavePasswordEnum.NEVER);
         label = activity.getString(R.string.settings_savepass_never_label);
         description = activity.getString(R.string.settings_savepass_never_descr);
     }
 
     @Override
-    public boolean isValid(Context ctx) {
+    public boolean isAvailable(Context ctx) {
         return true;
-    }
-
-    @Override
-    public void onClick(View v) {
-        savePasswordService.changeSavePasswordSetting(SavePasswordEnum.NEVER);
-
-        Intent intent = new Intent(activity, SettingsActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        activity.startActivity(intent);
-
     }
 
 

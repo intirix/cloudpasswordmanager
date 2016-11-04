@@ -68,6 +68,12 @@
         not be able to able to get your password unless they have root access.  Your password will not be
         backed up to Google\'s servers.
     </string>
+    <string name="settings_savepass_passwordprotected_label">Encrypt and Store Your Password When Phone is Password Protected</string>
+    <string name="settings_savepass_passwordprotected_descr">Your password will be encrypted and saved on the device.
+        When you open the app, the password field will be pre-populated.  Other apps on your device will
+        not be able to able to get your password unless they have root access.  Your password will not be
+        backed up to Google\'s servers.  Your device must be password protected to select this option.  Requires API 16.
+    </string>
 
     <string name="about_nav_label">About</string>
     <string name="about_version_label">Version:</string>

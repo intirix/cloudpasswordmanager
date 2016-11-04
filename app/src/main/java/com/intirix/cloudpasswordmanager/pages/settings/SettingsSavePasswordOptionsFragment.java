@@ -27,6 +27,7 @@ import com.intirix.cloudpasswordmanager.PasswordApplication;
 import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.pages.BaseFragment;
 import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordListAdapter;
+import com.intirix.cloudpasswordmanager.services.SavePasswordEnum;
 import com.intirix.cloudpasswordmanager.services.SavePasswordService;
 
 import javax.inject.Inject;
@@ -65,8 +66,9 @@ public class SettingsSavePasswordOptionsFragment extends BaseFragment {
         recyclerView.setLayoutManager(layoutManager);
         adapter = new SavePasswordOptionsAdapter();
 
-        adapter.addOption(getContext(), new SavePasswordOptionNever(getActivity(), savePasswordService));
-        adapter.addOption(getContext(), new SavePasswordOptionAlways(getActivity(), savePasswordService));
+        for (final SavePasswordEnum option: savePasswordService.listAvailableOptions()) {
+            adapter.addOption(getContext(), SavePasswordOptionFactory.createOption(option, getActivity(), savePasswordService));
+        }
 
         recyclerView.setAdapter(adapter);
 

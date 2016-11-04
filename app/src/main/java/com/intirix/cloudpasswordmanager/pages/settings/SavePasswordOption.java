@@ -15,7 +15,9 @@
  */
 package com.intirix.cloudpasswordmanager.pages.settings;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.view.View;
 
 import com.intirix.cloudpasswordmanager.services.SavePasswordEnum;
@@ -28,23 +30,26 @@ public abstract class SavePasswordOption {
 
     protected SavePasswordService savePasswordService;
 
-    private SavePasswordEnum option;
+    protected SavePasswordEnum option;
+
+    protected Activity activity;
 
     protected String label;
 
     protected String description;
 
-    protected SavePasswordOption(SavePasswordService savePasswordService, SavePasswordEnum option) {
+    protected SavePasswordOption(Activity activity, SavePasswordService savePasswordService, SavePasswordEnum option) {
+        this.activity = activity;
         this.savePasswordService = savePasswordService;
         this.option = option;
     }
 
     /**
-     * Is the option valid for this device
+     * Is the option currently available
      * @param ctx
      * @return
      */
-    public abstract boolean isValid(Context ctx);
+    public abstract boolean isAvailable(Context ctx);
 
     public boolean isCurrentlySelected() {
         return option.equals(savePasswordService.getCurrentSetting());
@@ -58,5 +63,13 @@ public abstract class SavePasswordOption {
         return label;
     }
 
-    public abstract void onClick(View v);
+    public void onClick(View v) {
+        if (isAvailable(activity)) {
+            savePasswordService.changeSavePasswordSetting(option);
+
+            Intent intent = new Intent(activity, SettingsActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            activity.startActivity(intent);
+        }
+    }
 }

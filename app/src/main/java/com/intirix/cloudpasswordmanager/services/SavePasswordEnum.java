@@ -5,5 +5,5 @@ package com.intirix.cloudpasswordmanager.services;
  */
 
 public enum SavePasswordEnum {
-    NEVER, ALWAYS
+    NEVER, ALWAYS, PASSWORD_PROTECTED
 }

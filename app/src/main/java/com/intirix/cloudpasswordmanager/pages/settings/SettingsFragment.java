@@ -17,6 +17,7 @@ package com.intirix.cloudpasswordmanager.pages.settings;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,6 +43,8 @@ import butterknife.OnClick;
  */
 public class SettingsFragment extends BaseFragment {
 
+    private static final String TAG = SettingsFragment.class.getSimpleName();
+
     @Inject
     SavePasswordService savePasswordService;
 
@@ -63,11 +66,12 @@ public class SettingsFragment extends BaseFragment {
         PasswordApplication.getSInjector(getActivity()).inject(this);
         ButterKnife.bind(this, getActivity());
 
-        final Map<SavePasswordEnum, SavePasswordOption> options = new HashMap<>();
-        options.put(SavePasswordEnum.NEVER, new SavePasswordOptionNever(getActivity(), savePasswordService));
-        options.put(SavePasswordEnum.ALWAYS, new SavePasswordOptionAlways(getActivity(), savePasswordService));
-
-        SavePasswordOption currentOption = options.get(savePasswordService.getCurrentSetting());
+        SavePasswordOption currentOption = SavePasswordOptionFactory.createOption(savePasswordService.getCurrentSetting(), getActivity(), savePasswordService);
+        if (currentOption==null) {
+            Log.w(TAG, "Unknown save password policy selected, changing to option NEVER");
+            currentOption = SavePasswordOptionFactory.createOption(SavePasswordEnum.NEVER, getActivity(), savePasswordService);
+            savePasswordService.changeSavePasswordSetting(SavePasswordEnum.NEVER);
+        }
         currentSavePasswordOptionLabel.setText(currentOption.getLabel());
         currentSavePasswordOptionDescription.setText(currentOption.getDescription());
 

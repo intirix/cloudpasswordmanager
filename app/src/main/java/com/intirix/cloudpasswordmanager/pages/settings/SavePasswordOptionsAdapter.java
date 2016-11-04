@@ -22,7 +22,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.intirix.cloudpasswordmanager.R;
-import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordListViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,9 +34,7 @@ public class SavePasswordOptionsAdapter extends RecyclerView.Adapter<SavePasswor
     private List<SavePasswordOption> options = new ArrayList<>();
 
     public void addOption(Context ctx, SavePasswordOption option) {
-        if (option.isValid(ctx)) {
-            options.add(option);
-        }
+        options.add(option);
     }
 
     @Override
