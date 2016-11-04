@@ -89,7 +89,7 @@ public class SettingsActivityActionSpec extends BaseTestCase {
 
         // click ALWAYS
         TextView tv = (TextView)rv.getChildAt(1).findViewById(R.id.savepassword_option_row_label);
-        Assert.assertEquals("Always", tv.getText().toString());
+        Assert.assertEquals(activity.getString(R.string.settings_savepass_always_label), tv.getText().toString());
         rv.getChildAt(1).performClick();
 
         controller.pause().stop().destroy();
@@ -169,7 +169,8 @@ public class SettingsActivityActionSpec extends BaseTestCase {
 
         // the setting should be NEVER
         Assert.assertEquals(SavePasswordEnum.NEVER, activity.savePasswordService.getCurrentSetting());
-        Assert.assertNull("Saved password should have been cleared out", activity.savePasswordService.getPassword());
+        String pass = activity.savePasswordService.getPassword();
+        Assert.assertTrue("Saved password should have been cleared out", pass==null||pass.length()==0);
 
         ShadowActivity shadowActivity = Shadows.shadowOf(activity);
         Intent intent = shadowActivity.peekNextStartedActivity();
