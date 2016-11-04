@@ -34,7 +34,7 @@ public class SavePasswordOptionAlways extends SavePasswordOption {
     private Activity activity;
 
     public SavePasswordOptionAlways(Activity activity, SavePasswordService savePasswordService) {
-        super(savePasswordService);
+        super(savePasswordService, SavePasswordEnum.ALWAYS);
         this.activity = activity;
         label = activity.getString(R.string.settings_savepass_always_label);
         description = activity.getString(R.string.settings_savepass_always_descr);

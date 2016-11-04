@@ -18,6 +18,7 @@ package com.intirix.cloudpasswordmanager.pages.settings;
 import android.content.Context;
 import android.view.View;
 
+import com.intirix.cloudpasswordmanager.services.SavePasswordEnum;
 import com.intirix.cloudpasswordmanager.services.SavePasswordService;
 
 /**
@@ -27,12 +28,15 @@ public abstract class SavePasswordOption {
 
     protected SavePasswordService savePasswordService;
 
+    private SavePasswordEnum option;
+
     protected String label;
 
     protected String description;
 
-    public SavePasswordOption(SavePasswordService savePasswordService) {
+    protected SavePasswordOption(SavePasswordService savePasswordService, SavePasswordEnum option) {
         this.savePasswordService = savePasswordService;
+        this.option = option;
     }
 
     /**
@@ -41,6 +45,10 @@ public abstract class SavePasswordOption {
      * @return
      */
     public abstract boolean isValid(Context ctx);
+
+    public boolean isCurrentlySelected() {
+        return option.equals(savePasswordService.getCurrentSetting());
+    }
 
     public String getDescription() {
         return description;

@@ -32,7 +32,7 @@ public class SavePasswordOptionNever extends SavePasswordOption {
     private Activity activity;
 
     public SavePasswordOptionNever(Activity activity, SavePasswordService savePasswordService) {
-        super(savePasswordService);
+        super(savePasswordService, SavePasswordEnum.NEVER);
         this.activity = activity;
         label = activity.getString(R.string.settings_savepass_never_label);
         description = activity.getString(R.string.settings_savepass_never_descr);

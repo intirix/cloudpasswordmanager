@@ -15,13 +15,17 @@
  */
 package com.intirix.cloudpasswordmanager.pages.settings;
 
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordBean;
 
+import butterknife.BindArray;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -35,6 +39,9 @@ public class SavePasswordOptionsViewHolder extends RecyclerView.ViewHolder imple
 
     @BindView(R.id.savepassword_option_row_descr)
     TextView descr;
+
+    @BindView(R.id.savepassword_option_row)
+    ViewGroup row;
 
     private SavePasswordOption bean;
 
@@ -50,6 +57,12 @@ public class SavePasswordOptionsViewHolder extends RecyclerView.ViewHolder imple
         this.bean = bean;
         label.setText(bean.getLabel());
         descr.setText(bean.getDescription());
+
+        if (bean.isCurrentlySelected()) {
+            row.setBackgroundColor(ContextCompat.getColor(label.getContext(), R.color.selectOptionSelectedBackground));
+        } else {
+            row.setBackgroundColor(ContextCompat.getColor(label.getContext(), R.color.selectOptionUnselectedBackground));
+        }
     }
 
     @Override
