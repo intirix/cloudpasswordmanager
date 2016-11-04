@@ -55,15 +55,19 @@
 
     <string name="settings_title">Settings</string>
     <string name="settings_nav_label">Settings</string>
-    <string name="settings_savepass_label">Save Password:</string>
-    <string name="settings_savepass_descr">Which scenarios will your password be saved?</string>
+    <string name="settings_savepass_label">Password Policy:</string>
+    <string name="settings_savepass_descr">Which scenarios will your password be saved and used?</string>
 
-    <string name="settings_savepass_never_label">Never</string>
-    <string name="settings_savepass_never_descr">Your password will never be saved</string>
-    <string name="settings_savepass_always_label">Always</string>
-    <string name="settings_savepass_always_descr">Your password will be stored on your device.
-        Anyone with access to your device will be able to get your password and log into your
-        password manager.  This can be a very serious security risk.</string>
+    <string name="settings_savepass_never_label">Never Store Your Password</string>
+    <string name="settings_savepass_never_descr">Your password will never be saved to your device.
+        You will need to enter your password every time you open the app.
+    </string>
+    <string name="settings_savepass_always_label">Encrypt and Store Your Password</string>
+    <string name="settings_savepass_always_descr">Your password will be encrypted and saved on the device.
+        When you open the app, the password field will be pre-populated.  Other apps on your device will
+        not be able to able to get your password unless they have root access.  Your password will not be
+        backed up to Google\'s servers.
+    </string>
 
     <string name="about_nav_label">About</string>
     <string name="about_version_label">Version:</string>

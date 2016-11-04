@@ -27,7 +27,7 @@
     <TextView
         style="@style/settings_descr"
         android:id="@+id/settings_savepass_descr"
-        android:layout_below="@id/settings_savepass_label"
+        android:layout_below="@id/settings_savepass_value"
         android:layout_alignLeft="@id/settings_savepass_label"
         android:text="@string/settings_savepass_descr"
         />
