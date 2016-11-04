@@ -21,6 +21,9 @@ import com.intirix.cloudpasswordmanager.pages.SecureActivity;
 import com.intirix.cloudpasswordmanager.pages.login.LoginActivity;
 import com.intirix.cloudpasswordmanager.pages.passworddetail.PasswordDetailActivity;
 import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordListActivity;
+import com.intirix.cloudpasswordmanager.pages.settings.SettingsActivity;
+import com.intirix.cloudpasswordmanager.pages.settings.SettingsFragment;
+import com.intirix.cloudpasswordmanager.pages.settings.SettingsSavePasswordOptionsFragment;
 import com.intirix.cloudpasswordmanager.services.session.SessionService;
 
 import javax.inject.Singleton;
@@ -43,4 +46,7 @@ public interface ServiceRef {
     void inject(PasswordListActivity activity);
     void inject(PasswordDetailActivity activity);
     void inject(AboutActivity activity);
+    void inject(SettingsActivity activity);
+    void inject(SettingsFragment fragment);
+    void inject(SettingsSavePasswordOptionsFragment fragment);
 }
