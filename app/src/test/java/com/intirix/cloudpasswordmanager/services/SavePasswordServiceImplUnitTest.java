@@ -15,6 +15,7 @@
  */
 package com.intirix.cloudpasswordmanager.services;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
@@ -22,6 +23,7 @@ import com.intirix.cloudpasswordmanager.BuildConfig;
 import com.intirix.cloudpasswordmanager.TestPasswordApplication;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricGradleTestRunner;
@@ -36,37 +38,50 @@ import org.robolectric.annotation.Config;
         application = TestPasswordApplication.class, sdk = 23)
 public class SavePasswordServiceImplUnitTest {
 
+    private SharedPreferences deviceSpecific;
+
+    @Before
+    public void setUp() {
+        deviceSpecific = RuntimeEnvironment.application.getSharedPreferences("device.xml", Context.MODE_PRIVATE);
+
+    }
+
     @Test
     public void testFirstRun() {
-        SavePasswordServiceImpl impl = new SavePasswordServiceImpl(RuntimeEnvironment.application);
+        SavePasswordServiceImpl impl = new SavePasswordServiceImpl(RuntimeEnvironment.application, null);
         Assert.assertEquals(SavePasswordEnum.NEVER, impl.currentSetting);
     }
 
     @Test
     public void testNeverSelected() {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.application);
-        preferences.edit().putString(SavePasswordServiceImpl.PREF_SAVE_PASSWORD_SETTING, SavePasswordEnum.NEVER.toString());
+        deviceSpecific.edit().putString(SavePasswordServiceImpl.PREF_SAVE_PASSWORD_SETTING, SavePasswordEnum.NEVER.toString());
 
-        SavePasswordServiceImpl impl = new SavePasswordServiceImpl(RuntimeEnvironment.application);
+        SavePasswordServiceImpl impl = new SavePasswordServiceImpl(RuntimeEnvironment.application, null);
         Assert.assertEquals(SavePasswordEnum.NEVER, impl.currentSetting);
     }
 
     @Test
     public void testAlwaysSelected() {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.application);
-        preferences.edit().putString(SavePasswordServiceImpl.PREF_SAVE_PASSWORD_SETTING, SavePasswordEnum.ALWAYS.toString()).commit();
+        deviceSpecific.edit().putString(SavePasswordServiceImpl.PREF_SAVE_PASSWORD_SETTING, SavePasswordEnum.ALWAYS.toString()).commit();
 
-        SavePasswordServiceImpl impl = new SavePasswordServiceImpl(RuntimeEnvironment.application);
+        SavePasswordServiceImpl impl = new SavePasswordServiceImpl(RuntimeEnvironment.application, null);
         Assert.assertEquals(SavePasswordEnum.ALWAYS, impl.currentSetting);
     }
 
     @Test
     public void testUnknownSelected() {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.application);
-        preferences.edit().putString(SavePasswordServiceImpl.PREF_SAVE_PASSWORD_SETTING, "UNKNOWN").commit();
+        deviceSpecific.edit().putString(SavePasswordServiceImpl.PREF_SAVE_PASSWORD_SETTING, "UNKNOWN").commit();
 
-        SavePasswordServiceImpl impl = new SavePasswordServiceImpl(RuntimeEnvironment.application);
+        SavePasswordServiceImpl impl = new SavePasswordServiceImpl(RuntimeEnvironment.application, null);
         Assert.assertEquals(SavePasswordEnum.NEVER, impl.currentSetting);
+    }
+
+    @Test
+    public void testEncryption() {
+        SavePasswordServiceImpl impl = new SavePasswordServiceImpl(RuntimeEnvironment.application, null);
+        String PASSWORD = "random_password";
+        Assert.assertEquals(PASSWORD, impl.decryptPassword(impl.encryptPassword(PASSWORD)));
+
     }
 
 }
