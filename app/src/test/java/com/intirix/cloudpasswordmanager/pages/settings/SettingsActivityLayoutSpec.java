@@ -17,11 +17,14 @@ package com.intirix.cloudpasswordmanager.pages.settings;
 
 import android.content.Intent;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import com.intirix.cloudpasswordmanager.BaseTestCase;
 import com.intirix.cloudpasswordmanager.BuildConfig;
 import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.TestPasswordApplication;
+import com.intirix.cloudpasswordmanager.services.SavePasswordEnum;
 import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordBean;
 import com.intirix.cloudpasswordmanager.services.session.SessionService;
 
@@ -56,6 +59,33 @@ public class SettingsActivityLayoutSpec extends BaseTestCase {
 
         Assert.assertEquals("Settings", activity.getTitle().toString());
         Assert.assertNotNull(activity.findViewById(R.id.settings_savepass_label));
+
+        controller.pause().stop().destroy();
+    }
+
+    @Test
+    public void verifySavePasswordSelectionWhenAlways() {
+        SessionService sessionService = serviceRef.sessionService();
+
+        final String MOCK_URL = "https://www.example.com/owncloud";
+        final String MOCK_USER = "myusername";
+        final String MOCK_PASS = "mypassword";
+
+        sessionService.setUrl(MOCK_URL);
+        sessionService.setUsername(MOCK_USER);
+        sessionService.start();
+        sessionService.getCurrentSession().setPassword(MOCK_PASS);
+
+
+        ActivityController<SettingsActivity> controller = Robolectric.buildActivity(SettingsActivity.class).create();
+        SettingsActivity activity = controller.get();
+
+        activity.savePasswordService.changeSavePasswordSetting(SavePasswordEnum.ALWAYS);
+
+        controller.start().resume();
+
+        final TextView tv = (TextView)activity.findViewById(R.id.settings_savepass_value);
+        Assert.assertEquals(activity.getString(R.string.settings_savepass_always_label), tv.getText().toString());
 
         controller.pause().stop().destroy();
     }

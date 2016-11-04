@@ -20,10 +20,20 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
+import com.intirix.cloudpasswordmanager.PasswordApplication;
 import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.pages.BaseFragment;
+import com.intirix.cloudpasswordmanager.services.SavePasswordEnum;
+import com.intirix.cloudpasswordmanager.services.SavePasswordService;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.inject.Inject;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -31,6 +41,15 @@ import butterknife.OnClick;
  * Created by jeff on 10/6/16.
  */
 public class SettingsFragment extends BaseFragment {
+
+    @Inject
+    SavePasswordService savePasswordService;
+
+    @BindView(R.id.settings_savepass_value)
+    TextView currentSavePasswordOptionLabel;
+
+    @BindView(R.id.settings_savepass_value_descr)
+    TextView currentSavePasswordOptionDescription;
 
     @Nullable
     @Override
@@ -41,7 +60,17 @@ public class SettingsFragment extends BaseFragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        PasswordApplication.getSInjector(getActivity()).inject(this);
         ButterKnife.bind(this, getActivity());
+
+        final Map<SavePasswordEnum, SavePasswordOption> options = new HashMap<>();
+        options.put(SavePasswordEnum.NEVER, new SavePasswordOptionNever(getActivity(), savePasswordService));
+        options.put(SavePasswordEnum.ALWAYS, new SavePasswordOptionAlways(getActivity(), savePasswordService));
+
+        SavePasswordOption currentOption = options.get(savePasswordService.getCurrentSetting());
+        currentSavePasswordOptionLabel.setText(currentOption.getLabel());
+        currentSavePasswordOptionDescription.setText(currentOption.getDescription());
+
     }
 
     @OnClick(R.id.settings_savepass_value)
