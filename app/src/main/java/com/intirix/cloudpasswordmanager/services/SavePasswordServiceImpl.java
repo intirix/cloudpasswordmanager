@@ -132,6 +132,9 @@ public class SavePasswordServiceImpl implements SavePasswordService {
 
     @Override
     public boolean isPasswordAvailable() {
+        if (SavePasswordEnum.ALWAYS.equals(currentSetting)) {
+            return true;
+        }
         return false;
     }
 

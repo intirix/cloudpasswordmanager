@@ -48,6 +48,7 @@ public class LoginActivityLayoutSpec extends BaseTestCase {
         Assert.assertNotNull(activity.urlInput);
         Assert.assertNotNull(activity.userInput);
         Assert.assertNotNull(activity.passInput);
+        Assert.assertEquals("",activity.passInput.getText().toString());
         Assert.assertNotNull(activity.errorMessageView);
         Assert.assertEquals(View.GONE, activity.errorMessageView.getVisibility());
         Assert.assertNotNull(activity.findViewById(R.id.login_login_button));
