@@ -51,9 +51,6 @@ public class SettingsFragment extends BaseFragment {
     @BindView(R.id.settings_savepass_value)
     TextView currentSavePasswordOptionLabel;
 
-    @BindView(R.id.settings_savepass_value_descr)
-    TextView currentSavePasswordOptionDescription;
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -73,11 +70,10 @@ public class SettingsFragment extends BaseFragment {
             savePasswordService.changeSavePasswordSetting(SavePasswordEnum.NEVER);
         }
         currentSavePasswordOptionLabel.setText(currentOption.getLabel());
-        currentSavePasswordOptionDescription.setText(currentOption.getDescription());
 
     }
 
-    @OnClick(R.id.settings_savepass_value)
+    @OnClick(R.id.settings_savepass_row)
     public void onClickChangeSavePassword(View view) {
         baseActivity.navigateRightPane(new SettingsSavePasswordOptionsFragment());
     }

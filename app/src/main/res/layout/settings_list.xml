@@ -9,35 +9,31 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".pages.settings.SettingsActivity">
 
-    <TextView
-        style="@style/settings_label"
-        android:id="@+id/settings_savepass_label"
-        android:layout_below="@id/my_toolbar"
-        android:layout_marginTop="20dp"
-        android:layout_alignLeft="@id/my_toolbar"
-        android:text="@string/settings_savepass_label"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <TextView
-        style="@style/settings_value"
-        android:id="@+id/settings_savepass_value"
-        android:layout_toRightOf="@id/settings_savepass_label"
-        android:layout_alignBottom="@id/settings_savepass_label"
-        android:text="@string/settings_savepass_never_label"/>
+        <RelativeLayout
+            android:id="@+id/settings_savepass_row"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                style="@style/settings_label"
+                android:id="@+id/settings_savepass_label"
+                android:layout_below="@id/my_toolbar"
+                android:layout_marginTop="20dp"
+                android:layout_alignLeft="@id/my_toolbar"
+                android:text="@string/settings_savepass_label"/>
 
-    <TextView
-        style="@style/settings_descr"
-        android:id="@+id/settings_savepass_descr"
-        android:layout_below="@id/settings_savepass_value"
-        android:layout_alignLeft="@id/settings_savepass_label"
-        android:text="@string/settings_savepass_descr"
-        />
+            <TextView
+                style="@style/settings_value"
+                android:id="@+id/settings_savepass_value"
+                android:layout_alignLeft="@id/settings_savepass_label"
+                android:layout_below="@id/settings_savepass_label"
+                android:text="@string/settings_savepass_never_label"/>
 
-    <TextView
-        style="@style/settings_value_descr"
-        android:id="@+id/settings_savepass_value_descr"
-        android:layout_below="@id/settings_savepass_descr"
-        android:layout_alignLeft="@id/settings_savepass_label"
-        android:text="@string/settings_savepass_never_descr"
-        />
+        </RelativeLayout>
+
+    </LinearLayout>
 
 </RelativeLayout>
