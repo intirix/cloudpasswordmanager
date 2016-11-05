@@ -15,6 +15,8 @@
  */
 package com.intirix.cloudpasswordmanager.services;
 
+import java.util.List;
+
 /**
  * Created by jeff on 10/23/16.
  */
@@ -43,6 +45,12 @@ public interface SavePasswordService {
      * @return
      */
     public String getPassword();
+
+    /**
+     * List all the options available on the device
+     * @return
+     */
+    public List<SavePasswordEnum> listAvailableOptions();
 
     /**
      * Change the save password setting

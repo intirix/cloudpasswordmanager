@@ -17,6 +17,7 @@ package com.intirix.cloudpasswordmanager.services;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.Base64;
 import android.util.Log;
@@ -28,6 +29,8 @@ import com.intirix.cloudpasswordmanager.services.ui.EventService;
 
 import java.nio.charset.Charset;
 import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -141,6 +144,21 @@ public class SavePasswordServiceImpl implements SavePasswordService {
     @Override
     public String getPassword() {
         return decryptPassword(deviceSpecific.getString("password",""));
+    }
+
+    @Override
+    public List<SavePasswordEnum> listAvailableOptions() {
+        final List<SavePasswordEnum> list = new ArrayList<>();
+
+        list.add(SavePasswordEnum.NEVER);
+        list.add(SavePasswordEnum.ALWAYS);
+        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.JELLY_BEAN) {
+            list.add(SavePasswordEnum.PASSWORD_PROTECTED);
+        } else {
+            Log.d(TAG, "Skipping password protected option because API level is too old");
+        }
+
+        return list;
     }
 
     @Override

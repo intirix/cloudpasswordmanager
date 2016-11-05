@@ -6,4 +6,5 @@
 
     <color name="selectOptionUnselectedBackground">#EEEEEE</color>
     <color name="selectOptionSelectedBackground">#CCCCFF</color>
+    <color name="selectOptionUnavailableBackground">#FFCCFF</color>
 </resources>

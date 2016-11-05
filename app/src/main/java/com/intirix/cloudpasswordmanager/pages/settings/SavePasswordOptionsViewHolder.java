@@ -15,6 +15,7 @@
  */
 package com.intirix.cloudpasswordmanager.pages.settings;
 
+import android.content.Context;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -58,10 +59,14 @@ public class SavePasswordOptionsViewHolder extends RecyclerView.ViewHolder imple
         label.setText(bean.getLabel());
         descr.setText(bean.getDescription());
 
-        if (bean.isCurrentlySelected()) {
-            row.setBackgroundColor(ContextCompat.getColor(label.getContext(), R.color.selectOptionSelectedBackground));
+        Context context = label.getContext();
+        if (!bean.isAvailable(context)) {
+            row.setBackgroundColor(ContextCompat.getColor(context, R.color.selectOptionUnavailableBackground));
+        }
+        else if (bean.isCurrentlySelected()) {
+            row.setBackgroundColor(ContextCompat.getColor(context, R.color.selectOptionSelectedBackground));
         } else {
-            row.setBackgroundColor(ContextCompat.getColor(label.getContext(), R.color.selectOptionUnselectedBackground));
+            row.setBackgroundColor(ContextCompat.getColor(context, R.color.selectOptionUnselectedBackground));
         }
     }
 

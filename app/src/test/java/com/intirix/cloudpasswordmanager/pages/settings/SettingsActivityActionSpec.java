@@ -74,14 +74,14 @@ public class SettingsActivityActionSpec extends BaseTestCase {
         Assert.assertEquals("Settings", activity.getTitle().toString());
         Assert.assertNotNull(activity.findViewById(R.id.settings_savepass_label));
 
-        activity.findViewById(R.id.settings_savepass_value).performClick();
+        activity.findViewById(R.id.settings_savepass_row).performClick();
 
         Assert.assertNotNull(activity.findViewById(R.id.settings_savepass_options_recycler));
 
         RecyclerView rv = (RecyclerView)activity.findViewById(R.id.settings_savepass_options_recycler);
 
         // verify that there is an entry in the list
-        Assert.assertEquals(2, rv.getAdapter().getItemCount());
+        Assert.assertEquals(3, rv.getAdapter().getItemCount());
 
         rv.measure(0,0);
         rv.layout(0,0,100,1000);
@@ -107,12 +107,9 @@ public class SettingsActivityActionSpec extends BaseTestCase {
         Assert.assertEquals(SavePasswordEnum.NEVER, activity.savePasswordService.getCurrentSetting());
 
         // Change save password
-        activity.findViewById(R.id.settings_savepass_value).performClick();
+        activity.findViewById(R.id.settings_savepass_row).performClick();
 
         RecyclerView rv = (RecyclerView)activity.findViewById(R.id.settings_savepass_options_recycler);
-
-        // verify that there is an entry in the list
-        Assert.assertEquals(2, rv.getAdapter().getItemCount());
 
         rv.measure(0,0);
         rv.layout(0,0,100,1000);
@@ -151,12 +148,9 @@ public class SettingsActivityActionSpec extends BaseTestCase {
         Assert.assertEquals(SavePasswordEnum.ALWAYS, activity.savePasswordService.getCurrentSetting());
 
         // Change save password
-        activity.findViewById(R.id.settings_savepass_value).performClick();
+        activity.findViewById(R.id.settings_savepass_row).performClick();
 
         RecyclerView rv = (RecyclerView)activity.findViewById(R.id.settings_savepass_options_recycler);
-
-        // verify that there is an entry in the list
-        Assert.assertEquals(2, rv.getAdapter().getItemCount());
 
         rv.measure(0,0);
         rv.layout(0,0,100,1000);
