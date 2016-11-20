@@ -158,7 +158,8 @@ public class PasswordStorageServiceImpl implements PasswordStorageService {
     List<PasswordInfo> translatePasswordList(List<PasswordResponse> response) throws ParseException {
         List<PasswordInfo> list = new ArrayList<>();
         for (final PasswordResponse pr : response) {
-            if (pr.getProperties()!=null && "0".equals(pr.getDeleted())) {
+            boolean valid = "0".equals(pr.getDeleted()) || "false".equals(pr.getDeleted());
+            if (pr.getProperties()!=null && valid) {
                 list.add(createPasswordInfo(pr));
             }
         }
