@@ -21,6 +21,7 @@ import android.util.Log;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.services.backend.beans.Category;
 import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordInfo;
@@ -177,55 +178,61 @@ public class PasswordStorageServiceImpl implements PasswordStorageService {
         ret.setHasNotes(pr.isNotes());
 
         if (pr.getProperties()!=null && pr.getProperties().length()>2) {
-            String json = '{'+pr.getProperties()+'}';
-            JsonObject obj = new JsonParser().parse(json).getAsJsonObject();
+            try {
+                String json = '{' + pr.getProperties() + '}';
+                JsonObject obj = new JsonParser().parse(json).getAsJsonObject();
 
-            if (obj.has("loginname")) {
-                ret.setLoginName(obj.get("loginname").getAsString());
-            }
-            if (obj.has("address")) {
-                ret.setAddress(obj.get("address").getAsString());
-            }
-            if (obj.has("notes")) {
-                ret.setNotes(obj.get("notes").getAsString());
-            }
-            if (obj.has("category")) {
-                ret.setCategory(obj.get("category").getAsString());
-            }
+                if (obj.has("loginname")) {
+                    ret.setLoginName(obj.get("loginname").getAsString());
+                }
+                if (obj.has("address")) {
+                    ret.setAddress(obj.get("address").getAsString());
+                }
+                if (obj.has("notes")) {
+                    ret.setNotes(obj.get("notes").getAsString());
+                }
+                if (obj.has("category")) {
+                    ret.setCategory(obj.get("category").getAsString());
+                }
 
-            if (obj.has("length")) {
-                ret.setLength(obj.get("length").getAsInt());
-            }
-            if (obj.has("strength")) {
-                ret.setStrength(obj.get("strength").getAsInt());
-            }
+                if (obj.has("length")) {
+                    ret.setLength(obj.get("length").getAsInt());
+                }
+                if (obj.has("strength")) {
+                    ret.setStrength(obj.get("strength").getAsInt());
+                }
 
-            if (obj.has("lower")) {
-                ret.setHasLower("1".equals(obj.get("lower").getAsString()));
-            } else {
-                ret.setHasLower(false);
-            }
-            if (obj.has("upper")) {
-                ret.setHasUpper("1".equals(obj.get("upper").getAsString()));
-            } else {
-                ret.setHasUpper(false);
-            }
-            if (obj.has("number")) {
-                ret.setHasNumber("1".equals(obj.get("number").getAsString()));
-            } else {
-                ret.setHasNumber(false);
-            }
-            if (obj.has("special")) {
-                ret.setHasSpecial("1".equals(obj.get("special").getAsString()));
-            } else {
-                ret.setHasSpecial(false);
-            }
+                if (obj.has("lower")) {
+                    ret.setHasLower("1".equals(obj.get("lower").getAsString()));
+                } else {
+                    ret.setHasLower(false);
+                }
+                if (obj.has("upper")) {
+                    ret.setHasUpper("1".equals(obj.get("upper").getAsString()));
+                } else {
+                    ret.setHasUpper(false);
+                }
+                if (obj.has("number")) {
+                    ret.setHasNumber("1".equals(obj.get("number").getAsString()));
+                } else {
+                    ret.setHasNumber(false);
+                }
+                if (obj.has("special")) {
+                    ret.setHasSpecial("1".equals(obj.get("special").getAsString()));
+                } else {
+                    ret.setHasSpecial(false);
+                }
 
-            if (obj.has("datechanged")) {
-                Date d = new SimpleDateFormat("yyyy-MM-dd").parse(obj.get("datechanged").getAsString());
-                Calendar c = Calendar.getInstance();
-                c.setTime(d);
-                ret.setDateChanged(c);
+                if (obj.has("datechanged")) {
+                    Date d = new SimpleDateFormat("yyyy-MM-dd").parse(obj.get("datechanged").getAsString());
+                    Calendar c = Calendar.getInstance();
+                    c.setTime(d);
+                    ret.setDateChanged(c);
+                }
+                ret.setDecrypted(true);
+            } catch (JsonSyntaxException e) {
+                ret.setDecrypted(false);
+                ret.setNotes(e.getMessage());
             }
 
         }

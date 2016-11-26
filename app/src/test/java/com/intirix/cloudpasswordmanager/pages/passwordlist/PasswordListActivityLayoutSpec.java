@@ -74,6 +74,7 @@ public class PasswordListActivityLayoutSpec extends BaseTestCase {
         pass1.setCategoryName("Finance");
         pass1.setCategoryForeground(0xFF00FF00);
         pass1.setCategoryBackground(0xFFFFFFFF);
+        pass1.setDecrypted(true);
         List<PasswordBean> passwords = new ArrayList<>();
         passwords.add(pass1);
         sessionService.getCurrentSession().setPasswordBeanList(passwords);
@@ -118,6 +119,7 @@ public class PasswordListActivityLayoutSpec extends BaseTestCase {
         PasswordBean pass1 = new PasswordBean();
         pass1.setWebsite("www.gmail.com");
         pass1.setLoginName("myGmailUsername");
+        pass1.setDecrypted(true);
         List<PasswordBean> passwords = new ArrayList<>();
         passwords.add(pass1);
         sessionService.getCurrentSession().setPasswordBeanList(passwords);

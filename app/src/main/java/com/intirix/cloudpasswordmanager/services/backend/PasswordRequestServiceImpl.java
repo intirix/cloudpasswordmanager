@@ -163,6 +163,7 @@ public class PasswordRequestServiceImpl implements PasswordRequestService {
                 bean.setPass(passwordInfo.getPass());
                 bean.setDateChanged(passwordInfo.getDateChanged());
                 bean.setWebsite(passwordInfo.getWebsite());
+                bean.setDecrypted(passwordInfo.isDecrypted());
 
                 if (categoryMap.containsKey(passwordInfo.getCategory())) {
                     bean.setCategory(passwordInfo.getCategory());

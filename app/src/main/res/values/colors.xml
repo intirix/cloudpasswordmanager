@@ -7,4 +7,6 @@
     <color name="selectOptionUnselectedBackground">#EEEEEE</color>
     <color name="selectOptionSelectedBackground">#CCCCFF</color>
     <color name="selectOptionUnavailableBackground">#FFCCFF</color>
+
+    <color name="categoryDecryptionFailed">#FF0000</color>
 </resources>

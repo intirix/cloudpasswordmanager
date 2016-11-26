@@ -27,6 +27,7 @@
 
     <string name="password_list_nav_label">Password List</string>
     <string name="password_list_progress_message">Loading</string>
+    <string name="password_list_decryption_failed">Decryption Failed</string>
 
     <string name="example_website">www.github.com</string>
     <string name="example_website_empty">(No Website)</string>

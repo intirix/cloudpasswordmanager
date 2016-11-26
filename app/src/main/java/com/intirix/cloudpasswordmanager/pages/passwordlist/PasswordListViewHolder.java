@@ -67,23 +67,40 @@ public class PasswordListViewHolder extends RecyclerView.ViewHolder implements V
         this.index = index;
         this.id = pass.getId();
         website.setText(pass.getWebsite());
-        loginName.setText(pass.getLoginName());
-        if (pass.getCategoryName()==null||pass.getCategoryName().length()==0) {
-            categoryName.setVisibility(View.GONE);
+
+        if (pass.isDecrypted()) {
+            loginName.setText(pass.getLoginName());
+            if (pass.getCategoryName() == null || pass.getCategoryName().length() == 0) {
+                categoryName.setVisibility(View.GONE);
+            } else {
+                categoryName.setVisibility(View.VISIBLE);
+                categoryName.setText(pass.getCategoryName());
+                categoryName.setTextColor(pass.getCategoryForeground());
+
+
+                if (categoryName.getBackground() != null && categoryName.getBackground() instanceof PaintDrawable) {
+                    PaintDrawable bg = (PaintDrawable) categoryName.getBackground();
+                    bg.getPaint().setColor(pass.getCategoryBackground());
+                } else {
+                    PaintDrawable bg = new PaintDrawable(pass.getCategoryBackground());
+                    bg.setCornerRadius(16);
+                    categoryName.setBackgroundDrawable(bg);
+                }
+            }
         } else {
             categoryName.setVisibility(View.VISIBLE);
-            categoryName.setText(pass.getCategoryName());
-            categoryName.setTextColor(pass.getCategoryForeground());
+            categoryName.setText(activity.getString(R.string.password_list_decryption_failed));
+            categoryName.setTextColor(activity.getResources().getColor(android.R.color.white));
 
-
-            if (categoryName.getBackground()!=null && categoryName.getBackground() instanceof PaintDrawable) {
-                PaintDrawable bg = (PaintDrawable)categoryName.getBackground();
-                bg.getPaint().setColor(pass.getCategoryBackground());
+            if (categoryName.getBackground() != null && categoryName.getBackground() instanceof PaintDrawable) {
+                PaintDrawable bg = (PaintDrawable) categoryName.getBackground();
+                bg.getPaint().setColor(activity.getResources().getColor(R.color.categoryDecryptionFailed));
             } else {
-                PaintDrawable bg = new PaintDrawable(pass.getCategoryBackground());
+                PaintDrawable bg = new PaintDrawable(activity.getResources().getColor(R.color.categoryDecryptionFailed));
                 bg.setCornerRadius(16);
                 categoryName.setBackgroundDrawable(bg);
             }
+
         }
     }
 }
