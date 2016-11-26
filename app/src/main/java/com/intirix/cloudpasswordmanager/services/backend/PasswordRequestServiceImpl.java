@@ -16,6 +16,7 @@
 package com.intirix.cloudpasswordmanager.services.backend;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.pages.passwordlist.CategoryListUpdatedEvent;
@@ -45,6 +46,8 @@ import javax.inject.Inject;
  * Created by jeff on 6/29/16.
  */
 public class PasswordRequestServiceImpl implements PasswordRequestService {
+
+    private static final String TAG = PasswordRequestServiceImpl.class.getSimpleName();
 
     private PasswordStorageService passwordStorageService;
 
@@ -117,6 +120,7 @@ public class PasswordRequestServiceImpl implements PasswordRequestService {
         passwordStorageService.listPasswords(new PasswordListCallback() {
             @Override
             public void onReturn(List<PasswordInfo> passwords) {
+                Log.d(TAG,"returned "+passwords.size()+" passwords");
                 session.setPasswordList(passwords);
                 updatePasswordBeanList(session);
                 eventService.postEvent(new PasswordListUpdatedEvent());
@@ -159,6 +163,7 @@ public class PasswordRequestServiceImpl implements PasswordRequestService {
                 bean.setPass(passwordInfo.getPass());
                 bean.setDateChanged(passwordInfo.getDateChanged());
                 bean.setWebsite(passwordInfo.getWebsite());
+                bean.setDecrypted(passwordInfo.isDecrypted());
 
                 if (categoryMap.containsKey(passwordInfo.getCategory())) {
                     bean.setCategory(passwordInfo.getCategory());
