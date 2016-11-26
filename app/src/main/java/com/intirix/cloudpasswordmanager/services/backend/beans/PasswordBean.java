@@ -60,6 +60,8 @@ public class PasswordBean implements Comparable<PasswordBean> {
 
     private Calendar dateChanged;
 
+    private boolean decrypted;
+
     public String getAddress() {
         return address;
     }
@@ -212,6 +214,14 @@ public class PasswordBean implements Comparable<PasswordBean> {
         this.categoryName = categoryName;
     }
 
+    public boolean isDecrypted() {
+        return decrypted;
+    }
+
+    public void setDecrypted(boolean decrypted) {
+        this.decrypted = decrypted;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -228,6 +238,7 @@ public class PasswordBean implements Comparable<PasswordBean> {
         if (isHasSpecial() != that.isHasSpecial()) return false;
         if (getCategoryBackground() != that.getCategoryBackground()) return false;
         if (getCategoryForeground() != that.getCategoryForeground()) return false;
+        if (isDecrypted() != that.isDecrypted()) return false;
         if (getId() != null ? !getId().equals(that.getId()) : that.getId() != null) return false;
         if (getUser_id() != null ? !getUser_id().equals(that.getUser_id()) : that.getUser_id() != null)
             return false;
@@ -270,6 +281,7 @@ public class PasswordBean implements Comparable<PasswordBean> {
         result = 31 * result + getCategoryForeground();
         result = 31 * result + (getCategoryName() != null ? getCategoryName().hashCode() : 0);
         result = 31 * result + (getDateChanged() != null ? getDateChanged().hashCode() : 0);
+        result = 31 * result + (isDecrypted() ? 1 : 0);
         return result;
     }
 

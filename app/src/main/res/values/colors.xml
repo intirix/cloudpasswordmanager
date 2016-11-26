@@ -3,4 +3,10 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#AAAAAA</color>
+
+    <color name="selectOptionUnselectedBackground">#EEEEEE</color>
+    <color name="selectOptionSelectedBackground">#CCCCFF</color>
+    <color name="selectOptionUnavailableBackground">#FFCCFF</color>
+
+    <color name="categoryDecryptionFailed">#FF0000</color>
 </resources>

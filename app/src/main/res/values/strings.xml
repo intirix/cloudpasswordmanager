@@ -27,6 +27,7 @@
 
     <string name="password_list_nav_label">Password List</string>
     <string name="password_list_progress_message">Loading</string>
+    <string name="password_list_decryption_failed">Decryption Failed</string>
 
     <string name="example_website">www.github.com</string>
     <string name="example_website_empty">(No Website)</string>
@@ -52,6 +53,28 @@
     <string name="password_detail_website_toast">URL copied to clipboard</string>
     <string name="password_detail_loginName_toast">Login name copied to clipboard</string>
     <string name="password_detail_password_toast">Password copied to clipboard</string>
+
+    <string name="settings_title">Settings</string>
+    <string name="settings_nav_label">Settings</string>
+    <string name="settings_savepass_label">Password Policy:</string>
+    <string name="settings_savepass_descr">Which scenarios will your password be saved and used?</string>
+
+    <string name="settings_savepass_never_label">Never Store Your Password</string>
+    <string name="settings_savepass_never_descr">Your password will never be saved to your device.
+        You will need to enter your password every time you open the app.
+    </string>
+    <string name="settings_savepass_always_label">Encrypt and Store Your Password</string>
+    <string name="settings_savepass_always_descr">Your password will be encrypted and saved on the device.
+        When you open the app, the password field will be pre-populated.  Other apps on your device will
+        not be able to able to get your password unless they have root access.  Your password will not be
+        backed up to Google\'s servers.
+    </string>
+    <string name="settings_savepass_passwordprotected_label">Encrypt and Store Your Password When Phone is Password Protected</string>
+    <string name="settings_savepass_passwordprotected_descr">Your password will be encrypted and saved on the device.
+        When you open the app, the password field will be pre-populated.  Other apps on your device will
+        not be able to able to get your password unless they have root access.  Your password will not be
+        backed up to Google\'s servers.  Your device must be password protected to select this option.  Requires API 16.
+    </string>
 
     <string name="about_nav_label">About</string>
     <string name="about_version_label">Version:</string>

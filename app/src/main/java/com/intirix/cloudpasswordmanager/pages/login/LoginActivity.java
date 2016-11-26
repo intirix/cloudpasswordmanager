@@ -30,6 +30,7 @@ import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.pages.FatalErrorEvent;
 import com.intirix.cloudpasswordmanager.pages.BaseActivity;
 import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordListActivity;
+import com.intirix.cloudpasswordmanager.services.SavePasswordService;
 import com.intirix.cloudpasswordmanager.services.ssl.CertPinningService;
 import com.intirix.cloudpasswordmanager.services.backend.PasswordRequestService;
 import com.intirix.cloudpasswordmanager.services.ssl.PinFailedEvent;
@@ -58,6 +59,9 @@ public class LoginActivity extends BaseActivity {
 
     @Inject
     CertPinningService certPinningService;
+
+    @Inject
+    SavePasswordService savePasswordService;
 
     @BindView(R.id.login_url)
     EditText urlInput;
@@ -112,6 +116,10 @@ public class LoginActivity extends BaseActivity {
 
         if (userInput.getText().toString().length()==0) {
             userInput.setText(sessionService.getUsername());
+        }
+
+        if (savePasswordService.isPasswordAvailable() && passInput.getText().toString().length()==0) {
+            passInput.setText(savePasswordService.getPassword());
         }
 
         // Only set the error message if the current view is empty

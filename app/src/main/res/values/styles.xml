@@ -95,4 +95,42 @@
         <item name="android:textStyle">bold</item>
     </style>
 
+
+    <!-- Settings page -->
+    <style name="settings_label">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="settings_descr">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textStyle">italic</item>
+        <!-- this is used to somewhat align the label and the value -->
+        <item name="android:paddingBottom">1sp</item>
+    </style>
+
+    <style name="settings_value">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_marginLeft">10sp</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <style name="settings_value_descr">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_marginTop">5dp</item>
+        <item name="android:textSize">15sp</item>
+        <!-- this is used to somewhat align the label and the value -->
+        <item name="android:paddingBottom">2sp</item>
+        <item name="android:paddingLeft">15dp</item>
+    </style>
+
+
 </resources>

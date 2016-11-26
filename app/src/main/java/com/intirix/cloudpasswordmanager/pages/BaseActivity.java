@@ -18,10 +18,12 @@ package com.intirix.cloudpasswordmanager.pages;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 import android.widget.ListView;
@@ -35,10 +37,12 @@ import com.intirix.cloudpasswordmanager.pages.navigation.NavigationAdapter;
 import com.intirix.cloudpasswordmanager.pages.navigation.NavigationClickListener;
 import com.intirix.cloudpasswordmanager.pages.navigation.NavigationItem;
 import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordListNavigationItem;
+import com.intirix.cloudpasswordmanager.pages.settings.SettingsNavigationItem;
 import com.intirix.cloudpasswordmanager.services.session.AutoLogoffService;
 import com.intirix.cloudpasswordmanager.services.session.SessionService;
 
 import java.util.LinkedList;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -49,6 +53,8 @@ import butterknife.ButterKnife;
  * Created by jeff on 7/27/16.
  */
 public abstract class BaseActivity extends AppCompatActivity {
+
+    private static final String TAG = BaseActivity.class.getSimpleName();
 
     private NavigationAdapter adapter;
 
@@ -70,6 +76,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Inject
     protected SessionService sessionService;
 
+    protected boolean twoPane = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -81,6 +88,24 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         // attach the activity's actual layout to the page
         getLayoutInflater().inflate(getLayoutId(), contentFrame, true);
+
+        if (findViewById(R.id.frame_main)!=null) {
+            if (savedInstanceState==null) {
+                Log.d(TAG, "Layout has a fragment frame, creating initial fragment");
+                Fragment frag = createInitialFragment();
+                if (frag!=null) {
+                    Log.d(TAG, "Adding fragment "+frag.getClass().getSimpleName());
+
+                    frag.setArguments(getIntent().getExtras());
+                    getSupportFragmentManager().beginTransaction().add(R.id.frame_main, frag).commit();
+                } else {
+                    Log.d(TAG, "No fragment created");
+                }
+            } else {
+                Log.d(TAG, "Layout has a fragment frame, restoring previous fragment");
+            }
+        }
+
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
@@ -105,10 +130,21 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Create the initial fragment
+     * @return
+     */
+    protected Fragment createInitialFragment() {
+        return null;
+    }
+
+
+
     protected void addNavigationItems(LinkedList<NavigationItem> navItems) {
         if (autoLogoffService.isSessionStillValid()) {
             navItems.addFirst(new LogOffNavigationItem(this, sessionService));
             navItems.addLast(new PasswordListNavigationItem(this));
+            navItems.addLast(new SettingsNavigationItem(this));
 
         } else {
             navItems.addFirst(new LoginNavigationItem(this));
@@ -148,5 +184,24 @@ public abstract class BaseActivity extends AppCompatActivity {
         // Handle your other action bar items...
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public ListView getDrawerListView() {
+        return drawerListView;
+    }
+
+
+    /**
+     * Change the right pane
+     * @param frag
+     */
+    public void navigateRightPane(Fragment frag) {
+        if (twoPane) {
+            Log.d(TAG, "Navigating right pane to fragment "+frag.getClass().getSimpleName());
+
+        } else {
+            Log.d(TAG, "Navigating page to fragment "+frag.getClass().getSimpleName());
+            getSupportFragmentManager().beginTransaction().replace(R.id.frame_main, frag).addToBackStack(null).commit();
+        }
     }
 }

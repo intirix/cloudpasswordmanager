@@ -14,7 +14,8 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:fullBackupContent="@xml/backup_file">
         <activity android:name=".pages.login.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,6 +29,8 @@
         <activity android:name=".pages.passworddetail.PasswordDetailActivity"
             android:label="@string/password_detail_title"/>
         <activity android:name=".pages.about.AboutActivity"/>
+        <activity android:name=".pages.settings.SettingsActivity"
+            android:label="@string/settings_title"/>
     </application>
 
 </manifest>
