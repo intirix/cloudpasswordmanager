@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/CloudPasswordManager.iml" filepath="$PROJECT_DIR$/CloudPasswordManager.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/secretsmanagerapiv1/secretsmanagerapiv1.iml" filepath="$PROJECT_DIR$/secretsmanagerapiv1/secretsmanagerapiv1.iml" />
     </modules>
   </component>
 </project>
