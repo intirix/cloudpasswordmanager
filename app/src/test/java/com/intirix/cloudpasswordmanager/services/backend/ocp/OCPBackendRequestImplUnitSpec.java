@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.intirix.cloudpasswordmanager.services.backend;
+package com.intirix.cloudpasswordmanager.services.backend.ocp;
 
 import com.intirix.cloudpasswordmanager.BuildConfig;
 import com.intirix.cloudpasswordmanager.TestPasswordApplication;
@@ -21,6 +21,7 @@ import com.intirix.cloudpasswordmanager.pages.passwordlist.CategoryListUpdatedEv
 import com.intirix.cloudpasswordmanager.pages.FatalErrorEvent;
 import com.intirix.cloudpasswordmanager.pages.login.LoginSuccessfulEvent;
 import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordListUpdatedEvent;
+import com.intirix.cloudpasswordmanager.services.backend.PasswordRequestServiceImpl;
 import com.intirix.cloudpasswordmanager.services.backend.ocp.MockPasswordStorageService;
 import com.intirix.cloudpasswordmanager.services.ui.ColorService;
 import com.intirix.cloudpasswordmanager.services.ui.MockEventService;
@@ -47,7 +48,7 @@ import java.util.List;
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class,
         application = TestPasswordApplication.class, sdk = 23)
-public class PasswordRequestServiceImplUnitSpec {
+public class OCPBackendRequestImplUnitSpec {
 
     private MockEventService eventService;
 
@@ -55,7 +56,7 @@ public class PasswordRequestServiceImplUnitSpec {
 
     private MockPasswordStorageService passwordStorageService;
 
-    private PasswordRequestServiceImpl impl;
+    private OCPBackendRequestImpl impl;
 
     private ColorService colorService;
 
@@ -67,7 +68,7 @@ public class PasswordRequestServiceImplUnitSpec {
         passwordStorageService = new MockPasswordStorageService();
         colorService = EasyMock.createMock(ColorService.class);
 
-        impl = new PasswordRequestServiceImpl(RuntimeEnvironment.application, sessionService, passwordStorageService, eventService, colorService);
+        impl = new OCPBackendRequestImpl(RuntimeEnvironment.application, sessionService, passwordStorageService, eventService, colorService);
     }
 
     @Test
