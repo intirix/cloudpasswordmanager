@@ -33,6 +33,7 @@ import com.intirix.cloudpasswordmanager.pages.FatalErrorEvent;
 import com.intirix.cloudpasswordmanager.pages.BaseActivity;
 import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordListActivity;
 import com.intirix.cloudpasswordmanager.services.SavePasswordService;
+import com.intirix.cloudpasswordmanager.services.session.StorageType;
 import com.intirix.cloudpasswordmanager.services.ssl.CertPinningService;
 import com.intirix.cloudpasswordmanager.services.backend.PasswordRequestService;
 import com.intirix.cloudpasswordmanager.services.ssl.PinFailedEvent;
@@ -258,6 +259,11 @@ public class LoginActivity extends BaseActivity {
                 sessionService.setUsername(userInput.getText().toString());
                 sessionService.start();
                 sessionService.getCurrentSession().setPassword(passInput.getText().toString());
+                if (storageTypeSpinner.getSelectedItemPosition()==0) {
+                    sessionService.getCurrentSession().setStorageType(StorageType.OWNCLOUD_PASSWORDS);
+                } else {
+                    sessionService.getCurrentSession().setStorageType(StorageType.SECRETS_MANAGER_API_V1);
+                }
 
                 passwordRequestService.login();
                 updateProgressDialog();

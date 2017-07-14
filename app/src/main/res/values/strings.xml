@@ -21,6 +21,7 @@
 
     <string-array name="login_storage_type_labels">
         <item>OwnCloud Passwords</item>
+        <item>Secrets Manager</item>
     </string-array>
 
     <string name="error_invalid_username_password">Invalid username and password</string>
