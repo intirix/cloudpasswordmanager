@@ -80,6 +80,7 @@ public class PasswordRestServiceUnitSpec {
                 return new Response.Builder()
                         .request(chain.request())
                         .code(200)
+                        .message("OK")
                         .protocol(Protocol.HTTP_1_1)
                         .header("Content-Type", "application/json")
                         .body(ResponseBody.create(MediaType.parse("application/json"),responseJson))
