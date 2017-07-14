@@ -22,7 +22,9 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.intirix.cloudpasswordmanager.PasswordApplication;
@@ -62,6 +64,11 @@ public class LoginActivity extends BaseActivity {
 
     @Inject
     SavePasswordService savePasswordService;
+
+    @BindView(R.id.login_storage_type)
+    Spinner storageTypeSpinner;
+
+    ArrayAdapter<CharSequence> storageTypeAdapter;
 
     @BindView(R.id.login_url)
     EditText urlInput;
@@ -133,6 +140,13 @@ public class LoginActivity extends BaseActivity {
 
         // only show the error message if the view is populated
         updateErrorMessageVisibility();
+
+        if (storageTypeAdapter==null) {
+            storageTypeAdapter = ArrayAdapter.createFromResource(this,
+                    R.array.login_storage_type_labels, android.R.layout.simple_spinner_item);
+            storageTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            storageTypeSpinner.setAdapter(storageTypeAdapter);
+        }
 
         // recheck the pinning flags
         updateLoginForm(false);

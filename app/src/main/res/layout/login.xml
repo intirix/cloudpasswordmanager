@@ -31,12 +31,21 @@
         android:layout_height="match_parent"
         android:layout_weight="1">
 
+        <Spinner
+            style="@style/login_form_element"
+            android:id="@+id/login_storage_type"
+            >
+
+        </Spinner>
+
         <EditText
             style="@style/login_form_element"
             android:id="@+id/login_url"
             android:drawableLeft="@drawable/ic_highlight_off_black_24dp"
             android:hint="@string/login_url_hint"
+            android:layout_below="@id/login_storage_type"
             android:inputType="textUri"/>
+
 
         <EditText
             style="@style/login_form_element"

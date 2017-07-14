@@ -45,6 +45,7 @@ public class LoginActivityLayoutSpec extends BaseTestCase {
         ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class).create().start().resume();
         LoginActivity activity = controller.get();
 
+        Assert.assertNotNull(activity.storageTypeSpinner);
         Assert.assertNotNull(activity.urlInput);
         Assert.assertNotNull(activity.userInput);
         Assert.assertNotNull(activity.passInput);
@@ -94,6 +95,16 @@ public class LoginActivityLayoutSpec extends BaseTestCase {
         Button unpinButton = (Button)activity.findViewById(R.id.login_unpin_button);
         Assert.assertEquals(View.VISIBLE, unpinButton.getVisibility());
         Assert.assertTrue(unpinButton.isEnabled());
+
+        controller.pause().stop().destroy();
+    }
+
+    @Test
+    public void verifyOwnCloudPasswordsIsDefaultStorageType() {
+        ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class).create().start().resume();
+        LoginActivity activity = controller.get();
+
+        Assert.assertEquals("OwnCloud Passwords",activity.storageTypeSpinner.getSelectedItem().toString());
 
         controller.pause().stop().destroy();
     }

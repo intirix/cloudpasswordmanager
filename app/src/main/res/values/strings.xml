@@ -19,6 +19,10 @@
     <string name="login_progress_message">Logging In</string>
     <string name="login_pin_progress_message">Checking Encryption</string>
 
+    <string-array name="login_storage_type_labels">
+        <item>OwnCloud Passwords</item>
+    </string-array>
+
     <string name="error_invalid_username_password">Invalid username and password</string>
     <string name="error_unknown_error">An unknown error has occurred</string>
     <string name="error_empty_url">You must specify a URL</string>
