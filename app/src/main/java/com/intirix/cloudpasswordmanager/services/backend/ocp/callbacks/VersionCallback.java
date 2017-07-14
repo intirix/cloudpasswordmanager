@@ -13,15 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.intirix.cloudpasswordmanager.services.backend.callbacks;
-
-import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordInfo;
-
-import java.util.List;
+package com.intirix.cloudpasswordmanager.services.backend.ocp.callbacks;
 
 /**
- * Created by jeff on 6/28/16.
+ * Created by jeff on 6/18/16.
  */
-public interface PasswordListCallback extends BaseCallback {
-    public void onReturn(List<PasswordInfo> passwords);
+public interface VersionCallback extends BaseCallback {
+
+    public void onReturn(String version);
 }

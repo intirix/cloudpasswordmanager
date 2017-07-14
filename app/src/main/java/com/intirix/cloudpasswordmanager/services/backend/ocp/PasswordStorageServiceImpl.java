@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.intirix.cloudpasswordmanager.services.backend;
+package com.intirix.cloudpasswordmanager.services.backend.ocp;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -26,9 +26,9 @@ import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.services.backend.beans.Category;
 import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordInfo;
 import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordResponse;
-import com.intirix.cloudpasswordmanager.services.backend.callbacks.CategoryListCallback;
-import com.intirix.cloudpasswordmanager.services.backend.callbacks.PasswordListCallback;
-import com.intirix.cloudpasswordmanager.services.backend.callbacks.VersionCallback;
+import com.intirix.cloudpasswordmanager.services.backend.ocp.callbacks.CategoryListCallback;
+import com.intirix.cloudpasswordmanager.services.backend.ocp.callbacks.PasswordListCallback;
+import com.intirix.cloudpasswordmanager.services.backend.ocp.callbacks.VersionCallback;
 import com.intirix.cloudpasswordmanager.services.session.SessionService;
 
 import java.text.ParseException;

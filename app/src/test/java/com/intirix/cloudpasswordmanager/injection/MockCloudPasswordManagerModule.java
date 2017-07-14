@@ -20,12 +20,12 @@ import android.content.Context;
 import com.intirix.cloudpasswordmanager.services.ssl.CertPinningService;
 import com.intirix.cloudpasswordmanager.services.ssl.CertPinningServiceImpl;
 import com.intirix.cloudpasswordmanager.services.ssl.MockCertPinningService;
-import com.intirix.cloudpasswordmanager.services.backend.MockPasswordStorageService;
+import com.intirix.cloudpasswordmanager.services.backend.ocp.MockPasswordStorageService;
 import com.intirix.cloudpasswordmanager.services.session.MockSessionService;
 import com.intirix.cloudpasswordmanager.services.backend.PasswordRequestService;
 import com.intirix.cloudpasswordmanager.services.backend.PasswordRequestServiceImpl;
-import com.intirix.cloudpasswordmanager.services.backend.PasswordStorageService;
-import com.intirix.cloudpasswordmanager.services.backend.PasswordStorageServiceImpl;
+import com.intirix.cloudpasswordmanager.services.backend.ocp.PasswordStorageService;
+import com.intirix.cloudpasswordmanager.services.backend.ocp.PasswordStorageServiceImpl;
 import com.intirix.cloudpasswordmanager.services.session.SessionService;
 import com.intirix.cloudpasswordmanager.services.session.SessionServiceImpl;
 

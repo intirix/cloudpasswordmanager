@@ -23,15 +23,16 @@ import com.intirix.cloudpasswordmanager.pages.passwordlist.CategoryListUpdatedEv
 import com.intirix.cloudpasswordmanager.pages.FatalErrorEvent;
 import com.intirix.cloudpasswordmanager.pages.login.LoginSuccessfulEvent;
 import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordListUpdatedEvent;
+import com.intirix.cloudpasswordmanager.services.backend.ocp.PasswordStorageService;
 import com.intirix.cloudpasswordmanager.services.ui.ColorService;
 import com.intirix.cloudpasswordmanager.services.ui.EventService;
 import com.intirix.cloudpasswordmanager.services.backend.beans.Category;
 import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordBean;
 import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordInfo;
 import com.intirix.cloudpasswordmanager.services.session.SessionInfo;
-import com.intirix.cloudpasswordmanager.services.backend.callbacks.CategoryListCallback;
-import com.intirix.cloudpasswordmanager.services.backend.callbacks.PasswordListCallback;
-import com.intirix.cloudpasswordmanager.services.backend.callbacks.VersionCallback;
+import com.intirix.cloudpasswordmanager.services.backend.ocp.callbacks.CategoryListCallback;
+import com.intirix.cloudpasswordmanager.services.backend.ocp.callbacks.PasswordListCallback;
+import com.intirix.cloudpasswordmanager.services.backend.ocp.callbacks.VersionCallback;
 import com.intirix.cloudpasswordmanager.services.session.SessionService;
 
 import java.util.ArrayList;
