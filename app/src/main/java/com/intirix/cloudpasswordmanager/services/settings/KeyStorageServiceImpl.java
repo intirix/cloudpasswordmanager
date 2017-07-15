@@ -3,7 +3,9 @@ package com.intirix.cloudpasswordmanager.services.settings;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
+import com.intirix.cloudpasswordmanager.services.backend.ocp.OCPBackendRequestImpl;
 import com.intirix.cloudpasswordmanager.services.session.SessionService;
 
 import java.io.IOException;
@@ -16,6 +18,8 @@ import javax.inject.Inject;
  */
 
 public class KeyStorageServiceImpl implements KeyStorageService {
+
+    private static final String TAG = KeyStorageServiceImpl.class.getSimpleName();
 
     private Context context;
 
@@ -45,6 +49,7 @@ public class KeyStorageServiceImpl implements KeyStorageService {
 
     @Override
     public void saveEncryptedPrivateKey(String key) throws IOException {
+        Log.i(TAG,"Changing the private key");
         deviceSpecific.edit().putString(PREF_PRIVATE_KEY_SETTING, key).commit();
     }
 
@@ -55,6 +60,7 @@ public class KeyStorageServiceImpl implements KeyStorageService {
 
     @Override
     public void clearEncryptedPrivateKey() throws IOException {
+        Log.i(TAG,"Removing the private key");
         deviceSpecific.edit().remove(PREF_PRIVATE_KEY_SETTING).commit();
     }
 }

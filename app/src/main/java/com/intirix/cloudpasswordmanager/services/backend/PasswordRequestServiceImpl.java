@@ -59,6 +59,9 @@ public class PasswordRequestServiceImpl implements PasswordRequestService {
 
     @Override
     public boolean isLoginRunning() {
+        if (sessionService.getCurrentSession()==null) {
+            return false;
+        }
         return getBackend().isLoginRunning();
     }
 

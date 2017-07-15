@@ -307,6 +307,7 @@ public class LoginActivity extends BaseActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLogin(LoginSuccessfulEvent event) {
+        Log.d(TAG,"onLogin()");
         updateProgressDialog();
 
         passwordRequestService.listPasswords();

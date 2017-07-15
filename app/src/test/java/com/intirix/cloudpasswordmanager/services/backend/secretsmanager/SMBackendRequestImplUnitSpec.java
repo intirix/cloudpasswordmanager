@@ -4,6 +4,7 @@ import com.intirix.cloudpasswordmanager.BuildConfig;
 import com.intirix.cloudpasswordmanager.TestPasswordApplication;
 import com.intirix.cloudpasswordmanager.pages.FatalErrorEvent;
 import com.intirix.cloudpasswordmanager.pages.login.LoginSuccessfulEvent;
+import com.intirix.cloudpasswordmanager.pages.passwordlist.CategoryListUpdatedEvent;
 import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordListUpdatedEvent;
 import com.intirix.cloudpasswordmanager.services.backend.ocp.MockCall;
 import com.intirix.cloudpasswordmanager.services.session.MockSessionService;
@@ -80,13 +81,14 @@ public class SMBackendRequestImplUnitSpec {
             public void enqueue(Callback<String> callback) {
                 Assert.assertTrue(impl.isLoginRunning());
                 callback.onResponse(null, Response.success("TEST123"));
+                Assert.assertFalse(impl.isLoginRunning());
             }
         };
 
         Call<List<Secret>> secretsCall = new MockCall<List<Secret>>() {
             @Override
             public void enqueue(Callback<List<Secret>> callback) {
-                Assert.assertTrue(impl.isLoginRunning());
+                Assert.assertFalse(impl.isLoginRunning());
                 callback.onResponse(null, Response.success(Collections.<Secret>emptyList()));
             }
         };
@@ -99,10 +101,14 @@ public class SMBackendRequestImplUnitSpec {
         impl.login();
         Assert.assertFalse(impl.isLoginRunning());
 
-        eventService.assertNumberOfPosts(2);
+        eventService.assertNumberOfPosts(3);
         eventService.assertEventType(0, LoginSuccessfulEvent.class);
-        eventService.assertEventType(1, PasswordListUpdatedEvent.class);
+        eventService.assertEventType(1, CategoryListUpdatedEvent.class);
+        eventService.assertEventType(2, PasswordListUpdatedEvent.class);
 
+        Assert.assertNotNull(sessionService.getCurrentSession().getPasswordBeanList());
+        Assert.assertNotNull(sessionService.getCurrentSession().getPasswordList());
+        Assert.assertNotNull(sessionService.getCurrentSession().getCategoryList());
 
         EasyMock.verify(api,keyStorageService);
     }
@@ -174,7 +180,7 @@ public class SMBackendRequestImplUnitSpec {
         Call<List<Secret>> secretsCall = new MockCall<List<Secret>>() {
             @Override
             public void enqueue(Callback<List<Secret>> callback) {
-                Assert.assertTrue(impl.isLoginRunning());
+                Assert.assertFalse(impl.isLoginRunning());
                 callback.onResponse(null, Response.success(Collections.<Secret>emptyList()));
             }
         };
@@ -186,9 +192,14 @@ public class SMBackendRequestImplUnitSpec {
         impl.login();
         Assert.assertFalse(impl.isLoginRunning());
 
-        eventService.assertNumberOfPosts(2);
+        eventService.assertNumberOfPosts(3);
         eventService.assertEventType(0, LoginSuccessfulEvent.class);
-        eventService.assertEventType(1, PasswordListUpdatedEvent.class);
+        eventService.assertEventType(1, CategoryListUpdatedEvent.class);
+        eventService.assertEventType(2, PasswordListUpdatedEvent.class);
+
+        Assert.assertNotNull(sessionService.getCurrentSession().getPasswordBeanList());
+        Assert.assertNotNull(sessionService.getCurrentSession().getPasswordList());
+        Assert.assertNotNull(sessionService.getCurrentSession().getCategoryList());
 
 
         EasyMock.verify(api,keyStorageService);
@@ -204,7 +215,7 @@ public class SMBackendRequestImplUnitSpec {
         Call<List<Secret>> secretsCall = new MockCall<List<Secret>>() {
             @Override
             public void enqueue(Callback<List<Secret>> callback) {
-                Assert.assertTrue(impl.isLoginRunning());
+                Assert.assertFalse(impl.isLoginRunning());
                 callback.onFailure(null, new IOException("Access denied"));
             }
         };
@@ -216,8 +227,10 @@ public class SMBackendRequestImplUnitSpec {
         impl.login();
         Assert.assertFalse(impl.isLoginRunning());
 
-        eventService.assertNumberOfPosts(1);
-        eventService.assertEventType(0, FatalErrorEvent.class);
+        eventService.assertNumberOfPosts(2);
+        // the login is considered successful when the private key is successfully decrypted
+        eventService.assertEventType(0, LoginSuccessfulEvent.class);
+        eventService.assertEventType(1, FatalErrorEvent.class);
 
 
         EasyMock.verify(api,keyStorageService);
