@@ -1,7 +1,11 @@
 package com.intirix.cloudpasswordmanager.services.backend.secretsmanager;
 
+import android.util.Log;
+
+import com.intirix.cloudpasswordmanager.pages.FatalErrorEvent;
 import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordListUpdatedEvent;
 import com.intirix.cloudpasswordmanager.services.backend.BackendRequestInterface;
+import com.intirix.cloudpasswordmanager.services.backend.ocp.OCPBackendRequestImpl;
 import com.intirix.cloudpasswordmanager.services.session.AuthenticationInterceptor;
 import com.intirix.cloudpasswordmanager.services.session.SessionService;
 import com.intirix.cloudpasswordmanager.services.settings.KeyStorageService;
@@ -24,6 +28,8 @@ import retrofit2.Response;
  */
 
 public class SMBackendRequestImpl implements BackendRequestInterface {
+
+    private static final String TAG = SMBackendRequestImpl.class.getSimpleName();
 
     private ApiClient client;
 
@@ -72,12 +78,15 @@ public class SMBackendRequestImpl implements BackendRequestInterface {
                     keyStorageService.saveEncryptedPrivateKey(response.body());
                     downloadSecrets();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Log.w(TAG, "downloadEncryptedPrivateKey() save failed", e);
+                    eventService.postEvent(new FatalErrorEvent(e.getMessage()));
                 }
             }
 
             @Override
             public void onFailure(Call<String> call, Throwable t) {
+                Log.w(TAG, "downloadEncryptedPrivateKey() failed", t);
+                eventService.postEvent(new FatalErrorEvent(t.getMessage()));
 
             }
         });

@@ -2,6 +2,7 @@ package com.intirix.cloudpasswordmanager.services.backend.secretsmanager;
 
 import com.intirix.cloudpasswordmanager.BuildConfig;
 import com.intirix.cloudpasswordmanager.TestPasswordApplication;
+import com.intirix.cloudpasswordmanager.pages.FatalErrorEvent;
 import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordListUpdatedEvent;
 import com.intirix.cloudpasswordmanager.services.backend.ocp.MockCall;
 import com.intirix.cloudpasswordmanager.services.session.MockSessionService;
@@ -97,6 +98,60 @@ public class SMBackendRequestImplUnitSpec {
 
         eventService.assertNumberOfPosts(1);
         eventService.assertEventType(0, PasswordListUpdatedEvent.class);
+
+
+        EasyMock.verify(api,keyStorageService);
+    }
+
+    @Test
+    public void verifyFailureToDownloadKeySendsError() throws IOException {
+        EasyMock.expect(keyStorageService.isPrivateKeyStored()).andReturn(false).anyTimes();
+
+
+        Call<String> privateKeyCall = new MockCall<String>() {
+            @Override
+            public void enqueue(Callback<String> callback) {
+                callback.onFailure(null,new IOException("Failed"));
+            }
+        };
+
+        EasyMock.expect(api.getUserEncryptedPrivateKey(username)).andReturn(privateKeyCall);
+
+        EasyMock.replay(api,keyStorageService);
+        Assert.assertFalse(impl.isLoginRunning());
+        impl.login();
+        Assert.assertFalse(impl.isLoginRunning());
+
+        eventService.assertNumberOfPosts(1);
+        eventService.assertEventType(0, FatalErrorEvent.class);
+
+
+        EasyMock.verify(api,keyStorageService);
+    }
+
+    @Test
+    public void verifyFailureToSaveDownloadedKeySendsError() throws IOException {
+        EasyMock.expect(keyStorageService.isPrivateKeyStored()).andReturn(false).anyTimes();
+        keyStorageService.saveEncryptedPrivateKey("TEST123");
+        EasyMock.expectLastCall().andThrow(new IOException("Failed to save key"));
+
+
+        Call<String> privateKeyCall = new MockCall<String>() {
+            @Override
+            public void enqueue(Callback<String> callback) {
+                callback.onResponse(null, Response.success("TEST123"));
+            }
+        };
+
+        EasyMock.expect(api.getUserEncryptedPrivateKey(username)).andReturn(privateKeyCall);
+
+        EasyMock.replay(api,keyStorageService);
+        Assert.assertFalse(impl.isLoginRunning());
+        impl.login();
+        Assert.assertFalse(impl.isLoginRunning());
+
+        eventService.assertNumberOfPosts(1);
+        eventService.assertEventType(0, FatalErrorEvent.class);
 
 
         EasyMock.verify(api,keyStorageService);
