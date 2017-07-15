@@ -22,6 +22,7 @@ import com.intirix.cloudpasswordmanager.BaseTestCase;
 import com.intirix.cloudpasswordmanager.BuildConfig;
 import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.TestPasswordApplication;
+import com.intirix.cloudpasswordmanager.services.session.StorageType;
 import com.intirix.cloudpasswordmanager.services.ssl.MockCertPinningService;
 
 import org.junit.Assert;
@@ -104,7 +105,7 @@ public class LoginActivityLayoutSpec extends BaseTestCase {
         ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class).create().start().resume();
         LoginActivity activity = controller.get();
 
-        Assert.assertEquals("OwnCloud Passwords",activity.storageTypeSpinner.getSelectedItem().toString());
+        Assert.assertEquals(StorageType.OWNCLOUD_PASSWORDS,activity.storageTypeSpinner.getSelectedItem());
 
         controller.pause().stop().destroy();
     }
