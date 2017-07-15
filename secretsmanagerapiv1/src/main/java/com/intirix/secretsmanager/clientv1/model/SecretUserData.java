@@ -26,7 +26,7 @@ import java.io.IOException;
 /**
  * SecretUserData
  */
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2017-07-04T11:05:51.227Z")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2017-07-15T18:23:16.205Z")
 public class SecretUserData {
   /**
    * Can the user write to the secret

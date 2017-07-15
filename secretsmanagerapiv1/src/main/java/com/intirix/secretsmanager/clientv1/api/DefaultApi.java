@@ -112,20 +112,20 @@ public interface DefaultApi {
    * Get all of a user&#39;s encrypted secrets
    * 
    * @param username  (required)
-   * @return Call&lt;List&lt;Secret&gt;&gt;
+   * @return Call&lt;Map&lt;String, Secret&gt;&gt;
    */
   @GET("users/{username}/secrets")
-  Call<List<Secret>> getUserSecrets(
+  Call<Map<String, Secret>> getUserSecrets(
     @retrofit2.http.Path("username") String username
   );
 
   /**
    * List all the users
    * 
-   * @return Call&lt;List&lt;User&gt;&gt;
+   * @return Call&lt;Map&lt;String, User&gt;&gt;
    */
   @GET("users")
-  Call<List<User>> listUsers();
+  Call<Map<String, User>> listUsers();
     
 
   /**

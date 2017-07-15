@@ -24,6 +24,7 @@ import org.robolectric.annotation.Config;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -38,6 +39,7 @@ import retrofit2.Response;
         application = TestPasswordApplication.class, sdk = 23)
 public class SMBackendRequestImplUnitSpec {
 
+    private static final String ENCRYPTED_KEY = "TEST123";
     private SMBackendRequestImpl impl;
 
     private MockSessionService sessionService;
@@ -72,7 +74,7 @@ public class SMBackendRequestImplUnitSpec {
     @Test
     public void verifyLoginWithoutLocalKeyDownloadsKey() throws IOException {
         EasyMock.expect(keyStorageService.isPrivateKeyStored()).andReturn(false).anyTimes();
-        keyStorageService.saveEncryptedPrivateKey("TEST123");
+        keyStorageService.saveEncryptedPrivateKey(ENCRYPTED_KEY);
         EasyMock.expectLastCall();
 
 
@@ -80,16 +82,16 @@ public class SMBackendRequestImplUnitSpec {
             @Override
             public void enqueue(Callback<String> callback) {
                 Assert.assertTrue(impl.isLoginRunning());
-                callback.onResponse(null, Response.success("TEST123"));
+                callback.onResponse(null, Response.success(ENCRYPTED_KEY));
                 Assert.assertFalse(impl.isLoginRunning());
             }
         };
 
-        Call<List<Secret>> secretsCall = new MockCall<List<Secret>>() {
+        Call<Map<String,Secret>> secretsCall = new MockCall<Map<String,Secret>>() {
             @Override
-            public void enqueue(Callback<List<Secret>> callback) {
+            public void enqueue(Callback<Map<String,Secret>> callback) {
                 Assert.assertFalse(impl.isLoginRunning());
-                callback.onResponse(null, Response.success(Collections.<Secret>emptyList()));
+                callback.onResponse(null, Response.success(Collections.<String,Secret>emptyMap()));
             }
         };
 
@@ -143,7 +145,7 @@ public class SMBackendRequestImplUnitSpec {
     @Test
     public void verifyFailureToSaveDownloadedKeySendsError() throws IOException {
         EasyMock.expect(keyStorageService.isPrivateKeyStored()).andReturn(false).anyTimes();
-        keyStorageService.saveEncryptedPrivateKey("TEST123");
+        keyStorageService.saveEncryptedPrivateKey(ENCRYPTED_KEY);
         EasyMock.expectLastCall().andThrow(new IOException("Failed to save key"));
 
 
@@ -151,7 +153,7 @@ public class SMBackendRequestImplUnitSpec {
             @Override
             public void enqueue(Callback<String> callback) {
                 Assert.assertTrue(impl.isLoginRunning());
-                callback.onResponse(null, Response.success("TEST123"));
+                callback.onResponse(null, Response.success(ENCRYPTED_KEY));
             }
         };
 
@@ -173,15 +175,15 @@ public class SMBackendRequestImplUnitSpec {
     @Test
     public void verifyLoginWithLocalKeyDoesNotDownloadKey() throws IOException {
         EasyMock.expect(keyStorageService.isPrivateKeyStored()).andReturn(true).anyTimes();
-        EasyMock.expect(keyStorageService.getEncryptedPrivateKey()).andReturn("TEST123").anyTimes();
+        EasyMock.expect(keyStorageService.getEncryptedPrivateKey()).andReturn(ENCRYPTED_KEY).anyTimes();
         EasyMock.expectLastCall();
 
 
-        Call<List<Secret>> secretsCall = new MockCall<List<Secret>>() {
+        Call<Map<String,Secret>> secretsCall = new MockCall<Map<String,Secret>>() {
             @Override
-            public void enqueue(Callback<List<Secret>> callback) {
+            public void enqueue(Callback<Map<String,Secret>> callback) {
                 Assert.assertFalse(impl.isLoginRunning());
-                callback.onResponse(null, Response.success(Collections.<Secret>emptyList()));
+                callback.onResponse(null, Response.success(Collections.<String,Secret>emptyMap()));
             }
         };
 
@@ -208,13 +210,13 @@ public class SMBackendRequestImplUnitSpec {
     @Test
     public void verifyFailedLoginSendsError() throws IOException {
         EasyMock.expect(keyStorageService.isPrivateKeyStored()).andReturn(true).anyTimes();
-        EasyMock.expect(keyStorageService.getEncryptedPrivateKey()).andReturn("TEST123").anyTimes();
+        EasyMock.expect(keyStorageService.getEncryptedPrivateKey()).andReturn(ENCRYPTED_KEY).anyTimes();
         EasyMock.expectLastCall();
 
 
-        Call<List<Secret>> secretsCall = new MockCall<List<Secret>>() {
+        Call<Map<String,Secret>> secretsCall = new MockCall<Map<String,Secret>>() {
             @Override
-            public void enqueue(Callback<List<Secret>> callback) {
+            public void enqueue(Callback<Map<String,Secret>> callback) {
                 Assert.assertFalse(impl.isLoginRunning());
                 callback.onFailure(null, new IOException("Access denied"));
             }

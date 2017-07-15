@@ -32,7 +32,7 @@ public class DefaultApiTest {
     @Test
     public void addSecretTest() {
         Secret secret = null;
-        // DefinitionsSecret response = api.addSecret(secret);
+        // Secret response = api.addSecret(secret);
 
         // TODO: test validations
     }
@@ -46,7 +46,7 @@ public class DefaultApiTest {
     public void addUserTest() {
         String username = null;
         User user = null;
-        // DefinitionsUser response = api.addUser(username, user);
+        // User response = api.addUser(username, user);
 
         // TODO: test validations
     }
@@ -74,7 +74,7 @@ public class DefaultApiTest {
     @Test
     public void getSecretTest() {
         String sid = null;
-        // DefinitionsSecret response = api.getSecret(sid);
+        // Secret response = api.getSecret(sid);
 
         // TODO: test validations
     }
@@ -87,7 +87,7 @@ public class DefaultApiTest {
     @Test
     public void getUserTest() {
         String username = null;
-        // DefinitionsUser response = api.getUser(username);
+        // User response = api.getUser(username);
 
         // TODO: test validations
     }
@@ -126,7 +126,7 @@ public class DefaultApiTest {
     @Test
     public void getUserSecretsTest() {
         String username = null;
-        // List<DefinitionsSecret> response = api.getUserSecrets(username);
+        // Map<String, Secret> response = api.getUserSecrets(username);
 
         // TODO: test validations
     }
@@ -138,7 +138,7 @@ public class DefaultApiTest {
      */
     @Test
     public void listUsersTest() {
-        // List<DefinitionsUser> response = api.listUsers();
+        // List<User> response = api.listUsers();
 
         // TODO: test validations
     }
@@ -152,7 +152,7 @@ public class DefaultApiTest {
     public void setUserEncryptedPrivateKeyTest() {
         String username = null;
         String key = null;
-        // DefinitionsUser response = api.setUserEncryptedPrivateKey(username, key);
+        // User response = api.setUserEncryptedPrivateKey(username, key);
 
         // TODO: test validations
     }
@@ -166,7 +166,7 @@ public class DefaultApiTest {
     public void setUserPublicKeyTest() {
         String username = null;
         String key = null;
-        // DefinitionsUser response = api.setUserPublicKey(username, key);
+        // User response = api.setUserPublicKey(username, key);
 
         // TODO: test validations
     }
@@ -180,7 +180,7 @@ public class DefaultApiTest {
     public void updateSecretTest() {
         String sid = null;
         Secret secret = null;
-        // DefinitionsSecret response = api.updateSecret(sid, secret);
+        // Secret response = api.updateSecret(sid, secret);
 
         // TODO: test validations
     }
@@ -194,7 +194,7 @@ public class DefaultApiTest {
     public void updateUserTest() {
         String username = null;
         User user = null;
-        // DefinitionsUser response = api.updateUser(username, user);
+        // User response = api.updateUser(username, user);
 
         // TODO: test validations
     }

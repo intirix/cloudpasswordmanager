@@ -44,8 +44,19 @@ public class KeyStorageServiceImpl implements KeyStorageService {
 
         @Override
     public boolean isPrivateKeyStored() {
-        return deviceSpecific.contains(PREF_PRIVATE_KEY_SETTING);
-    }
+            try {
+                if (deviceSpecific.contains(PREF_PRIVATE_KEY_SETTING) && getEncryptedPrivateKey()!=null) {
+                    Log.d(TAG,"Private key exists");
+                    return true;
+                } else {
+                    Log.d(TAG,"Private key does not exist");
+                    return false;
+                }
+            } catch (IOException e) {
+                Log.w(TAG,"Failed to verify private key");
+                return false;
+            }
+        }
 
     @Override
     public void saveEncryptedPrivateKey(String key) throws IOException {

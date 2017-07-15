@@ -23,6 +23,7 @@ import com.intirix.secretsmanager.clientv1.model.Secret;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -65,7 +66,6 @@ public class SMBackendRequestImpl implements BackendRequestInterface {
             client.addAuthorization("custom", interceptor);
         }
         DefaultApi api = client.createService(DefaultApi.class);
-        api.getUserSecrets(sessionService.getUsername());
         return api;
     }
 
@@ -86,14 +86,20 @@ public class SMBackendRequestImpl implements BackendRequestInterface {
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
+                loginRunning = false;
                 try {
-                    keyStorageService.saveEncryptedPrivateKey(response.body());
-                    loginRunning = false;
-                    eventService.postEvent(new LoginSuccessfulEvent());
-                    downloadSecrets();
+                    String key = response.body();
+                    if (response.code()!=200) {
+                        eventService.postEvent(new FatalErrorEvent("Response: " + response.code()));
+                    } else if (key==null) {
+                        eventService.postEvent(new FatalErrorEvent("No key available"));
+                    } else {
+                        keyStorageService.saveEncryptedPrivateKey(key);
+                        eventService.postEvent(new LoginSuccessfulEvent());
+                        downloadSecrets();
+                    }
                 } catch (IOException e) {
                     Log.w(TAG, "downloadEncryptedPrivateKey() save failed", e);
-                    loginRunning = false;
                     eventService.postEvent(new FatalErrorEvent(e.getMessage()));
                 }
             }
@@ -111,10 +117,10 @@ public class SMBackendRequestImpl implements BackendRequestInterface {
     private void downloadSecrets() {
         final SessionInfo session = sessionService.getCurrentSession();
         Log.i(TAG, "Downloading the secrets");
-        Call<List<Secret>> call = getApi().getUserSecrets(sessionService.getUsername());
-        call.enqueue(new Callback<List<Secret>>() {
+        Call<Map<String,Secret>> call = getApi().getUserSecrets(sessionService.getUsername());
+        call.enqueue(new Callback<Map<String,Secret>>() {
             @Override
-            public void onResponse(Call<List<Secret>> call, Response<List<Secret>> response) {
+            public void onResponse(Call<Map<String,Secret>> call, Response<Map<String,Secret>> response) {
                 if (response.body()!=null) {
                     Log.d(TAG, "Downloaded " + response.body().size() + " secrets");
                 }
@@ -126,7 +132,7 @@ public class SMBackendRequestImpl implements BackendRequestInterface {
             }
 
             @Override
-            public void onFailure(Call<List<Secret>> call, Throwable t) {
+            public void onFailure(Call<Map<String,Secret>> call, Throwable t) {
                 Log.w(TAG, "downloadSecrets() failed", t);
                 eventService.postEvent(new FatalErrorEvent(t.getMessage()));
             }
