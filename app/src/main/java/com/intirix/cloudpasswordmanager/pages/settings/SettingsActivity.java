@@ -22,7 +22,7 @@ import android.support.v4.app.Fragment;
 import com.intirix.cloudpasswordmanager.PasswordApplication;
 import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.pages.SecureActivity;
-import com.intirix.cloudpasswordmanager.services.SavePasswordService;
+import com.intirix.cloudpasswordmanager.services.settings.SavePasswordService;
 
 import javax.inject.Inject;
 

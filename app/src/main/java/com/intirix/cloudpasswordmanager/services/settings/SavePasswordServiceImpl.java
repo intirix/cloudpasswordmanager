@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.intirix.cloudpasswordmanager.services;
+package com.intirix.cloudpasswordmanager.services.settings;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -23,9 +23,6 @@ import android.util.Base64;
 import android.util.Log;
 
 import com.intirix.cloudpasswordmanager.services.session.SessionService;
-import com.intirix.cloudpasswordmanager.services.ssl.CustomHostnameVerifier;
-import com.intirix.cloudpasswordmanager.services.ssl.CustomTrustManager;
-import com.intirix.cloudpasswordmanager.services.ui.EventService;
 
 import java.nio.charset.Charset;
 import java.security.SecureRandom;
@@ -37,8 +34,6 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import javax.inject.Inject;
-
-import static android.R.attr.data;
 
 /**
  * Created by jeff on 10/23/16.

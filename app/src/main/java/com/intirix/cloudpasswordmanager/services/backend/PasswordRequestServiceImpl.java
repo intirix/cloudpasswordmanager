@@ -16,7 +16,7 @@
 package com.intirix.cloudpasswordmanager.services.backend;
 
 import com.intirix.cloudpasswordmanager.services.backend.ocp.OCPBackendRequestImpl;
-import com.intirix.cloudpasswordmanager.services.session.SessionInfo;
+import com.intirix.cloudpasswordmanager.services.backend.secretsmanager.SMBackendRequestImpl;
 import com.intirix.cloudpasswordmanager.services.session.SessionService;
 import com.intirix.cloudpasswordmanager.services.session.StorageType;
 
@@ -32,17 +32,22 @@ public class PasswordRequestServiceImpl implements PasswordRequestService {
 
     private OCPBackendRequestImpl ocpImpl;
 
+    private SMBackendRequestImpl smimpl;
+
     private SessionService sessionService;
 
     @Inject
-    public PasswordRequestServiceImpl(SessionService sessionService, OCPBackendRequestImpl ocpImpl) {
+    public PasswordRequestServiceImpl(SessionService sessionService, OCPBackendRequestImpl ocpImpl, SMBackendRequestImpl smimpl) {
         this.sessionService = sessionService;
         this.ocpImpl = ocpImpl;
+        this.smimpl = smimpl;
     }
 
     private BackendRequestInterface getBackend() {
         if (sessionService.getCurrentSession().getStorageType()== StorageType.OWNCLOUD_PASSWORDS) {
             return ocpImpl;
+        } else if (sessionService.getCurrentSession().getStorageType()==StorageType.SECRETS_MANAGER_API_V1) {
+            return smimpl;
         }
         return null;
     }

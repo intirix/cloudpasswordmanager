@@ -18,28 +18,29 @@ package com.intirix.cloudpasswordmanager.injection;
 import android.content.Context;
 import android.util.Log;
 
-import com.intirix.cloudpasswordmanager.services.SavePasswordService;
-import com.intirix.cloudpasswordmanager.services.SavePasswordServiceImpl;
-import com.intirix.cloudpasswordmanager.services.backend.ocp.OCPBackendRequestImpl;
-import com.intirix.cloudpasswordmanager.services.session.AuthenticationInterceptor;
-import com.intirix.cloudpasswordmanager.services.session.AutoLogoffService;
-import com.intirix.cloudpasswordmanager.services.session.AutoLogoffServiceImpl;
-import com.intirix.cloudpasswordmanager.services.ssl.CertPinningService;
-import com.intirix.cloudpasswordmanager.services.ssl.CertPinningServiceImpl;
-import com.intirix.cloudpasswordmanager.services.ui.ClipboardService;
-import com.intirix.cloudpasswordmanager.services.ui.ClipboardServiceImpl;
-import com.intirix.cloudpasswordmanager.services.ui.ColorService;
-import com.intirix.cloudpasswordmanager.services.ui.ColorServiceImpl;
-import com.intirix.cloudpasswordmanager.services.ssl.CustomHostnameVerifier;
-import com.intirix.cloudpasswordmanager.services.ssl.CustomTrustManager;
-import com.intirix.cloudpasswordmanager.services.ui.EventService;
-import com.intirix.cloudpasswordmanager.services.ui.EventServiceImpl;
 import com.intirix.cloudpasswordmanager.services.backend.PasswordRequestService;
 import com.intirix.cloudpasswordmanager.services.backend.PasswordRequestServiceImpl;
 import com.intirix.cloudpasswordmanager.services.backend.ocp.PasswordStorageService;
 import com.intirix.cloudpasswordmanager.services.backend.ocp.PasswordStorageServiceImpl;
+import com.intirix.cloudpasswordmanager.services.session.AuthenticationInterceptor;
+import com.intirix.cloudpasswordmanager.services.session.AutoLogoffService;
+import com.intirix.cloudpasswordmanager.services.session.AutoLogoffServiceImpl;
 import com.intirix.cloudpasswordmanager.services.session.SessionService;
 import com.intirix.cloudpasswordmanager.services.session.SessionServiceImpl;
+import com.intirix.cloudpasswordmanager.services.settings.KeyStorageService;
+import com.intirix.cloudpasswordmanager.services.settings.KeyStorageServiceImpl;
+import com.intirix.cloudpasswordmanager.services.settings.SavePasswordService;
+import com.intirix.cloudpasswordmanager.services.settings.SavePasswordServiceImpl;
+import com.intirix.cloudpasswordmanager.services.ssl.CertPinningService;
+import com.intirix.cloudpasswordmanager.services.ssl.CertPinningServiceImpl;
+import com.intirix.cloudpasswordmanager.services.ssl.CustomHostnameVerifier;
+import com.intirix.cloudpasswordmanager.services.ssl.CustomTrustManager;
+import com.intirix.cloudpasswordmanager.services.ui.ClipboardService;
+import com.intirix.cloudpasswordmanager.services.ui.ClipboardServiceImpl;
+import com.intirix.cloudpasswordmanager.services.ui.ColorService;
+import com.intirix.cloudpasswordmanager.services.ui.ColorServiceImpl;
+import com.intirix.cloudpasswordmanager.services.ui.EventService;
+import com.intirix.cloudpasswordmanager.services.ui.EventServiceImpl;
 import com.intirix.cloudpasswordmanager.services.ui.FilterPasswordService;
 import com.intirix.cloudpasswordmanager.services.ui.FilterPasswordServiceImpl;
 
@@ -176,6 +177,11 @@ public class CloudPasswordManagerModule {
 
     @Provides @Singleton
     SavePasswordService provideSavePasswordService(SavePasswordServiceImpl impl) {
+        return impl;
+    }
+
+    @Provides @Singleton
+    KeyStorageService provideKeyStorageService(KeyStorageServiceImpl impl) {
         return impl;
     }
 }

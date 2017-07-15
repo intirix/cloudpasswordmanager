@@ -15,17 +15,13 @@
  */
 package com.intirix.cloudpasswordmanager.pages.settings;
 
-import android.content.Intent;
-import android.view.View;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import com.intirix.cloudpasswordmanager.BaseTestCase;
 import com.intirix.cloudpasswordmanager.BuildConfig;
 import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.TestPasswordApplication;
-import com.intirix.cloudpasswordmanager.services.SavePasswordEnum;
-import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordBean;
+import com.intirix.cloudpasswordmanager.services.settings.SavePasswordEnum;
 import com.intirix.cloudpasswordmanager.services.session.SessionService;
 
 import org.junit.Assert;
@@ -35,9 +31,6 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 import org.robolectric.util.ActivityController;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by jeff on 6/19/16.

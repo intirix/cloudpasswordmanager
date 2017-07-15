@@ -42,7 +42,6 @@ import com.intirix.cloudpasswordmanager.services.session.AutoLogoffService;
 import com.intirix.cloudpasswordmanager.services.session.SessionService;
 
 import java.util.LinkedList;
-import java.util.Map;
 
 import javax.inject.Inject;
 

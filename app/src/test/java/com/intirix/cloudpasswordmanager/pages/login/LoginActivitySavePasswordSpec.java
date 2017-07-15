@@ -15,30 +15,19 @@
  */
 package com.intirix.cloudpasswordmanager.pages.login;
 
-import android.content.Intent;
-import android.view.View;
-import android.widget.Button;
-
 import com.intirix.cloudpasswordmanager.BaseTestCase;
 import com.intirix.cloudpasswordmanager.BuildConfig;
-import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.TestPasswordApplication;
-import com.intirix.cloudpasswordmanager.pages.FatalErrorEvent;
-import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordListActivity;
-import com.intirix.cloudpasswordmanager.services.SavePasswordEnum;
-import com.intirix.cloudpasswordmanager.services.SavePasswordService;
-import com.intirix.cloudpasswordmanager.services.backend.PasswordRequestService;
+import com.intirix.cloudpasswordmanager.services.settings.SavePasswordEnum;
+import com.intirix.cloudpasswordmanager.services.settings.SavePasswordService;
 import com.intirix.cloudpasswordmanager.services.session.MockSessionService;
 
-import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
-import org.robolectric.Shadows;
 import org.robolectric.annotation.Config;
-import org.robolectric.shadows.ShadowActivity;
 import org.robolectric.util.ActivityController;
 
 /**

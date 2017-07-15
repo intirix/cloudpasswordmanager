@@ -29,13 +29,13 @@ import android.widget.TextView;
 
 import com.intirix.cloudpasswordmanager.PasswordApplication;
 import com.intirix.cloudpasswordmanager.R;
-import com.intirix.cloudpasswordmanager.pages.FatalErrorEvent;
 import com.intirix.cloudpasswordmanager.pages.BaseActivity;
+import com.intirix.cloudpasswordmanager.pages.FatalErrorEvent;
 import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordListActivity;
-import com.intirix.cloudpasswordmanager.services.SavePasswordService;
-import com.intirix.cloudpasswordmanager.services.session.StorageType;
-import com.intirix.cloudpasswordmanager.services.ssl.CertPinningService;
 import com.intirix.cloudpasswordmanager.services.backend.PasswordRequestService;
+import com.intirix.cloudpasswordmanager.services.session.StorageType;
+import com.intirix.cloudpasswordmanager.services.settings.SavePasswordService;
+import com.intirix.cloudpasswordmanager.services.ssl.CertPinningService;
 import com.intirix.cloudpasswordmanager.services.ssl.PinFailedEvent;
 import com.intirix.cloudpasswordmanager.services.ssl.PinSuccessfulEvent;
 

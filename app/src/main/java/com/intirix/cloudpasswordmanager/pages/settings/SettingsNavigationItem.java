@@ -21,7 +21,6 @@ import android.content.Intent;
 
 import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.pages.navigation.NavigationItem;
-import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordListActivity;
 
 /**
  * Created by jeff on 7/28/16.

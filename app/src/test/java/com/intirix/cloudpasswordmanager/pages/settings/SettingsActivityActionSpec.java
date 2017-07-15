@@ -23,8 +23,7 @@ import com.intirix.cloudpasswordmanager.BaseTestCase;
 import com.intirix.cloudpasswordmanager.BuildConfig;
 import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.TestPasswordApplication;
-import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordListActivity;
-import com.intirix.cloudpasswordmanager.services.SavePasswordEnum;
+import com.intirix.cloudpasswordmanager.services.settings.SavePasswordEnum;
 import com.intirix.cloudpasswordmanager.services.session.SessionService;
 
 import org.junit.Assert;

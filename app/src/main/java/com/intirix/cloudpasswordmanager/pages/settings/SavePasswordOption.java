@@ -20,8 +20,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.view.View;
 
-import com.intirix.cloudpasswordmanager.services.SavePasswordEnum;
-import com.intirix.cloudpasswordmanager.services.SavePasswordService;
+import com.intirix.cloudpasswordmanager.services.settings.SavePasswordEnum;
+import com.intirix.cloudpasswordmanager.services.settings.SavePasswordService;
 
 /**
  * Created by jeff on 10/22/16.

@@ -17,8 +17,8 @@ package com.intirix.cloudpasswordmanager.pages.settings;
 
 import android.app.Activity;
 
-import com.intirix.cloudpasswordmanager.services.SavePasswordEnum;
-import com.intirix.cloudpasswordmanager.services.SavePasswordService;
+import com.intirix.cloudpasswordmanager.services.settings.SavePasswordEnum;
+import com.intirix.cloudpasswordmanager.services.settings.SavePasswordService;
 
 /**
  * Created by jeff on 11/4/16.

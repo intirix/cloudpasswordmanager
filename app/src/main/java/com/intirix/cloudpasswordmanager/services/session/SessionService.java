@@ -15,8 +15,6 @@
  */
 package com.intirix.cloudpasswordmanager.services.session;
 
-import com.intirix.cloudpasswordmanager.services.session.SessionInfo;
-
 /**
  * Created by jeff on 6/18/16.
  */

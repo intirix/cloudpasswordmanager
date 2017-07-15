@@ -1,4 +1,4 @@
-package com.intirix.cloudpasswordmanager.services;
+package com.intirix.cloudpasswordmanager.services.settings;
 
 /**
  * Created by jeff on 10/23/16.
