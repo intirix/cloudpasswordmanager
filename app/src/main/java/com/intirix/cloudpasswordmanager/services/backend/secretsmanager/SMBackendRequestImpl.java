@@ -3,6 +3,7 @@ package com.intirix.cloudpasswordmanager.services.backend.secretsmanager;
 import android.util.Log;
 
 import com.intirix.cloudpasswordmanager.pages.FatalErrorEvent;
+import com.intirix.cloudpasswordmanager.pages.login.LoginSuccessfulEvent;
 import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordListUpdatedEvent;
 import com.intirix.cloudpasswordmanager.services.backend.BackendRequestInterface;
 import com.intirix.cloudpasswordmanager.services.backend.ocp.OCPBackendRequestImpl;
@@ -104,6 +105,7 @@ public class SMBackendRequestImpl implements BackendRequestInterface {
             @Override
             public void onResponse(Call<List<Secret>> call, Response<List<Secret>> response) {
                 loginRunning = false;
+                eventService.postEvent(new LoginSuccessfulEvent());
                 eventService.postEvent(new PasswordListUpdatedEvent());
             }
 
@@ -128,6 +130,6 @@ public class SMBackendRequestImpl implements BackendRequestInterface {
 
     @Override
     public void listPasswords() {
-
+        downloadSecrets();
     }
 }

@@ -3,6 +3,7 @@ package com.intirix.cloudpasswordmanager.services.backend.secretsmanager;
 import com.intirix.cloudpasswordmanager.BuildConfig;
 import com.intirix.cloudpasswordmanager.TestPasswordApplication;
 import com.intirix.cloudpasswordmanager.pages.FatalErrorEvent;
+import com.intirix.cloudpasswordmanager.pages.login.LoginSuccessfulEvent;
 import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordListUpdatedEvent;
 import com.intirix.cloudpasswordmanager.services.backend.ocp.MockCall;
 import com.intirix.cloudpasswordmanager.services.session.MockSessionService;
@@ -98,8 +99,9 @@ public class SMBackendRequestImplUnitSpec {
         impl.login();
         Assert.assertFalse(impl.isLoginRunning());
 
-        eventService.assertNumberOfPosts(1);
-        eventService.assertEventType(0, PasswordListUpdatedEvent.class);
+        eventService.assertNumberOfPosts(2);
+        eventService.assertEventType(0, LoginSuccessfulEvent.class);
+        eventService.assertEventType(1, PasswordListUpdatedEvent.class);
 
 
         EasyMock.verify(api,keyStorageService);
@@ -184,8 +186,9 @@ public class SMBackendRequestImplUnitSpec {
         impl.login();
         Assert.assertFalse(impl.isLoginRunning());
 
-        eventService.assertNumberOfPosts(1);
-        eventService.assertEventType(0, PasswordListUpdatedEvent.class);
+        eventService.assertNumberOfPosts(2);
+        eventService.assertEventType(0, LoginSuccessfulEvent.class);
+        eventService.assertEventType(1, PasswordListUpdatedEvent.class);
 
 
         EasyMock.verify(api,keyStorageService);
