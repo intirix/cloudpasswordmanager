@@ -11,7 +11,9 @@ public interface KeyStorageService {
 
     public boolean isPrivateKeyStored();
 
-    public void saveEncryptedPrivateKey(String key) throws IOException, UnsupportedEncodingException;
+    public void saveEncryptedPrivateKey(String key) throws IOException;
 
-    public String getEncryptedPrivateKey() throws IOException, UnsupportedEncodingException;
+    public String getEncryptedPrivateKey() throws IOException;
+
+    public void clearEncryptedPrivateKey() throws IOException;
 }

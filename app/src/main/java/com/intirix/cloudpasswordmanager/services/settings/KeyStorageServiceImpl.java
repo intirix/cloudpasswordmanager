@@ -1,6 +1,8 @@
 package com.intirix.cloudpasswordmanager.services.settings;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 import com.intirix.cloudpasswordmanager.services.session.SessionService;
 
@@ -19,25 +21,40 @@ public class KeyStorageServiceImpl implements KeyStorageService {
 
     private SessionService sessionService;
 
+    private SharedPreferences preferences;
+
+    private SharedPreferences deviceSpecific;
+
+    static final String PREF_PRIVATE_KEY_SETTING = "PRIVATE_KEY";
+
     @Inject
     public KeyStorageServiceImpl(Context context, SessionService sessionService) {
         this.context = context;
         this.sessionService = sessionService;
+
+        preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        deviceSpecific = context.getSharedPreferences("device.xml", Context.MODE_PRIVATE);
+
     }
 
 
         @Override
     public boolean isPrivateKeyStored() {
-        return false;
+        return deviceSpecific.contains(PREF_PRIVATE_KEY_SETTING);
     }
 
     @Override
-    public void saveEncryptedPrivateKey(String key) throws IOException, UnsupportedEncodingException {
-
+    public void saveEncryptedPrivateKey(String key) throws IOException {
+        deviceSpecific.edit().putString(PREF_PRIVATE_KEY_SETTING, key).commit();
     }
 
     @Override
-    public String getEncryptedPrivateKey() throws IOException, UnsupportedEncodingException {
-        return null;
+    public String getEncryptedPrivateKey() throws IOException {
+        return deviceSpecific.getString(PREF_PRIVATE_KEY_SETTING, null);
+    }
+
+    @Override
+    public void clearEncryptedPrivateKey() throws IOException {
+        deviceSpecific.edit().remove(PREF_PRIVATE_KEY_SETTING).commit();
     }
 }
