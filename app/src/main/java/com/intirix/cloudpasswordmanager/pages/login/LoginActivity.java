@@ -69,7 +69,7 @@ public class LoginActivity extends BaseActivity {
     @BindView(R.id.login_storage_type)
     Spinner storageTypeSpinner;
 
-    ArrayAdapter<CharSequence> storageTypeAdapter;
+    StorageTypeAdapter storageTypeAdapter;
 
     @BindView(R.id.login_url)
     EditText urlInput;
@@ -143,10 +143,12 @@ public class LoginActivity extends BaseActivity {
         updateErrorMessageVisibility();
 
         if (storageTypeAdapter==null) {
-            storageTypeAdapter = ArrayAdapter.createFromResource(this,
-                    R.array.login_storage_type_labels, android.R.layout.simple_spinner_item);
-            storageTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            storageTypeAdapter = new StorageTypeAdapter(this,android.R.layout.simple_spinner_item,
+                    StorageType.OWNCLOUD_PASSWORDS, StorageType.SECRETS_MANAGER_API_V1);
             storageTypeSpinner.setAdapter(storageTypeAdapter);
+
+            int selectedPosition = storageTypeAdapter.getPosition(StorageType.OWNCLOUD_PASSWORDS);
+            storageTypeSpinner.setSelection(selectedPosition);
         }
 
         // recheck the pinning flags

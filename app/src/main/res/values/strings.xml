@@ -9,6 +9,9 @@
     <string name="logout_menu_label">Logout</string>
     <string name="login_nav_label">Login</string>
 
+    <string name="storage_type_owncloud_passwords">OwnCloud Passwords</string>
+    <string name="storage_type_secrets_manager_v1">Secrets Manager</string>
+
     <string name="login_url_hint">https://mycloud.example.com/owncloud</string>
     <string name="login_user_hint">Username</string>
     <string name="login_pass_hint">Password</string>
@@ -18,11 +21,6 @@
     <string name="login_error_description">Error message</string>
     <string name="login_progress_message">Logging In</string>
     <string name="login_pin_progress_message">Checking Encryption</string>
-
-    <string-array name="login_storage_type_labels">
-        <item>OwnCloud Passwords</item>
-        <item>Secrets Manager</item>
-    </string-array>
 
     <string name="error_invalid_username_password">Invalid username and password</string>
     <string name="error_unknown_error">An unknown error has occurred</string>
