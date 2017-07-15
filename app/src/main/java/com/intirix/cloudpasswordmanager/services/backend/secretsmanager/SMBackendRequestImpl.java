@@ -102,7 +102,8 @@ public class SMBackendRequestImpl implements BackendRequestInterface {
 
             @Override
             public void onFailure(Call<List<Secret>> call, Throwable t) {
-
+                Log.w(TAG, "downloadSecrets() failed", t);
+                eventService.postEvent(new FatalErrorEvent(t.getMessage()));
             }
         });
     }

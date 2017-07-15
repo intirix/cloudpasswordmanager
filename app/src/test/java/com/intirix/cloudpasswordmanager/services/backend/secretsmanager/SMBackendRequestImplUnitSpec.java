@@ -186,4 +186,32 @@ public class SMBackendRequestImplUnitSpec {
         EasyMock.verify(api,keyStorageService);
     }
 
+    @Test
+    public void verifyFailedLoginSendsError() throws IOException {
+        EasyMock.expect(keyStorageService.isPrivateKeyStored()).andReturn(true).anyTimes();
+        EasyMock.expect(keyStorageService.getEncryptedPrivateKey()).andReturn("TEST123").anyTimes();
+        EasyMock.expectLastCall();
+
+
+        Call<List<Secret>> secretsCall = new MockCall<List<Secret>>() {
+            @Override
+            public void enqueue(Callback<List<Secret>> callback) {
+                callback.onFailure(null, new IOException("Access denied"));
+            }
+        };
+
+        EasyMock.expect(api.getUserSecrets(username)).andReturn(secretsCall);
+
+        EasyMock.replay(api,keyStorageService);
+        Assert.assertFalse(impl.isLoginRunning());
+        impl.login();
+        Assert.assertFalse(impl.isLoginRunning());
+
+        eventService.assertNumberOfPosts(1);
+        eventService.assertEventType(0, FatalErrorEvent.class);
+
+
+        EasyMock.verify(api,keyStorageService);
+    }
+
 }
