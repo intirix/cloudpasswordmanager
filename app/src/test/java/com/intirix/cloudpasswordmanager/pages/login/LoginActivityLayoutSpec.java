@@ -15,6 +15,8 @@
  */
 package com.intirix.cloudpasswordmanager.pages.login;
 
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.Button;
 
@@ -22,6 +24,8 @@ import com.intirix.cloudpasswordmanager.BaseTestCase;
 import com.intirix.cloudpasswordmanager.BuildConfig;
 import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.TestPasswordApplication;
+import com.intirix.cloudpasswordmanager.services.session.MockSessionService;
+import com.intirix.cloudpasswordmanager.services.session.SessionServiceImpl;
 import com.intirix.cloudpasswordmanager.services.session.StorageType;
 import com.intirix.cloudpasswordmanager.services.ssl.MockCertPinningService;
 
@@ -30,6 +34,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.util.ActivityController;
 
@@ -102,13 +107,45 @@ public class LoginActivityLayoutSpec extends BaseTestCase {
 
     @Test
     public void verifyOwnCloudPasswordsIsDefaultStorageType() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.application);
+        sharedPreferences.edit().putString(SessionServiceImpl.STORAGE_TYPE_KEY,"INVALID").commit();
+
         ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class).create().start().resume();
         LoginActivity activity = controller.get();
 
-        Assert.assertEquals(StorageType.OWNCLOUD_PASSWORDS,activity.storageTypeSpinner.getSelectedItem());
+        Assert.assertEquals(0,activity.storageTypeSpinner.getSelectedItemPosition());
+        Assert.assertEquals(SessionServiceImpl.DEFAULT_STORAGE_TYPE,activity.storageTypeSpinner.getSelectedItem());
 
         controller.pause().stop().destroy();
     }
+
+
+    @Test
+    public void verifyDefaultStorageTypeIsUsedWhenNullStorageTypeSet() {
+        MockSessionService sessionService = (MockSessionService)serviceRef.sessionService();
+        sessionService.setStorageType(null);
+
+        ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class).create().start().resume();
+        LoginActivity activity = controller.get();
+
+        Assert.assertEquals(0,activity.storageTypeSpinner.getSelectedItemPosition());
+        Assert.assertEquals(SessionServiceImpl.DEFAULT_STORAGE_TYPE,activity.storageTypeSpinner.getSelectedItem());
+
+        controller.pause().stop().destroy();
+    }
+
+    @Test
+    public void verifyDefaultStorageTypeIsUsedWhenInvalidStorageTypeSet() {
+
+        ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class).create().start().resume();
+        LoginActivity activity = controller.get();
+
+        Assert.assertEquals(0,activity.storageTypeSpinner.getSelectedItemPosition());
+        Assert.assertEquals(SessionServiceImpl.DEFAULT_STORAGE_TYPE,activity.storageTypeSpinner.getSelectedItem());
+
+        controller.pause().stop().destroy();
+    }
+
 
 
 }

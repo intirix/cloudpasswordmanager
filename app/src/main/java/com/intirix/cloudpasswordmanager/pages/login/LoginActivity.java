@@ -147,7 +147,7 @@ public class LoginActivity extends BaseActivity {
                     StorageType.OWNCLOUD_PASSWORDS, StorageType.SECRETS_MANAGER_API_V1);
             storageTypeSpinner.setAdapter(storageTypeAdapter);
 
-            int selectedPosition = storageTypeAdapter.getPosition(StorageType.OWNCLOUD_PASSWORDS);
+            int selectedPosition = storageTypeAdapter.getPosition(sessionService.getStorageType());
             storageTypeSpinner.setSelection(selectedPosition);
         }
 
@@ -257,15 +257,11 @@ public class LoginActivity extends BaseActivity {
                 updateErrorMessageVisibility();
 
                 Log.d(LoginActivity.class.getSimpleName(), "onLogin() - "+new URL(urlInput.getText().toString()));
+                sessionService.setStorageType((StorageType)storageTypeSpinner.getSelectedItem());
                 sessionService.setUrl(urlInput.getText().toString());
                 sessionService.setUsername(userInput.getText().toString());
                 sessionService.start();
                 sessionService.getCurrentSession().setPassword(passInput.getText().toString());
-                if (storageTypeSpinner.getSelectedItemPosition()==0) {
-                    sessionService.getCurrentSession().setStorageType(StorageType.OWNCLOUD_PASSWORDS);
-                } else {
-                    sessionService.getCurrentSession().setStorageType(StorageType.SECRETS_MANAGER_API_V1);
-                }
 
                 passwordRequestService.login();
                 updateProgressDialog();

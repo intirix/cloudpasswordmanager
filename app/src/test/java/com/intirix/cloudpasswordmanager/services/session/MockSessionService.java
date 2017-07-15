@@ -19,6 +19,8 @@ package com.intirix.cloudpasswordmanager.services.session;
  * Created by jeff on 6/19/16.
  */
 public class MockSessionService implements SessionService {
+    private StorageType storageType = SessionServiceImpl.DEFAULT_STORAGE_TYPE;
+
     private String url;
 
     private String username;
@@ -61,6 +63,18 @@ public class MockSessionService implements SessionService {
     @Override
     public String getUsername() {
         return username;
+    }
+
+    @Override
+    public StorageType getStorageType() {
+        return storageType;
+    }
+
+    @Override
+    public void setStorageType(StorageType storageType) {
+        if (storageType!=null) {
+            this.storageType = storageType;
+        }
     }
 
     @Override

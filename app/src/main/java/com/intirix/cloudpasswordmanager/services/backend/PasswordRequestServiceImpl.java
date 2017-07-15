@@ -44,9 +44,9 @@ public class PasswordRequestServiceImpl implements PasswordRequestService {
     }
 
     private BackendRequestInterface getBackend() {
-        if (sessionService.getCurrentSession().getStorageType()== StorageType.OWNCLOUD_PASSWORDS) {
+        if (sessionService.getStorageType()== StorageType.OWNCLOUD_PASSWORDS) {
             return ocpImpl;
-        } else if (sessionService.getCurrentSession().getStorageType()==StorageType.SECRETS_MANAGER_API_V1) {
+        } else if (sessionService.getStorageType()==StorageType.SECRETS_MANAGER_API_V1) {
             return smimpl;
         }
         return null;

@@ -27,6 +27,7 @@ import com.intirix.cloudpasswordmanager.pages.FatalErrorEvent;
 import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordListActivity;
 import com.intirix.cloudpasswordmanager.services.session.MockSessionService;
 import com.intirix.cloudpasswordmanager.services.backend.PasswordRequestService;
+import com.intirix.cloudpasswordmanager.services.session.SessionServiceImpl;
 import com.intirix.cloudpasswordmanager.services.session.StorageType;
 
 import org.easymock.EasyMock;
@@ -158,7 +159,7 @@ public class LoginActivityActionSpec extends BaseTestCase {
         Assert.assertEquals(MOCK_URL, sessionService.getUrl());
         Assert.assertEquals(MOCK_USER, sessionService.getUsername());
         Assert.assertEquals(MOCK_PASS, sessionService.getCurrentSession().getPassword());
-        Assert.assertEquals(StorageType.OWNCLOUD_PASSWORDS, sessionService.getCurrentSession().getStorageType());
+        Assert.assertEquals(StorageType.OWNCLOUD_PASSWORDS, sessionService.getStorageType());
 
         Assert.assertTrue(sessionService.isStarted());
         Assert.assertFalse(sessionService.isEnded());
@@ -435,5 +436,4 @@ public class LoginActivityActionSpec extends BaseTestCase {
         // verify that login() was called
         //EasyMock.verify(passwordRequestService);
     }
-
 }

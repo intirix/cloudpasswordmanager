@@ -40,12 +40,16 @@ public class SessionServiceImplUnitSpec {
     public static final String TESTUSER = "testuser";
     public static final String TESTPASS = "testpass";
 
+    private static final StorageType DEFAULT_STORAGE_TYPE = StorageType.OWNCLOUD_PASSWORDS;
+    private static final StorageType NON_DEFAULT_STORAGE_TYPE = StorageType.SECRETS_MANAGER_API_V1;
+
     private SessionServiceImpl impl;
 
 
     @Test
     public void verifyNewInstallHasNoValues() {
         impl = new SessionServiceImpl(RuntimeEnvironment.application);
+        Assert.assertEquals(DEFAULT_STORAGE_TYPE,impl.getStorageType());
         Assert.assertNull(impl.getUrl());
         Assert.assertNull(impl.getUsername());
     }
@@ -53,11 +57,13 @@ public class SessionServiceImplUnitSpec {
     @Test
     public void verifyExistingInstallHasNoValues() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.application);
+        sharedPreferences.edit().putString(SessionServiceImpl.STORAGE_TYPE_KEY, NON_DEFAULT_STORAGE_TYPE.name()).commit();
         sharedPreferences.edit().putString(SessionServiceImpl.URL_KEY, TESTURL).commit();
         sharedPreferences.edit().putString(SessionServiceImpl.USERNAME_KEY, TESTUSER).commit();
 
 
         impl = new SessionServiceImpl(RuntimeEnvironment.application);
+        Assert.assertEquals(NON_DEFAULT_STORAGE_TYPE, impl.getStorageType());
         Assert.assertEquals(TESTURL, impl.getUrl());
         Assert.assertEquals(TESTUSER, impl.getUsername());
     }
@@ -66,6 +72,7 @@ public class SessionServiceImplUnitSpec {
     public void verifyStartSessionSavesUrlAndUsername() {
         impl = new SessionServiceImpl(RuntimeEnvironment.application);
 
+        impl.setStorageType(NON_DEFAULT_STORAGE_TYPE);
         impl.setUrl(TESTURL);
         impl.setUsername(TESTUSER);
         impl.start();
@@ -73,9 +80,11 @@ public class SessionServiceImplUnitSpec {
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.application);
 
+        Assert.assertEquals(NON_DEFAULT_STORAGE_TYPE.name(), sharedPreferences.getString(SessionServiceImpl.STORAGE_TYPE_KEY, null));
         Assert.assertEquals(TESTURL, sharedPreferences.getString(SessionServiceImpl.URL_KEY, null));
         Assert.assertEquals(TESTUSER, sharedPreferences.getString(SessionServiceImpl.USERNAME_KEY, null));
 
+        Assert.assertEquals(NON_DEFAULT_STORAGE_TYPE, impl.getStorageType());
         Assert.assertEquals(TESTURL, impl.getUrl());
         Assert.assertEquals(TESTUSER, impl.getUsername());
     }
@@ -84,11 +93,13 @@ public class SessionServiceImplUnitSpec {
     public void verifyStartDoesNotClearFields() {
         impl = new SessionServiceImpl(RuntimeEnvironment.application);
 
+        impl.setStorageType(NON_DEFAULT_STORAGE_TYPE);
         impl.setUrl(TESTURL);
         impl.setUsername(TESTUSER);
         impl.start();
 
 
+        Assert.assertEquals(NON_DEFAULT_STORAGE_TYPE, impl.getStorageType());
         Assert.assertEquals(TESTURL, impl.getUrl());
         Assert.assertEquals(TESTUSER, impl.getUsername());
 
@@ -98,6 +109,7 @@ public class SessionServiceImplUnitSpec {
     public void verifyEndClearsOnlyPasswordField() {
         impl = new SessionServiceImpl(RuntimeEnvironment.application);
 
+        impl.setStorageType(NON_DEFAULT_STORAGE_TYPE);
         impl.setUrl(TESTURL);
         impl.setUsername(TESTUSER);
 
@@ -109,9 +121,11 @@ public class SessionServiceImplUnitSpec {
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.application);
 
+        Assert.assertEquals(NON_DEFAULT_STORAGE_TYPE.name(),sharedPreferences.getString(SessionServiceImpl.STORAGE_TYPE_KEY, null));
         Assert.assertEquals(TESTURL, sharedPreferences.getString(SessionServiceImpl.URL_KEY, null));
         Assert.assertEquals(TESTUSER, sharedPreferences.getString(SessionServiceImpl.USERNAME_KEY, null));
 
+        Assert.assertEquals(NON_DEFAULT_STORAGE_TYPE, impl.getStorageType());
         Assert.assertEquals(TESTURL, impl.getUrl());
         Assert.assertEquals(TESTUSER, impl.getUsername());
         Assert.assertNull(impl.getCurrentSession());

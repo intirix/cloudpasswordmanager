@@ -28,8 +28,6 @@ public class SessionInfo {
 
     private String password;
 
-    private StorageType storageType;
-
     private long lastUserEvent = System.currentTimeMillis();
 
     private List<PasswordInfo> passwordList;
@@ -88,11 +86,4 @@ public class SessionInfo {
         this.lastUserEvent = lastUserEvent;
     }
 
-    public StorageType getStorageType() {
-        return storageType;
-    }
-
-    public void setStorageType(StorageType storageType) {
-        this.storageType = storageType;
-    }
 }

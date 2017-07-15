@@ -18,6 +18,7 @@ package com.intirix.cloudpasswordmanager.services.session;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import javax.inject.Inject;
 
@@ -25,13 +26,19 @@ import javax.inject.Inject;
  * Created by jeff on 6/18/16.
  */
 public class SessionServiceImpl implements SessionService {
+    private static final String TAG = SessionServiceImpl.class.getSimpleName();
 
+    public static final StorageType DEFAULT_STORAGE_TYPE = StorageType.OWNCLOUD_PASSWORDS;
+
+    public static final String STORAGE_TYPE_KEY = "last.storageType";
     public static final String URL_KEY = "last.url";
     public static final String USERNAME_KEY = "last.user";
 
     private Context context;
 
     SharedPreferences preferences;
+
+    private StorageType storageType = DEFAULT_STORAGE_TYPE;
 
     private String url;
 
@@ -44,13 +51,24 @@ public class SessionServiceImpl implements SessionService {
         this.context = context;
         preferences = PreferenceManager.getDefaultSharedPreferences(context);
 
+        String storageTypeName = preferences.getString(STORAGE_TYPE_KEY,DEFAULT_STORAGE_TYPE.name());
+        try {
+            setStorageType(StorageType.valueOf(storageTypeName));
+        } catch (IllegalArgumentException e) {
+            Log.w(TAG,"Invalid storage type: "+storageTypeName, e);
+            setStorageType(DEFAULT_STORAGE_TYPE);
+        }
         setUrl(preferences.getString(URL_KEY, null));
         setUsername(preferences.getString(USERNAME_KEY, null));
     }
 
     @Override
     public void start() {
-        preferences.edit().putString(URL_KEY,url).putString(USERNAME_KEY,username).commit();
+        preferences.edit()
+                .putString(URL_KEY,url)
+                .putString(USERNAME_KEY,username)
+                .putString(STORAGE_TYPE_KEY,storageType.name())
+                .commit();
         currentSession = new SessionInfo();
     }
 
@@ -77,6 +95,18 @@ public class SessionServiceImpl implements SessionService {
     @Override
     public String getUsername() {
         return username;
+    }
+
+    @Override
+    public StorageType getStorageType() {
+        return storageType;
+    }
+
+    @Override
+    public void setStorageType(StorageType storageType) {
+        if (storageType!=null) {
+            this.storageType = storageType;
+        }
     }
 
     @Override

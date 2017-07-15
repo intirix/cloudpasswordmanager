@@ -55,6 +55,18 @@ public interface SessionService {
     public String getUsername();
 
     /**
+     * Set the storage type
+     * @param storageType
+     */
+    public void setStorageType(StorageType storageType);
+
+    /**
+     * Get the storage type
+     * @return
+     */
+    public StorageType getStorageType();
+
+    /**
      * Get the current session
      * @return
      */
