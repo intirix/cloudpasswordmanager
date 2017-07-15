@@ -77,6 +77,7 @@ public class SMBackendRequestImplUnitSpec {
         Call<String> privateKeyCall = new MockCall<String>() {
             @Override
             public void enqueue(Callback<String> callback) {
+                Assert.assertTrue(impl.isLoginRunning());
                 callback.onResponse(null, Response.success("TEST123"));
             }
         };
@@ -84,6 +85,7 @@ public class SMBackendRequestImplUnitSpec {
         Call<List<Secret>> secretsCall = new MockCall<List<Secret>>() {
             @Override
             public void enqueue(Callback<List<Secret>> callback) {
+                Assert.assertTrue(impl.isLoginRunning());
                 callback.onResponse(null, Response.success(Collections.<Secret>emptyList()));
             }
         };
@@ -111,6 +113,7 @@ public class SMBackendRequestImplUnitSpec {
         Call<String> privateKeyCall = new MockCall<String>() {
             @Override
             public void enqueue(Callback<String> callback) {
+                Assert.assertTrue(impl.isLoginRunning());
                 callback.onFailure(null,new IOException("Failed"));
             }
         };
@@ -139,6 +142,7 @@ public class SMBackendRequestImplUnitSpec {
         Call<String> privateKeyCall = new MockCall<String>() {
             @Override
             public void enqueue(Callback<String> callback) {
+                Assert.assertTrue(impl.isLoginRunning());
                 callback.onResponse(null, Response.success("TEST123"));
             }
         };
@@ -168,6 +172,7 @@ public class SMBackendRequestImplUnitSpec {
         Call<List<Secret>> secretsCall = new MockCall<List<Secret>>() {
             @Override
             public void enqueue(Callback<List<Secret>> callback) {
+                Assert.assertTrue(impl.isLoginRunning());
                 callback.onResponse(null, Response.success(Collections.<Secret>emptyList()));
             }
         };
@@ -196,6 +201,7 @@ public class SMBackendRequestImplUnitSpec {
         Call<List<Secret>> secretsCall = new MockCall<List<Secret>>() {
             @Override
             public void enqueue(Callback<List<Secret>> callback) {
+                Assert.assertTrue(impl.isLoginRunning());
                 callback.onFailure(null, new IOException("Access denied"));
             }
         };

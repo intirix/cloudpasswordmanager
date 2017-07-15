@@ -41,6 +41,8 @@ public class SMBackendRequestImpl implements BackendRequestInterface {
 
     private AuthenticationInterceptor interceptor;
 
+    private boolean loginRunning = false;
+
     @Inject
     public SMBackendRequestImpl(SessionService sessionService, KeyStorageService keyStorageService, EventService eventService) {
         this.sessionService = sessionService;
@@ -71,6 +73,7 @@ public class SMBackendRequestImpl implements BackendRequestInterface {
 
     private void downloadEncryptedPrivateKey() {
         Call<String> call = getApi().getUserEncryptedPrivateKey(sessionService.getUsername());
+        loginRunning = true;
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
@@ -79,6 +82,7 @@ public class SMBackendRequestImpl implements BackendRequestInterface {
                     downloadSecrets();
                 } catch (IOException e) {
                     Log.w(TAG, "downloadEncryptedPrivateKey() save failed", e);
+                    loginRunning = false;
                     eventService.postEvent(new FatalErrorEvent(e.getMessage()));
                 }
             }
@@ -86,6 +90,7 @@ public class SMBackendRequestImpl implements BackendRequestInterface {
             @Override
             public void onFailure(Call<String> call, Throwable t) {
                 Log.w(TAG, "downloadEncryptedPrivateKey() failed", t);
+                loginRunning = false;
                 eventService.postEvent(new FatalErrorEvent(t.getMessage()));
 
             }
@@ -94,15 +99,18 @@ public class SMBackendRequestImpl implements BackendRequestInterface {
 
     private void downloadSecrets() {
         Call<List<Secret>> call = getApi().getUserSecrets(sessionService.getUsername());
+        loginRunning = true;
         call.enqueue(new Callback<List<Secret>>() {
             @Override
             public void onResponse(Call<List<Secret>> call, Response<List<Secret>> response) {
+                loginRunning = false;
                 eventService.postEvent(new PasswordListUpdatedEvent());
             }
 
             @Override
             public void onFailure(Call<List<Secret>> call, Throwable t) {
                 Log.w(TAG, "downloadSecrets() failed", t);
+                loginRunning = false;
                 eventService.postEvent(new FatalErrorEvent(t.getMessage()));
             }
         });
@@ -110,7 +118,7 @@ public class SMBackendRequestImpl implements BackendRequestInterface {
 
     @Override
     public boolean isLoginRunning() {
-        return false;
+        return loginRunning;
     }
 
     @Override
