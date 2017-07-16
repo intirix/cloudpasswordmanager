@@ -26,7 +26,8 @@ import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordListUpdatedEv
 import com.intirix.cloudpasswordmanager.services.backend.BackendRequestInterface;
 import com.intirix.cloudpasswordmanager.services.backend.beans.Category;
 import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordBean;
-import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordInfo;
+import com.intirix.cloudpasswordmanager.services.backend.ocp.beans.OCPSessionData;
+import com.intirix.cloudpasswordmanager.services.backend.ocp.beans.PasswordInfo;
 import com.intirix.cloudpasswordmanager.services.backend.ocp.callbacks.CategoryListCallback;
 import com.intirix.cloudpasswordmanager.services.backend.ocp.callbacks.PasswordListCallback;
 import com.intirix.cloudpasswordmanager.services.backend.ocp.callbacks.VersionCallback;
@@ -74,6 +75,7 @@ public class OCPBackendRequestImpl implements BackendRequestInterface {
     @Override
     public void login() {
         final SessionInfo session = sessionService.getCurrentSession();
+        session.setBackendData(new OCPSessionData());
         loginRunning = true;
         passwordStorageService.getServerVersion(new VersionCallback() {
             @Override
@@ -122,7 +124,7 @@ public class OCPBackendRequestImpl implements BackendRequestInterface {
             @Override
             public void onReturn(List<PasswordInfo> passwords) {
                 Log.d(TAG,"returned "+passwords.size()+" passwords");
-                session.setPasswordList(passwords);
+                getSessionData(session).setPasswordList(passwords);
                 updatePasswordBeanList(session);
                 eventService.postEvent(new PasswordListUpdatedEvent());
             }
@@ -136,8 +138,8 @@ public class OCPBackendRequestImpl implements BackendRequestInterface {
     }
 
     private void updatePasswordBeanList(SessionInfo session) {
-        if (session.getCategoryList()!=null && session.getPasswordList()!=null) {
-            List<PasswordBean> beans = new ArrayList<>(session.getPasswordList().size());
+        if (session.getCategoryList()!=null && getSessionData(session).getPasswordList()!=null) {
+            List<PasswordBean> beans = new ArrayList<>(getSessionData(session).getPasswordList().size());
 
             // put all the categories in a map to make it easier to lookup
             final Map<String, Category> categoryMap = new HashMap<>();
@@ -145,7 +147,7 @@ public class OCPBackendRequestImpl implements BackendRequestInterface {
                 categoryMap.put(category.getId(), category);
             }
 
-            for (final PasswordInfo passwordInfo: session.getPasswordList()) {
+            for (final PasswordInfo passwordInfo: getSessionData(session).getPasswordList()) {
                 final PasswordBean bean = new PasswordBean();
 
                 bean.setId(passwordInfo.getId());
@@ -191,5 +193,12 @@ public class OCPBackendRequestImpl implements BackendRequestInterface {
 
             session.setPasswordBeanList(beans);
         }
+    }
+
+    OCPSessionData getSessionData(SessionInfo session) {
+        if (session.getBackendData()==null) {
+            session.setBackendData(new OCPSessionData());
+        }
+        return (OCPSessionData)session.getBackendData();
     }
 }

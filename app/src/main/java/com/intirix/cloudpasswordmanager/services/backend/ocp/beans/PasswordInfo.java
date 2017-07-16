@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.intirix.cloudpasswordmanager.services.backend.beans;
+package com.intirix.cloudpasswordmanager.services.backend.ocp.beans;
 
 import java.util.Calendar;
 

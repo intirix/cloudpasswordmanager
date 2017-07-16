@@ -17,7 +17,6 @@ package com.intirix.cloudpasswordmanager.services.session;
 
 import com.intirix.cloudpasswordmanager.services.backend.beans.Category;
 import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordBean;
-import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordInfo;
 
 import java.util.List;
 
@@ -30,11 +29,11 @@ public class SessionInfo {
 
     private long lastUserEvent = System.currentTimeMillis();
 
-    private List<PasswordInfo> passwordList;
-
     private List<Category> categoryList;
 
     private List<PasswordBean> passwordBeanList;
+
+    private Object backendData;
 
     private String serverVersion;
 
@@ -48,14 +47,6 @@ public class SessionInfo {
 
     public List<Category> getCategoryList() {
         return categoryList;
-    }
-
-    public void setPasswordList(List<PasswordInfo> list) {
-        this.passwordList = list;
-    }
-
-    public List<PasswordInfo> getPasswordList() {
-        return passwordList;
     }
 
     public void setCategoryList(List<Category> list) {
@@ -86,4 +77,11 @@ public class SessionInfo {
         this.lastUserEvent = lastUserEvent;
     }
 
+    public Object getBackendData() {
+        return backendData;
+    }
+
+    public void setBackendData(Object backendData) {
+        this.backendData = backendData;
+    }
 }

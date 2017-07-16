@@ -17,9 +17,8 @@ package com.intirix.cloudpasswordmanager.services.backend.ocp;
 
 import com.intirix.cloudpasswordmanager.BuildConfig;
 import com.intirix.cloudpasswordmanager.TestPasswordApplication;
-import com.intirix.cloudpasswordmanager.services.backend.ocp.PasswordRestService;
 import com.intirix.cloudpasswordmanager.services.backend.beans.Category;
-import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordResponse;
+import com.intirix.cloudpasswordmanager.services.backend.ocp.beans.PasswordResponse;
 import com.intirix.cloudpasswordmanager.services.session.AuthenticationInterceptor;
 import com.intirix.cloudpasswordmanager.services.session.MockSessionService;
 

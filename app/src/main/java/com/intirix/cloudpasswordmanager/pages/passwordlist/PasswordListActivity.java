@@ -166,7 +166,7 @@ public class PasswordListActivity extends SecureActivity implements SearchView.O
 
     private void updateProgressDialog() {
         if (sessionService.getCurrentSession()!=null) {
-            boolean showDialog = sessionService.getCurrentSession().getCategoryList()==null||sessionService.getCurrentSession().getPasswordList()==null;
+            boolean showDialog = sessionService.getCurrentSession().getCategoryList()==null||sessionService.getCurrentSession().getPasswordBeanList()==null;
 
             if (showDialog) {
                 if (progressDialog==null) {

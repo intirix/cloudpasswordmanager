@@ -21,9 +21,8 @@ import com.google.gson.JsonSyntaxException;
 import com.ibm.icu.text.SimpleDateFormat;
 import com.intirix.cloudpasswordmanager.BuildConfig;
 import com.intirix.cloudpasswordmanager.TestPasswordApplication;
-import com.intirix.cloudpasswordmanager.services.backend.ocp.PasswordStorageServiceImpl;
-import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordInfo;
-import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordResponse;
+import com.intirix.cloudpasswordmanager.services.backend.ocp.beans.PasswordInfo;
+import com.intirix.cloudpasswordmanager.services.backend.ocp.beans.PasswordResponse;
 import com.intirix.cloudpasswordmanager.services.session.MockSessionService;
 
 import org.junit.Assert;

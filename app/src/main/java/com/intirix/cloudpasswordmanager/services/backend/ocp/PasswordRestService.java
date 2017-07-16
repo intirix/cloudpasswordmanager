@@ -16,7 +16,7 @@
 package com.intirix.cloudpasswordmanager.services.backend.ocp;
 
 import com.intirix.cloudpasswordmanager.services.backend.beans.Category;
-import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordResponse;
+import com.intirix.cloudpasswordmanager.services.backend.ocp.beans.PasswordResponse;
 
 import java.util.List;
 

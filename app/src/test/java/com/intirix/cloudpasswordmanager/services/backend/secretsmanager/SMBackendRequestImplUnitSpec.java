@@ -109,7 +109,6 @@ public class SMBackendRequestImplUnitSpec {
         eventService.assertEventType(2, PasswordListUpdatedEvent.class);
 
         Assert.assertNotNull(sessionService.getCurrentSession().getPasswordBeanList());
-        Assert.assertNotNull(sessionService.getCurrentSession().getPasswordList());
         Assert.assertNotNull(sessionService.getCurrentSession().getCategoryList());
 
         EasyMock.verify(api,keyStorageService);
@@ -200,7 +199,6 @@ public class SMBackendRequestImplUnitSpec {
         eventService.assertEventType(2, PasswordListUpdatedEvent.class);
 
         Assert.assertNotNull(sessionService.getCurrentSession().getPasswordBeanList());
-        Assert.assertNotNull(sessionService.getCurrentSession().getPasswordList());
         Assert.assertNotNull(sessionService.getCurrentSession().getCategoryList());
 
 

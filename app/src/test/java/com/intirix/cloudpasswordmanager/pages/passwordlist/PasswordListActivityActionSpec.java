@@ -24,10 +24,11 @@ import com.intirix.cloudpasswordmanager.TestPasswordApplication;
 import com.intirix.cloudpasswordmanager.pages.FatalErrorEvent;
 import com.intirix.cloudpasswordmanager.pages.login.LoginActivity;
 import com.intirix.cloudpasswordmanager.pages.passworddetail.PasswordDetailActivity;
+import com.intirix.cloudpasswordmanager.services.backend.ocp.beans.OCPSessionData;
 import com.intirix.cloudpasswordmanager.services.session.SessionService;
 import com.intirix.cloudpasswordmanager.services.backend.beans.Category;
 import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordBean;
-import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordInfo;
+import com.intirix.cloudpasswordmanager.services.backend.ocp.beans.PasswordInfo;
 
 import org.easymock.EasyMock;
 import org.junit.Assert;
@@ -42,6 +43,7 @@ import org.robolectric.shadows.ShadowActivity;
 import org.robolectric.util.ActivityController;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -141,7 +143,7 @@ public class PasswordListActivityActionSpec extends BaseTestCase {
         PasswordListActivity activity = controller.get();
 
         // both should be empty right now
-        Assert.assertNull(sessionService.getCurrentSession().getPasswordList());
+        Assert.assertNull(sessionService.getCurrentSession().getPasswordBeanList());
         Assert.assertNull(sessionService.getCurrentSession().getCategoryList());
 
         // the progress dialog should be showing
@@ -151,9 +153,9 @@ public class PasswordListActivityActionSpec extends BaseTestCase {
 
         // simulate the password list request finishing
         // categories should still be null
-        sessionService.getCurrentSession().setPasswordList(new ArrayList<PasswordInfo>());
+        sessionService.getCurrentSession().setPasswordBeanList(Collections.<PasswordBean>emptyList());
         activity.onPasswordsUpdated(null);
-        Assert.assertNotNull(sessionService.getCurrentSession().getPasswordList());
+        Assert.assertNotNull(sessionService.getCurrentSession().getPasswordBeanList());
         Assert.assertNull(sessionService.getCurrentSession().getCategoryList());
 
 
@@ -165,12 +167,12 @@ public class PasswordListActivityActionSpec extends BaseTestCase {
         // simulate the category list request finishing
         sessionService.getCurrentSession().setCategoryList(new ArrayList<Category>());
         activity.onCategoriesUpdated(null);
-        Assert.assertNotNull(sessionService.getCurrentSession().getPasswordList());
+        Assert.assertNotNull(sessionService.getCurrentSession().getPasswordBeanList());
         Assert.assertNotNull(sessionService.getCurrentSession().getCategoryList());
 
 
 
-        Assert.assertFalse("ProgressDialog should not be visisble", activity.progressDialog.isShowing());
+        Assert.assertFalse("ProgressDialog should not be visible", activity.progressDialog.isShowing());
 
 
 

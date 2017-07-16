@@ -21,13 +21,12 @@ import com.intirix.cloudpasswordmanager.pages.passwordlist.CategoryListUpdatedEv
 import com.intirix.cloudpasswordmanager.pages.FatalErrorEvent;
 import com.intirix.cloudpasswordmanager.pages.login.LoginSuccessfulEvent;
 import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordListUpdatedEvent;
-import com.intirix.cloudpasswordmanager.services.backend.PasswordRequestServiceImpl;
-import com.intirix.cloudpasswordmanager.services.backend.ocp.MockPasswordStorageService;
+import com.intirix.cloudpasswordmanager.services.backend.ocp.beans.OCPSessionData;
 import com.intirix.cloudpasswordmanager.services.ui.ColorService;
 import com.intirix.cloudpasswordmanager.services.ui.MockEventService;
 import com.intirix.cloudpasswordmanager.services.backend.beans.Category;
 import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordBean;
-import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordInfo;
+import com.intirix.cloudpasswordmanager.services.backend.ocp.beans.PasswordInfo;
 import com.intirix.cloudpasswordmanager.services.session.MockSessionService;
 
 import org.easymock.EasyMock;
@@ -107,7 +106,8 @@ public class OCPBackendRequestImplUnitSpec {
         eventService.assertNumberOfPosts(1);
         eventService.assertEventType(0, CategoryListUpdatedEvent.class);
         Assert.assertEquals(list, sessionService.getCurrentSession().getCategoryList());
-        Assert.assertNull(sessionService.getCurrentSession().getPasswordList());
+        OCPSessionData data = impl.getSessionData(sessionService.getCurrentSession());
+        Assert.assertNull(data.getPasswordList());
         Assert.assertNull(sessionService.getCurrentSession().getPasswordBeanList());
     }
 
@@ -139,7 +139,8 @@ public class OCPBackendRequestImplUnitSpec {
         passwordStorageService.getLastPasswordListCallack().onReturn(list);
         eventService.assertNumberOfPosts(1);
         eventService.assertEventType(0, PasswordListUpdatedEvent.class);
-        Assert.assertEquals(list, sessionService.getCurrentSession().getPasswordList());
+        OCPSessionData data = impl.getSessionData(sessionService.getCurrentSession());
+        Assert.assertEquals(list, data.getPasswordList());
         Assert.assertNull(sessionService.getCurrentSession().getCategoryList());
         Assert.assertNull(sessionService.getCurrentSession().getPasswordBeanList());
     }

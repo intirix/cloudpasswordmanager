@@ -9,8 +9,7 @@ import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordListUpdatedEv
 import com.intirix.cloudpasswordmanager.services.backend.BackendRequestInterface;
 import com.intirix.cloudpasswordmanager.services.backend.beans.Category;
 import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordBean;
-import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordInfo;
-import com.intirix.cloudpasswordmanager.services.backend.ocp.OCPBackendRequestImpl;
+import com.intirix.cloudpasswordmanager.services.backend.ocp.beans.PasswordInfo;
 import com.intirix.cloudpasswordmanager.services.session.AuthenticationInterceptor;
 import com.intirix.cloudpasswordmanager.services.session.SessionInfo;
 import com.intirix.cloudpasswordmanager.services.session.SessionService;
@@ -22,7 +21,6 @@ import com.intirix.secretsmanager.clientv1.model.Secret;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -124,7 +122,6 @@ public class SMBackendRequestImpl implements BackendRequestInterface {
                 if (response.body()!=null) {
                     Log.d(TAG, "Downloaded " + response.body().size() + " secrets");
                 }
-                session.setPasswordList(Collections.<PasswordInfo>emptyList());
                 session.setPasswordBeanList(Collections.<PasswordBean>emptyList());
                 session.setCategoryList(Collections.<Category>emptyList());
                 eventService.postEvent(new CategoryListUpdatedEvent());

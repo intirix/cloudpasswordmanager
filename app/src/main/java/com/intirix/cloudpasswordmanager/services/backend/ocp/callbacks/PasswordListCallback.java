@@ -15,7 +15,7 @@
  */
 package com.intirix.cloudpasswordmanager.services.backend.ocp.callbacks;
 
-import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordInfo;
+import com.intirix.cloudpasswordmanager.services.backend.ocp.beans.PasswordInfo;
 
 import java.util.List;
 
