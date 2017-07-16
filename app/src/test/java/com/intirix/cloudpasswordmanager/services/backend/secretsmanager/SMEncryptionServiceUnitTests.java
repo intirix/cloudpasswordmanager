@@ -57,7 +57,7 @@ public class SMEncryptionServiceUnitTests {
     }
 
     @Test
-    public void verifySignatureWorks() throws IOException, InvalidKeyException, InvalidKeySpecException, SignatureException {
+    public void verifySignatureWorks() throws IOException, InvalidKeyException, InvalidKeySpecException, SignatureException, NoSuchPaddingException, NoSuchAlgorithmException, NoSuchProviderException {
         byte[] privateKey = impl.decryptAES(impl.keyExtend("admin","password"),impl.decodeBase64(encryptedPrivateKey));
         String pem = new String(privateKey, "ASCII");
         Assert.assertTrue(pem.startsWith("-----BEGIN PRIVATE KEY-----"));
@@ -71,7 +71,7 @@ public class SMEncryptionServiceUnitTests {
     }
 
     @Test
-    public void verifyWrongPasswordFails() throws IOException, InvalidKeyException, InvalidKeySpecException, SignatureException {
+    public void verifyWrongPasswordFails() throws IOException, InvalidKeyException, InvalidKeySpecException, SignatureException, NoSuchPaddingException, NoSuchAlgorithmException, NoSuchProviderException {
         try {
             byte[] privateKey = impl.decryptAES(impl.keyExtend("admin", "password2"), impl.decodeBase64(encryptedPrivateKey));
             String pem = new String(privateKey, "ASCII");

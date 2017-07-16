@@ -40,16 +40,15 @@ import javax.crypto.spec.SecretKeySpec;
 public class SMEncryptionService {
     private static final int AES_BLOCK_SIZE = 16;
 
-    private Cipher cipher;
-
-    private Signature signature;
-
     private KeyFactory rsaKeyFactory;
 
     public SMEncryptionService() throws NoSuchPaddingException, NoSuchAlgorithmException, NoSuchProviderException {
-        cipher = Cipher.getInstance("AES/CBC/PKCS7Padding", "BC");
-        signature = Signature.getInstance("SHA256withRSA");
         rsaKeyFactory = KeyFactory.getInstance("RSA");
+
+        // verify that the algorithms are available up front
+        Cipher.getInstance("AES/CBC/PKCS7Padding", "BC");
+        Signature.getInstance("SHA256withRSA");
+
     }
 
 
@@ -62,12 +61,12 @@ public class SMEncryptionService {
         return Base64.decode(input.getBytes("ASCII"),Base64.NO_WRAP);
     }
 
-    public byte[] decryptAES(byte[] keyBytes, byte[] input) throws IOException, InvalidKeyException {
+    public byte[] decryptAES(byte[] keyBytes, byte[] input) throws IOException, InvalidKeyException, NoSuchPaddingException, NoSuchAlgorithmException, NoSuchProviderException {
         byte[] ivData = Arrays.copyOf(input, AES_BLOCK_SIZE);
         byte[] encrypted = Arrays.copyOfRange(input, AES_BLOCK_SIZE, input.length);
 
         SecretKeySpec key = new SecretKeySpec(keyBytes, "AES");
-
+        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS7Padding", "BC");
         IvParameterSpec ivspec = new IvParameterSpec(ivData);
         try {
             cipher.init(Cipher.DECRYPT_MODE, key, ivspec);
@@ -94,13 +93,15 @@ public class SMEncryptionService {
 
     }
 
-    public byte[] signRSA(String keyPem,byte[] input) throws SignatureException, InvalidKeySpecException, IOException, InvalidKeyException {
+    public byte[] signRSA(String keyPem,byte[] input) throws SignatureException, InvalidKeySpecException, IOException, InvalidKeyException, NoSuchAlgorithmException {
+        Signature signature = Signature.getInstance("SHA256withRSA");
         signature.initSign(getPrivateKey(keyPem));
         signature.update(input);
         return signature.sign();
     }
 
-    public boolean verifySignatureRSA(String pubKeyPem, byte[] plainText, byte[] sig) throws IOException, InvalidKeySpecException, InvalidKeyException, SignatureException {
+    public boolean verifySignatureRSA(String pubKeyPem, byte[] plainText, byte[] sig) throws IOException, InvalidKeySpecException, InvalidKeyException, SignatureException, NoSuchAlgorithmException {
+        Signature signature = Signature.getInstance("SHA256withRSA");
         signature.initVerify(getPublicKey(pubKeyPem));
         signature.update(plainText);
         return signature.verify(sig);
