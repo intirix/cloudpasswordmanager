@@ -65,6 +65,7 @@ dependencies {
     testCompile 'org.khronos:opengl-api:gl1.1-android-2.1_r1'
 
     testCompile 'org.easymock:easymock:3.1'
+    testCompile group: 'commons-io', name: 'commons-io', version: '2.5'
 
 
     compile 'com.android.support:appcompat-v7:24.2.0'
@@ -75,4 +76,6 @@ dependencies {
     compile 'com.android.support:design:24.2.0'
 
     compile 'org.greenrobot:eventbus:3.0.0'
+    //compile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.57'
+    compile group: 'com.madgag.spongycastle', name: 'prov', version: '1.56.0.0'
 }
