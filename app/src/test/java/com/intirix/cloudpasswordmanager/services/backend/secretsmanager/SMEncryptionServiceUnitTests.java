@@ -16,7 +16,10 @@ import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.SignatureException;
+import java.security.spec.InvalidKeySpecException;
 
+import javax.crypto.BadPaddingException;
 import javax.crypto.NoSuchPaddingException;
 
 /**
@@ -32,12 +35,20 @@ public class SMEncryptionServiceUnitTests {
 
     String encryptedPrivateKey;
 
+    String publicKey;
+
     @Before
     public void setUp() throws IOException, NoSuchPaddingException, NoSuchAlgorithmException, NoSuchProviderException {
         impl = new SMEncryptionService();
+
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         IOUtils.copy(getClass().getResourceAsStream("/mock_rsa_key.enc"),buffer);
         encryptedPrivateKey = buffer.toString("ASCII");
+
+        buffer.reset();
+        IOUtils.copy(getClass().getResourceAsStream("/mock_rsa_pub.pem"),buffer);
+        publicKey = buffer.toString("ASCII");
+
     }
 
     @Test
@@ -46,9 +57,27 @@ public class SMEncryptionServiceUnitTests {
     }
 
     @Test
-    public void verifySignatureWorks() throws IOException, InvalidKeyException {
+    public void verifySignatureWorks() throws IOException, InvalidKeyException, InvalidKeySpecException, SignatureException {
         byte[] privateKey = impl.decryptAES(impl.keyExtend("admin","password"),impl.decodeBase64(encryptedPrivateKey));
         String pem = new String(privateKey, "ASCII");
-        Assert.assertTrue(pem.startsWith("-----BEGIN RSA PRIVATE KEY-----"));
+        Assert.assertTrue(pem.startsWith("-----BEGIN PRIVATE KEY-----"));
+
+        String message = "The quick brown fox jumped over the lazy dog";
+
+        byte[] signature = impl.signRSA(pem,message.getBytes("UTF8"));
+        Assert.assertNotNull(signature);
+        Assert.assertEquals(256,signature.length);
+        Assert.assertTrue(impl.verifySignatureRSA(publicKey,message.getBytes("UTF-8"),signature));
+    }
+
+    @Test
+    public void verifyWrongPasswordFails() throws IOException, InvalidKeyException, InvalidKeySpecException, SignatureException {
+        try {
+            byte[] privateKey = impl.decryptAES(impl.keyExtend("admin", "password2"), impl.decodeBase64(encryptedPrivateKey));
+            String pem = new String(privateKey, "ASCII");
+            Assert.assertFalse(pem.startsWith("-----BEGIN PRIVATE KEY-----"));
+        } catch (IOException e) {
+            Assert.assertEquals(BadPaddingException.class, e.getCause().getClass());
+        }
     }
 }

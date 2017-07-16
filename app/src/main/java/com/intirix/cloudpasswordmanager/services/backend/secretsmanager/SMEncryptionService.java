@@ -4,13 +4,25 @@ import android.util.Base64;
 
 
 import org.spongycastle.crypto.generators.SCrypt;
+import org.spongycastle.util.io.pem.PemObject;
+import org.spongycastle.util.io.pem.PemReader;
 
 import java.io.IOException;
+import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
+import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.Signature;
+import java.security.SignatureException;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
 
 import javax.crypto.BadPaddingException;
@@ -28,10 +40,16 @@ import javax.crypto.spec.SecretKeySpec;
 public class SMEncryptionService {
     private static final int AES_BLOCK_SIZE = 16;
 
-    Cipher cipher;
+    private Cipher cipher;
+
+    private Signature signature;
+
+    private KeyFactory rsaKeyFactory;
 
     public SMEncryptionService() throws NoSuchPaddingException, NoSuchAlgorithmException, NoSuchProviderException {
         cipher = Cipher.getInstance("AES/CBC/PKCS7Padding", "BC");
+        signature = Signature.getInstance("SHA256withRSA");
+        rsaKeyFactory = KeyFactory.getInstance("RSA");
     }
 
 
@@ -75,4 +93,39 @@ public class SMEncryptionService {
         return Arrays.copyOf(plainText,ptLength);
 
     }
+
+    public byte[] signRSA(String keyPem,byte[] input) throws SignatureException, InvalidKeySpecException, IOException, InvalidKeyException {
+        signature.initSign(getPrivateKey(keyPem));
+        signature.update(input);
+        return signature.sign();
+    }
+
+    public boolean verifySignatureRSA(String pubKeyPem, byte[] plainText, byte[] sig) throws IOException, InvalidKeySpecException, InvalidKeyException, SignatureException {
+        signature.initVerify(getPublicKey(pubKeyPem));
+        signature.update(plainText);
+        return signature.verify(sig);
+    }
+
+    private PrivateKey getPrivateKey(String pem) throws InvalidKeySpecException, IOException {
+        PemReader pr = new PemReader(new StringReader(pem));
+        PemObject po = pr.readPemObject();
+        if (!"PRIVATE KEY".equals(po.getType())) {
+            throw new InvalidKeySpecException("Wrong key type: "+po.getType());
+        }
+        PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(po.getContent());
+
+        return rsaKeyFactory.generatePrivate(spec);
+    }
+
+    private PublicKey getPublicKey(String pem) throws IOException, InvalidKeySpecException {
+        PemReader pr = new PemReader(new StringReader(pem));
+        PemObject po = pr.readPemObject();
+        if (!"PUBLIC KEY".equals(po.getType())) {
+            throw new InvalidKeySpecException("Wrong key type: "+po.getType());
+        }
+        X509EncodedKeySpec spec = new X509EncodedKeySpec(po.getContent());
+
+        return rsaKeyFactory.generatePublic(spec);
+    }
+
 }
