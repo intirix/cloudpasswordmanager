@@ -50,11 +50,11 @@ public class SMBackendRequestImpl implements BackendRequestInterface {
     private boolean loginRunning = false;
 
     @Inject
-    public SMBackendRequestImpl(SessionService sessionService, KeyStorageService keyStorageService, EventService eventService) {
+    public SMBackendRequestImpl(SessionService sessionService, KeyStorageService keyStorageService, EventService eventService, SMEncryptionService encryptionService) {
         this.sessionService = sessionService;
         this.keyStorageService = keyStorageService;
         this.eventService = eventService;
-        this.interceptor = new AuthenticationInterceptor(sessionService);
+        this.interceptor = new SMAuthenticationInterceptor(sessionService,keyStorageService,encryptionService);
         client = new ApiClient();
     }
 

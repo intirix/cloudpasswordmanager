@@ -22,9 +22,13 @@ import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import javax.crypto.NoSuchPaddingException;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -53,7 +57,7 @@ public class SMBackendRequestImplUnitSpec {
     private String username;
 
     @Before
-    public void setUp() {
+    public void setUp() throws NoSuchPaddingException, NoSuchAlgorithmException, NoSuchProviderException {
         username = "myuser";
         sessionService = new MockSessionService();
         sessionService.setUsername(username);
@@ -62,8 +66,9 @@ public class SMBackendRequestImplUnitSpec {
         eventService = new MockEventService();
         keyStorageService = EasyMock.createMock(KeyStorageService.class);
         api = EasyMock.createMock(DefaultApi.class);
+        SMEncryptionService encryptionService = new SMEncryptionService();
 
-        impl = new SMBackendRequestImpl(sessionService, keyStorageService, eventService) {
+        impl = new SMBackendRequestImpl(sessionService, keyStorageService, eventService, encryptionService) {
             @Override
             protected DefaultApi getApi() {
                 return api;

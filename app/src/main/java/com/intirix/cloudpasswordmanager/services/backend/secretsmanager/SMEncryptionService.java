@@ -1,6 +1,7 @@
 package com.intirix.cloudpasswordmanager.services.backend.secretsmanager;
 
 import android.util.Base64;
+import android.util.Log;
 
 
 import org.spongycastle.crypto.generators.SCrypt;
@@ -32,6 +33,7 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.ShortBufferException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import javax.inject.Inject;
 
 /**
  * Created by jeff on 7/15/17.
@@ -42,13 +44,13 @@ public class SMEncryptionService {
 
     private KeyFactory rsaKeyFactory;
 
-    public SMEncryptionService() throws NoSuchPaddingException, NoSuchAlgorithmException, NoSuchProviderException {
-        rsaKeyFactory = KeyFactory.getInstance("RSA");
-
-        // verify that the algorithms are available up front
-        Cipher.getInstance("AES/CBC/PKCS7Padding", "BC");
-        Signature.getInstance("SHA256withRSA");
-
+    @Inject
+    public SMEncryptionService() {
+        try {
+            rsaKeyFactory = KeyFactory.getInstance("RSA");
+        } catch (NoSuchAlgorithmException e) {
+            Log.e(SMEncryptionService.class.getSimpleName(),"Missing encryption",e);
+        }
     }
 
 
