@@ -1,5 +1,7 @@
 package com.intirix.cloudpasswordmanager.services.backend.secretsmanager;
 
+import android.util.Base64;
+
 import com.intirix.cloudpasswordmanager.BuildConfig;
 import com.intirix.cloudpasswordmanager.TestPasswordApplication;
 import com.intirix.cloudpasswordmanager.pages.FatalErrorEvent;
@@ -13,6 +15,8 @@ import com.intirix.cloudpasswordmanager.services.ui.MockEventService;
 import com.intirix.secretsmanager.clientv1.api.DefaultApi;
 import com.intirix.secretsmanager.clientv1.model.Secret;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Before;
@@ -43,7 +47,6 @@ import retrofit2.Response;
         application = TestPasswordApplication.class, sdk = 23)
 public class SMBackendRequestImplUnitSpec {
 
-    private static final String ENCRYPTED_KEY = "TEST123";
     private SMBackendRequestImpl impl;
 
     private MockSessionService sessionService;
@@ -56,8 +59,15 @@ public class SMBackendRequestImplUnitSpec {
 
     private String username;
 
+    String encryptedPrivateKey;
+
+
     @Before
-    public void setUp() throws NoSuchPaddingException, NoSuchAlgorithmException, NoSuchProviderException {
+    public void setUp() throws NoSuchPaddingException, NoSuchAlgorithmException, NoSuchProviderException, IOException {
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        IOUtils.copy(getClass().getResourceAsStream("/mock_rsa_key.enc"),buffer);
+        encryptedPrivateKey = buffer.toString("ASCII");
+
         username = "myuser";
         sessionService = new MockSessionService();
         sessionService.setUsername(username);
@@ -76,10 +86,12 @@ public class SMBackendRequestImplUnitSpec {
         };
     }
 
+
+
     @Test
     public void verifyLoginWithoutLocalKeyDownloadsKey() throws IOException {
         EasyMock.expect(keyStorageService.isPrivateKeyStored()).andReturn(false).anyTimes();
-        keyStorageService.saveEncryptedPrivateKey(ENCRYPTED_KEY);
+        keyStorageService.saveEncryptedPrivateKey(encryptedPrivateKey);
         EasyMock.expectLastCall();
 
 
@@ -87,7 +99,51 @@ public class SMBackendRequestImplUnitSpec {
             @Override
             public void enqueue(Callback<String> callback) {
                 Assert.assertTrue(impl.isLoginRunning());
-                callback.onResponse(null, Response.success(ENCRYPTED_KEY));
+                callback.onResponse(null, Response.success(encryptedPrivateKey));
+                Assert.assertFalse(impl.isLoginRunning());
+            }
+        };
+
+        Call<Map<String,Secret>> secretsCall = new MockCall<Map<String,Secret>>() {
+            @Override
+            public void enqueue(Callback<Map<String,Secret>> callback) {
+                Assert.assertFalse(impl.isLoginRunning());
+                callback.onResponse(null, Response.success(Collections.<String,Secret>emptyMap()));
+            }
+        };
+
+        EasyMock.expect(api.getUserEncryptedPrivateKey(username)).andReturn(privateKeyCall);
+        EasyMock.expect(api.getUserSecrets(username)).andReturn(secretsCall);
+
+        EasyMock.replay(api,keyStorageService);
+        Assert.assertFalse(impl.isLoginRunning());
+        impl.login();
+        Assert.assertFalse(impl.isLoginRunning());
+
+        eventService.assertNumberOfPosts(3);
+        eventService.assertEventType(0, LoginSuccessfulEvent.class);
+        eventService.assertEventType(1, CategoryListUpdatedEvent.class);
+        eventService.assertEventType(2, PasswordListUpdatedEvent.class);
+
+        Assert.assertNotNull(sessionService.getCurrentSession().getPasswordBeanList());
+        Assert.assertNotNull(sessionService.getCurrentSession().getCategoryList());
+
+        EasyMock.verify(api,keyStorageService);
+    }
+
+    @Test
+    public void verifyDownloadDoubleEncodedKeyWorks() throws IOException {
+        EasyMock.expect(keyStorageService.isPrivateKeyStored()).andReturn(false).anyTimes();
+        keyStorageService.saveEncryptedPrivateKey(encryptedPrivateKey);
+        EasyMock.expectLastCall();
+
+        final String doubleEncoded = Base64.encodeToString(encryptedPrivateKey.getBytes("ASCII"),Base64.NO_WRAP);
+
+        Call<String> privateKeyCall = new MockCall<String>() {
+            @Override
+            public void enqueue(Callback<String> callback) {
+                Assert.assertTrue(impl.isLoginRunning());
+                callback.onResponse(null, Response.success(doubleEncoded));
                 Assert.assertFalse(impl.isLoginRunning());
             }
         };
@@ -149,7 +205,7 @@ public class SMBackendRequestImplUnitSpec {
     @Test
     public void verifyFailureToSaveDownloadedKeySendsError() throws IOException {
         EasyMock.expect(keyStorageService.isPrivateKeyStored()).andReturn(false).anyTimes();
-        keyStorageService.saveEncryptedPrivateKey(ENCRYPTED_KEY);
+        keyStorageService.saveEncryptedPrivateKey(encryptedPrivateKey);
         EasyMock.expectLastCall().andThrow(new IOException("Failed to save key"));
 
 
@@ -157,7 +213,7 @@ public class SMBackendRequestImplUnitSpec {
             @Override
             public void enqueue(Callback<String> callback) {
                 Assert.assertTrue(impl.isLoginRunning());
-                callback.onResponse(null, Response.success(ENCRYPTED_KEY));
+                callback.onResponse(null, Response.success(encryptedPrivateKey));
             }
         };
 
@@ -179,7 +235,7 @@ public class SMBackendRequestImplUnitSpec {
     @Test
     public void verifyLoginWithLocalKeyDoesNotDownloadKey() throws IOException {
         EasyMock.expect(keyStorageService.isPrivateKeyStored()).andReturn(true).anyTimes();
-        EasyMock.expect(keyStorageService.getEncryptedPrivateKey()).andReturn(ENCRYPTED_KEY).anyTimes();
+        EasyMock.expect(keyStorageService.getEncryptedPrivateKey()).andReturn(encryptedPrivateKey).anyTimes();
         EasyMock.expectLastCall();
 
 
@@ -213,7 +269,7 @@ public class SMBackendRequestImplUnitSpec {
     @Test
     public void verifyFailedLoginSendsError() throws IOException {
         EasyMock.expect(keyStorageService.isPrivateKeyStored()).andReturn(true).anyTimes();
-        EasyMock.expect(keyStorageService.getEncryptedPrivateKey()).andReturn(ENCRYPTED_KEY).anyTimes();
+        EasyMock.expect(keyStorageService.getEncryptedPrivateKey()).andReturn(encryptedPrivateKey).anyTimes();
         EasyMock.expectLastCall();
 
 

@@ -1,5 +1,6 @@
 package com.intirix.cloudpasswordmanager.services.backend.secretsmanager;
 
+import android.util.Base64;
 import android.util.Log;
 
 import com.intirix.cloudpasswordmanager.pages.FatalErrorEvent;
@@ -92,6 +93,23 @@ public class SMBackendRequestImpl implements BackendRequestInterface {
                     } else if (key==null) {
                         eventService.postEvent(new FatalErrorEvent("No key available"));
                     } else {
+
+                        // Swagger codegen+Retrofit doesn't handle non-json responses very well
+                        // The server returns Base64-encoded text
+                        // The generated Retrofit code will Base64 encode the server response,
+                        // leaving key double-base64-encoded
+                        // To be safe and future safe, we double decode, then re-encode
+                        // In the future, if this gets fixed, then the second decode() will throw
+                        // an exception.  We ignore the exception, then encode it once.
+                        byte[] keyBytes = key.getBytes("ASCII");
+                        try {
+                            keyBytes = Base64.decode(keyBytes, Base64.NO_WRAP);
+                            keyBytes = Base64.decode(keyBytes, Base64.NO_WRAP);
+                        } catch (Exception e) {
+                        }
+
+                        key = Base64.encodeToString(keyBytes, Base64.NO_WRAP);
+
                         keyStorageService.saveEncryptedPrivateKey(key);
                         eventService.postEvent(new LoginSuccessfulEvent());
                         downloadSecrets();
