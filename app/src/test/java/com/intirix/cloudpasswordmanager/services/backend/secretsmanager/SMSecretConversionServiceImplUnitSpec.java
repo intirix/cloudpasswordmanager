@@ -1,9 +1,13 @@
 package com.intirix.cloudpasswordmanager.services.backend.secretsmanager;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.intirix.cloudpasswordmanager.BuildConfig;
 import com.intirix.cloudpasswordmanager.TestPasswordApplication;
 import com.intirix.cloudpasswordmanager.pages.passwordlist.CategoryListUpdatedEvent;
 import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordListUpdatedEvent;
+import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordBean;
 import com.intirix.cloudpasswordmanager.services.session.MockSessionService;
 import com.intirix.cloudpasswordmanager.services.settings.MockKeyStorageService;
 import com.intirix.cloudpasswordmanager.services.ui.EventService;
@@ -23,7 +27,11 @@ import org.robolectric.annotation.Config;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.List;
 
 import okhttp3.Interceptor;
 import okhttp3.MediaType;
@@ -64,7 +72,7 @@ public class SMSecretConversionServiceImplUnitSpec {
 
         keyStorageService = new MockKeyStorageService();
 
-        org.apache.commons.io.output.ByteArrayOutputStream buffer = new org.apache.commons.io.output.ByteArrayOutputStream();
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         IOUtils.copy(getClass().getResourceAsStream("/mock_rsa_key.enc"),buffer);
         keyStorageService.saveEncryptedPrivateKey(buffer.toString("ASCII"));
 
@@ -121,4 +129,68 @@ public class SMSecretConversionServiceImplUnitSpec {
         Assert.assertEquals(1,sessionService.getCurrentSession().getPasswordBeanList().size());
     }
 
+    @Test
+    public void verifyEmptyObject() throws IOException, ParseException {
+        List<PasswordBean> passwordBeanList = new ArrayList<>();
+
+
+        Assert.assertFalse(impl.parseSecret(sessionService.getCurrentSession(), "1", new JsonParser().parse("{}").getAsJsonObject(), passwordBeanList));
+
+        Assert.assertEquals(0, passwordBeanList.size());
+    }
+
+    @Test
+    public void verifyPasswordFields() throws IOException, ParseException {
+        List<PasswordBean> passwordBeanList = new ArrayList<>();
+
+
+        Assert.assertTrue(impl.parseSecret(sessionService.getCurrentSession(), "1", parseMockJson("/mock_sm_password.json"), passwordBeanList ));
+
+        Assert.assertEquals(1,passwordBeanList.size());
+
+        PasswordBean bean = passwordBeanList.get(0);
+
+        Assert.assertEquals("https://www.gmail.com", bean.getAddress());
+        Assert.assertEquals("1", bean.getId());
+        Assert.assertEquals("myuser", bean.getLoginName());
+        Assert.assertEquals("my notes", bean.getNotes());
+        Assert.assertEquals("myPassword", bean.getPass());
+        Assert.assertEquals("admin", bean.getUser_id());
+        Assert.assertEquals("www.google.com", bean.getWebsite());
+        Assert.assertEquals(2017, bean.getDateChanged().get(Calendar.YEAR));
+        Assert.assertEquals(1, bean.getDateChanged().get(Calendar.MONTH));
+        Assert.assertEquals(3, bean.getDateChanged().get(Calendar.DAY_OF_MONTH));
+        Assert.assertEquals(10, bean.getLength());
+
+    }
+
+    @Test
+    public void verifyInvalidTypesDontThrowExceptions() throws IOException, ParseException {
+        List<PasswordBean> passwordBeanList = new ArrayList<>();
+
+
+        Assert.assertTrue(impl.parseSecret(sessionService.getCurrentSession(), "1", parseMockJson("/mock_sm_password_bad_types.json"), passwordBeanList ));
+
+        Assert.assertEquals(1,passwordBeanList.size());
+
+        PasswordBean bean = passwordBeanList.get(0);
+
+        Assert.assertNull(bean.getAddress());
+        Assert.assertEquals("1", bean.getId());
+        Assert.assertNull(bean.getLoginName());
+        Assert.assertNull(bean.getNotes());
+        Assert.assertNull(bean.getPass());
+        Assert.assertEquals("admin", bean.getUser_id());
+        Assert.assertNull(bean.getWebsite());
+        Assert.assertNull(bean.getDateChanged());
+        Assert.assertEquals(0, bean.getLength());
+
+    }
+
+    private JsonObject parseMockJson(String filename) throws IOException {
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        IOUtils.copy(getClass().getResourceAsStream(filename),buffer);
+
+        return new JsonParser().parse(buffer.toString("UTF-8")).getAsJsonObject();
+    }
 }

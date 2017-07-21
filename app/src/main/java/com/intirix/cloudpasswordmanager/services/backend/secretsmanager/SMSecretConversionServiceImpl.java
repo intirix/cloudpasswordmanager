@@ -26,7 +26,10 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.spec.InvalidKeySpecException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
@@ -110,12 +113,47 @@ public class SMSecretConversionServiceImpl implements SMSecretConversionService 
 
     }
 
-    protected void parseSecret(SessionInfo session, String sid, JsonObject topElement, List<PasswordBean> passwordBeanList) {
+    protected boolean parseSecret(SessionInfo session, String sid, JsonObject topElement, List<PasswordBean> passwordBeanList) throws ParseException{
         if (topElement.has("type") && "password".equals(topElement.get("type").getAsString())) {
             PasswordBean bean = new PasswordBean();
 
+            if (topElement.has("address") && topElement.get("address").isJsonPrimitive()) {
+                bean.setAddress(topElement.get("address").getAsString());
+            }
+
+            if (topElement.has("website") && topElement.get("website").isJsonPrimitive()) {
+                bean.setWebsite(topElement.get("website").getAsString());
+            }
+
+            if (topElement.has("loginName") && topElement.get("loginName").isJsonPrimitive()) {
+                bean.setLoginName(topElement.get("loginName").getAsString());
+            }
+
+            if (topElement.has("notes") && topElement.get("notes").isJsonPrimitive()) {
+                bean.setNotes(topElement.get("notes").getAsString());
+            }
+
+            if (topElement.has("password") && topElement.get("password").isJsonPrimitive()) {
+                bean.setPass(topElement.get("password").getAsString());
+                bean.setLength(bean.getPass().length());
+            }
+
+            if (topElement.has("dateChanged") && topElement.get("dateChanged").isJsonPrimitive()) {
+                Calendar c = Calendar.getInstance();
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                c.setTime(sdf.parse(topElement.get("dateChanged").getAsString()));
+                bean.setDateChanged(c);
+            }
+
+            bean.setUser_id(sessionService.getUsername());
+            bean.setId(sid);
+
             passwordBeanList.add(bean);
+
+            return true;
         }
+
+        return false;
     }
 
     private byte[] decryptSecret(String privateKeyPem, Secret secret, byte[] encryptedKey) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeySpecException, IOException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException, ShortBufferException, NoSuchProviderException {
