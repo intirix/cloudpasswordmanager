@@ -22,6 +22,8 @@ import com.intirix.cloudpasswordmanager.services.backend.PasswordRequestService;
 import com.intirix.cloudpasswordmanager.services.backend.PasswordRequestServiceImpl;
 import com.intirix.cloudpasswordmanager.services.backend.ocp.PasswordStorageService;
 import com.intirix.cloudpasswordmanager.services.backend.ocp.PasswordStorageServiceImpl;
+import com.intirix.cloudpasswordmanager.services.backend.secretsmanager.SMSecretConversionService;
+import com.intirix.cloudpasswordmanager.services.backend.secretsmanager.SMSecretConversionServiceImpl;
 import com.intirix.cloudpasswordmanager.services.session.AuthenticationInterceptor;
 import com.intirix.cloudpasswordmanager.services.session.AutoLogoffService;
 import com.intirix.cloudpasswordmanager.services.session.AutoLogoffServiceImpl;
@@ -182,6 +184,11 @@ public class CloudPasswordManagerModule {
 
     @Provides @Singleton
     KeyStorageService provideKeyStorageService(KeyStorageServiceImpl impl) {
+        return impl;
+    }
+
+    @Provides @Singleton
+    SMSecretConversionService provideSMSecretConversionService(SMSecretConversionServiceImpl impl) {
         return impl;
     }
 }

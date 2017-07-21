@@ -48,14 +48,17 @@ public class SMBackendRequestImpl implements BackendRequestInterface {
 
     private AuthenticationInterceptor interceptor;
 
+    private SMSecretConversionService conversionService;
+
     private boolean loginRunning = false;
 
     @Inject
-    public SMBackendRequestImpl(SessionService sessionService, KeyStorageService keyStorageService, EventService eventService, SMEncryptionService encryptionService) {
+    public SMBackendRequestImpl(SessionService sessionService, KeyStorageService keyStorageService, EventService eventService, SMEncryptionService encryptionService, SMSecretConversionService conversionService) {
         this.sessionService = sessionService;
         this.keyStorageService = keyStorageService;
         this.eventService = eventService;
         this.interceptor = new SMAuthenticationInterceptor(sessionService,keyStorageService,encryptionService);
+        this.conversionService = conversionService;
         client = new ApiClient();
     }
 
@@ -142,8 +145,13 @@ public class SMBackendRequestImpl implements BackendRequestInterface {
                 }
                 session.setPasswordBeanList(Collections.<PasswordBean>emptyList());
                 session.setCategoryList(Collections.<Category>emptyList());
-                eventService.postEvent(new CategoryListUpdatedEvent());
-                eventService.postEvent(new PasswordListUpdatedEvent());
+
+                try {
+                    conversionService.processSecrets(session, response.body());
+                } catch (IOException e) {
+                    Log.w(TAG, "downloadSecrets() error", e);
+                    eventService.postEvent(new FatalErrorEvent(e.getMessage()));
+                }
             }
 
             @Override

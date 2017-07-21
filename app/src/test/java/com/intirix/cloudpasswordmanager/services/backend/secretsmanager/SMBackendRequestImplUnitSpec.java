@@ -10,6 +10,7 @@ import com.intirix.cloudpasswordmanager.pages.passwordlist.CategoryListUpdatedEv
 import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordListUpdatedEvent;
 import com.intirix.cloudpasswordmanager.services.backend.ocp.MockCall;
 import com.intirix.cloudpasswordmanager.services.session.MockSessionService;
+import com.intirix.cloudpasswordmanager.services.session.SessionInfo;
 import com.intirix.cloudpasswordmanager.services.settings.KeyStorageService;
 import com.intirix.cloudpasswordmanager.services.ui.MockEventService;
 import com.intirix.secretsmanager.clientv1.api.DefaultApi;
@@ -61,6 +62,8 @@ public class SMBackendRequestImplUnitSpec {
 
     String encryptedPrivateKey;
 
+    SMSecretConversionService conversionService;
+
 
     @Before
     public void setUp() throws NoSuchPaddingException, NoSuchAlgorithmException, NoSuchProviderException, IOException {
@@ -78,7 +81,8 @@ public class SMBackendRequestImplUnitSpec {
         api = EasyMock.createMock(DefaultApi.class);
         SMEncryptionService encryptionService = new SMEncryptionService();
 
-        impl = new SMBackendRequestImpl(sessionService, keyStorageService, eventService, encryptionService) {
+        conversionService = EasyMock.createMock(SMSecretConversionService.class);
+        impl = new SMBackendRequestImpl(sessionService, keyStorageService, eventService, encryptionService, conversionService) {
             @Override
             protected DefaultApi getApi() {
                 return api;
@@ -94,6 +98,8 @@ public class SMBackendRequestImplUnitSpec {
         keyStorageService.saveEncryptedPrivateKey(encryptedPrivateKey);
         EasyMock.expectLastCall();
 
+        conversionService.processSecrets(EasyMock.anyObject(SessionInfo.class),EasyMock.anyObject(Map.class));
+        EasyMock.expectLastCall();
 
         Call<String> privateKeyCall = new MockCall<String>() {
             @Override
@@ -115,26 +121,27 @@ public class SMBackendRequestImplUnitSpec {
         EasyMock.expect(api.getUserEncryptedPrivateKey(username)).andReturn(privateKeyCall);
         EasyMock.expect(api.getUserSecrets(username)).andReturn(secretsCall);
 
-        EasyMock.replay(api,keyStorageService);
+        EasyMock.replay(api,keyStorageService,conversionService);
         Assert.assertFalse(impl.isLoginRunning());
         impl.login();
         Assert.assertFalse(impl.isLoginRunning());
 
-        eventService.assertNumberOfPosts(3);
         eventService.assertEventType(0, LoginSuccessfulEvent.class);
-        eventService.assertEventType(1, CategoryListUpdatedEvent.class);
-        eventService.assertEventType(2, PasswordListUpdatedEvent.class);
+        eventService.assertNumberOfPosts(1);
 
         Assert.assertNotNull(sessionService.getCurrentSession().getPasswordBeanList());
         Assert.assertNotNull(sessionService.getCurrentSession().getCategoryList());
 
-        EasyMock.verify(api,keyStorageService);
+        EasyMock.verify(api,keyStorageService,conversionService);
     }
 
     @Test
     public void verifyDownloadDoubleEncodedKeyWorks() throws IOException {
         EasyMock.expect(keyStorageService.isPrivateKeyStored()).andReturn(false).anyTimes();
         keyStorageService.saveEncryptedPrivateKey(encryptedPrivateKey);
+        EasyMock.expectLastCall();
+
+        conversionService.processSecrets(EasyMock.anyObject(SessionInfo.class),EasyMock.anyObject(Map.class));
         EasyMock.expectLastCall();
 
         final String doubleEncoded = Base64.encodeToString(encryptedPrivateKey.getBytes("ASCII"),Base64.NO_WRAP);
@@ -159,20 +166,18 @@ public class SMBackendRequestImplUnitSpec {
         EasyMock.expect(api.getUserEncryptedPrivateKey(username)).andReturn(privateKeyCall);
         EasyMock.expect(api.getUserSecrets(username)).andReturn(secretsCall);
 
-        EasyMock.replay(api,keyStorageService);
+        EasyMock.replay(api,keyStorageService,conversionService);
         Assert.assertFalse(impl.isLoginRunning());
         impl.login();
         Assert.assertFalse(impl.isLoginRunning());
 
-        eventService.assertNumberOfPosts(3);
         eventService.assertEventType(0, LoginSuccessfulEvent.class);
-        eventService.assertEventType(1, CategoryListUpdatedEvent.class);
-        eventService.assertEventType(2, PasswordListUpdatedEvent.class);
+        eventService.assertNumberOfPosts(1);
 
         Assert.assertNotNull(sessionService.getCurrentSession().getPasswordBeanList());
         Assert.assertNotNull(sessionService.getCurrentSession().getCategoryList());
 
-        EasyMock.verify(api,keyStorageService);
+        EasyMock.verify(api,keyStorageService,conversionService);
     }
 
     @Test
@@ -238,6 +243,8 @@ public class SMBackendRequestImplUnitSpec {
         EasyMock.expect(keyStorageService.getEncryptedPrivateKey()).andReturn(encryptedPrivateKey).anyTimes();
         EasyMock.expectLastCall();
 
+        conversionService.processSecrets(EasyMock.anyObject(SessionInfo.class),EasyMock.anyObject(Map.class));
+        EasyMock.expectLastCall();
 
         Call<Map<String,Secret>> secretsCall = new MockCall<Map<String,Secret>>() {
             @Override
@@ -249,21 +256,19 @@ public class SMBackendRequestImplUnitSpec {
 
         EasyMock.expect(api.getUserSecrets(username)).andReturn(secretsCall);
 
-        EasyMock.replay(api,keyStorageService);
+        EasyMock.replay(api,keyStorageService,conversionService);
         Assert.assertFalse(impl.isLoginRunning());
         impl.login();
         Assert.assertFalse(impl.isLoginRunning());
 
-        eventService.assertNumberOfPosts(3);
         eventService.assertEventType(0, LoginSuccessfulEvent.class);
-        eventService.assertEventType(1, CategoryListUpdatedEvent.class);
-        eventService.assertEventType(2, PasswordListUpdatedEvent.class);
+        eventService.assertNumberOfPosts(1);
 
         Assert.assertNotNull(sessionService.getCurrentSession().getPasswordBeanList());
         Assert.assertNotNull(sessionService.getCurrentSession().getCategoryList());
 
 
-        EasyMock.verify(api,keyStorageService);
+        EasyMock.verify(api,keyStorageService,conversionService);
     }
 
     @Test

@@ -39,7 +39,6 @@ public class AuthenticationInterceptor implements Interceptor {
     @Override
     public Response intercept(Chain chain) throws IOException {
         String authValue = getAuthHeader();
-        Log.e(AuthenticationInterceptor.class.getSimpleName(),"auth="+authValue);
         Request request = chain.request().newBuilder().addHeader("Authorization", authValue).build();
         return chain.proceed(request);
     }

@@ -44,7 +44,20 @@ public class MockEventService implements EventService {
      * @param klass
      */
     public void assertEventType(int i, Class<?> klass) {
-        Assert.assertTrue(klass.isAssignableFrom(events.get(i).getClass()));
+        Assert.assertTrue("Expected "+klass.getSimpleName()+" got "+events.get(i).getClass(), klass.isAssignableFrom(events.get(i).getClass()));
+    }
+
+    /**
+     * Check if an event of that type was posted
+     * @param klass
+     */
+    public void assertEventType(Class<?> klass) {
+        for (Object e: events) {
+            if (klass.isAssignableFrom(e.getClass())) {
+                return;
+            }
+        }
+        Assert.fail("Failed to find event with type: "+klass.getSimpleName());
     }
 
     /**

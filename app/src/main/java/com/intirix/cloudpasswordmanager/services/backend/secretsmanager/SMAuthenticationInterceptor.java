@@ -40,8 +40,6 @@ public class SMAuthenticationInterceptor extends AuthenticationInterceptor {
                 String ssig = base64Encode(sig);
                 String password = String.format("{\"token\":\"%s\",\"signed\":\"%s\"}", token, ssig);
 
-                Log.e(TAG,password);
-
                 byte[] value = String.format("%s:%s", sessionService.getUsername(), password).getBytes("ASCII");
                 return "Basic " + base64Encode(value);
             }

@@ -46,6 +46,8 @@ public class SMEncryptionService {
 
     @Inject
     public SMEncryptionService() {
+
+
         try {
             rsaKeyFactory = KeyFactory.getInstance("RSA");
         } catch (NoSuchAlgorithmException e) {
@@ -76,6 +78,15 @@ public class SMEncryptionService {
             throw new IOException(e);
         }
 
+        try {
+            return cipher.doFinal(encrypted);
+        } catch (BadPaddingException e) {
+            throw new IOException(e);
+        } catch (IllegalBlockSizeException e) {
+            throw new IOException(e);
+        }
+
+        /*
         byte[] plainText = new byte[encrypted.length*2];
 
         int ptLength = 0;
@@ -92,7 +103,7 @@ public class SMEncryptionService {
 
 
         return Arrays.copyOf(plainText,ptLength);
-
+*/
     }
 
     public byte[] signRSA(String keyPem,byte[] input) throws SignatureException, InvalidKeySpecException, IOException, InvalidKeyException, NoSuchAlgorithmException {
@@ -107,6 +118,22 @@ public class SMEncryptionService {
         signature.initVerify(getPublicKey(pubKeyPem));
         signature.update(plainText);
         return signature.verify(sig);
+    }
+
+    public byte[] decryptRSA(String keyPem, byte[] input) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeySpecException, IOException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException, ShortBufferException {
+        final Cipher cipher = Cipher.getInstance("RSA/NONE/OAEPWithSHA256AndMGF1Padding");
+
+
+        cipher.init(Cipher.DECRYPT_MODE, getPrivateKey(keyPem));
+
+        return cipher.doFinal(input);
+/*
+        byte[] plainText = new byte[input.length*2];
+        int ptLength = cipher.update(input, 0, input.length, plainText, 0);
+        ptLength += cipher.doFinal(plainText, ptLength);
+
+        return Arrays.copyOf(plainText,ptLength);
+        */
     }
 
     private PrivateKey getPrivateKey(String pem) throws InvalidKeySpecException, IOException {
