@@ -1,0 +1,13 @@
+{
+  "type": "passwordCategories",
+  "categories": {
+    "1": {
+      "label": "Finance",
+      "backgroundColor": "#00FF00"
+    },
+    "2": {
+      "label": "Communication",
+      "backgroundColor": "#FF0000"
+    }
+  }
+}

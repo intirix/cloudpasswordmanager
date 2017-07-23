@@ -84,4 +84,18 @@ public class SessionInfo {
     public void setBackendData(Object backendData) {
         this.backendData = backendData;
     }
+
+    /**
+     * Get a category by id
+     * @param id
+     * @return
+     */
+    public Category getCategoryById(String id) {
+        for (final Category category: getCategoryList()) {
+            if (id.equals(category.getId())) {
+                return category;
+            }
+        }
+        return null;
+    }
 }
