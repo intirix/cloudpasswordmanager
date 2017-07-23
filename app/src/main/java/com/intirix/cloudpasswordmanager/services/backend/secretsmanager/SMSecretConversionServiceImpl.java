@@ -118,40 +118,7 @@ public class SMSecretConversionServiceImpl implements SMSecretConversionService 
         if (topElement.has("type")) {
             String type = topElement.get("type").getAsString();
             if ("password".equals(type)) {
-                PasswordBean bean = new PasswordBean();
-
-                if (topElement.has("address") && topElement.get("address").isJsonPrimitive()) {
-                    bean.setAddress(topElement.get("address").getAsString());
-                }
-
-                if (topElement.has("website") && topElement.get("website").isJsonPrimitive()) {
-                    bean.setWebsite(topElement.get("website").getAsString());
-                }
-
-                if (topElement.has("loginName") && topElement.get("loginName").isJsonPrimitive()) {
-                    bean.setLoginName(topElement.get("loginName").getAsString());
-                }
-
-                if (topElement.has("notes") && topElement.get("notes").isJsonPrimitive()) {
-                    bean.setNotes(topElement.get("notes").getAsString());
-                }
-
-                if (topElement.has("password") && topElement.get("password").isJsonPrimitive()) {
-                    bean.setPass(topElement.get("password").getAsString());
-                    bean.setLength(bean.getPass().length());
-                }
-
-                if (topElement.has("dateChanged") && topElement.get("dateChanged").isJsonPrimitive()) {
-                    Calendar c = Calendar.getInstance();
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                    c.setTime(sdf.parse(topElement.get("dateChanged").getAsString()));
-                    bean.setDateChanged(c);
-                }
-
-                bean.setUser_id(sessionService.getUsername());
-                bean.setId(sid);
-
-                passwordBeanList.add(bean);
+                parseSinglePassword(sid, topElement, passwordBeanList);
 
                 return SecretType.PASSWORD;
             } else if ("passwordCategories".equals(type)) {
@@ -165,28 +132,7 @@ public class SMSecretConversionServiceImpl implements SMSecretConversionService 
                     JsonObject categoriesObject = topElement.get("categories").getAsJsonObject();
 
                     for (Map.Entry<String, JsonElement> entry: categoriesObject.entrySet()) {
-
-                        // make sure it is an object
-                        if (entry.getValue().isJsonObject()) {
-                            final Category category = new Category();
-
-                            category.setId(entry.getKey());
-                            category.setUser_id(sessionService.getUsername());
-
-                            JsonObject categoryObject = entry.getValue().getAsJsonObject();
-
-                            if (categoryObject.has("label") && categoryObject.get("label").isJsonPrimitive()) {
-                                category.setCategory_name(categoryObject.get("label").getAsString());
-                            }
-
-                            if (categoryObject.has("backgroundColor") && categoryObject.get("backgroundColor").isJsonPrimitive()) {
-                                category.setCategory_colour(categoryObject.get("backgroundColor").getAsString().replace("#",""));
-                            }
-
-                            if (category.getCategory_colour()!=null && category.getCategory_colour()!=null) {
-                                categories.add(category);
-                            }
-                        }
+                        parseSingleCategory(categories, entry);
                     }
                 }
 
@@ -201,6 +147,67 @@ public class SMSecretConversionServiceImpl implements SMSecretConversionService 
         }
 
         return null;
+    }
+
+    private void parseSinglePassword(String sid, JsonObject topElement, List<PasswordBean> passwordBeanList) throws ParseException {
+        PasswordBean bean = new PasswordBean();
+
+        if (topElement.has("address") && topElement.get("address").isJsonPrimitive()) {
+            bean.setAddress(topElement.get("address").getAsString());
+        }
+
+        if (topElement.has("website") && topElement.get("website").isJsonPrimitive()) {
+            bean.setWebsite(topElement.get("website").getAsString());
+        }
+
+        if (topElement.has("loginName") && topElement.get("loginName").isJsonPrimitive()) {
+            bean.setLoginName(topElement.get("loginName").getAsString());
+        }
+
+        if (topElement.has("notes") && topElement.get("notes").isJsonPrimitive()) {
+            bean.setNotes(topElement.get("notes").getAsString());
+        }
+
+        if (topElement.has("password") && topElement.get("password").isJsonPrimitive()) {
+            bean.setPass(topElement.get("password").getAsString());
+            bean.setLength(bean.getPass().length());
+        }
+
+        if (topElement.has("dateChanged") && topElement.get("dateChanged").isJsonPrimitive()) {
+            Calendar c = Calendar.getInstance();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            c.setTime(sdf.parse(topElement.get("dateChanged").getAsString()));
+            bean.setDateChanged(c);
+        }
+
+        bean.setUser_id(sessionService.getUsername());
+        bean.setId(sid);
+
+        passwordBeanList.add(bean);
+    }
+
+    private void parseSingleCategory(List<Category> categories, Map.Entry<String, JsonElement> entry) {
+        // make sure it is an object
+        if (entry.getValue().isJsonObject()) {
+            final Category category = new Category();
+
+            category.setId(entry.getKey());
+            category.setUser_id(sessionService.getUsername());
+
+            JsonObject categoryObject = entry.getValue().getAsJsonObject();
+
+            if (categoryObject.has("label") && categoryObject.get("label").isJsonPrimitive()) {
+                category.setCategory_name(categoryObject.get("label").getAsString());
+            }
+
+            if (categoryObject.has("backgroundColor") && categoryObject.get("backgroundColor").isJsonPrimitive()) {
+                category.setCategory_colour(categoryObject.get("backgroundColor").getAsString().replace("#",""));
+            }
+
+            if (category.getCategory_colour()!=null && category.getCategory_colour()!=null) {
+                categories.add(category);
+            }
+        }
     }
 
     private byte[] decryptSecret(String privateKeyPem, Secret secret, byte[] encryptedKey) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeySpecException, IOException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException, ShortBufferException, NoSuchProviderException {
