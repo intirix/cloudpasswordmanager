@@ -99,10 +99,15 @@ public class SMSecretConversionServiceImpl implements SMSecretConversionService 
                     byte[] secretData = decryptSecret(privateKeyPem, secret, encryptedKey);
 
                     String secretString = new String(secretData, "UTF-8");
-                    System.out.println(secretString);
                     JsonElement topElement = new JsonParser().parse(secretString);
 
-                    parseSecret(session, secret.getSid(), topElement.getAsJsonObject(), passwordBeanList);
+                    SecretType parsedType = parseSecret(session, secret.getSid(), topElement.getAsJsonObject(), passwordBeanList);
+
+                    // if we parsed the password categories, then backfill to the already parsed passwords
+                    if (SecretType.PASSWORD_CATEGORY.equals(parsedType)) {
+                        addCategoryInfoToAllPasswords(session, passwordBeanList);
+                        eventService.postEvent(new CategoryListUpdatedEvent());
+                    }
                 }
 
                 session.setPasswordBeanList(passwordBeanList);
@@ -123,7 +128,8 @@ public class SMSecretConversionServiceImpl implements SMSecretConversionService 
         if (topElement.has("type")) {
             String type = topElement.get("type").getAsString();
             if ("password".equals(type)) {
-                parseSinglePassword(sid, topElement, passwordBeanList);
+                PasswordBean passwordBean = parseSinglePassword(sid, topElement, passwordBeanList);
+                addCategoryInfoToSinglePassword(session, passwordBean);
 
                 return SecretType.PASSWORD;
             } else if ("passwordCategories".equals(type)) {
@@ -186,7 +192,7 @@ public class SMSecretConversionServiceImpl implements SMSecretConversionService 
 
     }
 
-    private void parseSinglePassword(String sid, JsonObject topElement, List<PasswordBean> passwordBeanList) throws ParseException {
+    private PasswordBean parseSinglePassword(String sid, JsonObject topElement, List<PasswordBean> passwordBeanList) throws ParseException {
         PasswordBean bean = new PasswordBean();
 
         if (topElement.has("address") && topElement.get("address").isJsonPrimitive()) {
@@ -221,6 +227,8 @@ public class SMSecretConversionServiceImpl implements SMSecretConversionService 
         bean.setId(sid);
 
         passwordBeanList.add(bean);
+
+        return bean;
     }
 
     private void parseSingleCategory(List<Category> categories, Map.Entry<String, JsonElement> entry) {
