@@ -28,6 +28,16 @@ public class Category {
 
     private String category_colour;
 
+    public Category() {
+
+    }
+
+    public Category(String id, String name, String color) {
+        setId(id);
+        setCategory_name(name);
+        setCategory_colour(color);
+    }
+
     public String getCategory_colour() {
         return category_colour;
     }

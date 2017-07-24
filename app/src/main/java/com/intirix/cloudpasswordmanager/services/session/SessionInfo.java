@@ -91,9 +91,11 @@ public class SessionInfo {
      * @return
      */
     public Category getCategoryById(String id) {
-        for (final Category category: getCategoryList()) {
-            if (id.equals(category.getId())) {
-                return category;
+        if (id!=null && categoryList!=null) {
+            for (final Category category : getCategoryList()) {
+                if (id.equals(category.getId())) {
+                    return category;
+                }
             }
         }
         return null;

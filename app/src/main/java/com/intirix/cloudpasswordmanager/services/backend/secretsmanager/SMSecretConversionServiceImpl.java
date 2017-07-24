@@ -16,6 +16,7 @@ import com.intirix.cloudpasswordmanager.services.session.AuthenticationIntercept
 import com.intirix.cloudpasswordmanager.services.session.SessionInfo;
 import com.intirix.cloudpasswordmanager.services.session.SessionService;
 import com.intirix.cloudpasswordmanager.services.settings.KeyStorageService;
+import com.intirix.cloudpasswordmanager.services.ui.ColorService;
 import com.intirix.cloudpasswordmanager.services.ui.EventService;
 import com.intirix.secretsmanager.clientv1.ApiClient;
 import com.intirix.secretsmanager.clientv1.api.DefaultApi;
@@ -65,12 +66,15 @@ public class SMSecretConversionServiceImpl implements SMSecretConversionService 
 
     private KeyStorageService keyStorageService;
 
+    private ColorService colorService;
+
     @Inject
-    public SMSecretConversionServiceImpl(SessionService sessionService, EventService eventService, SMEncryptionService encryptionService, KeyStorageService keyStorageService) {
+    public SMSecretConversionServiceImpl(SessionService sessionService, EventService eventService, SMEncryptionService encryptionService, KeyStorageService keyStorageService, ColorService colorService) {
         this.sessionService = sessionService;
         this.eventService = eventService;
         this.encryptionService = encryptionService;
         this.keyStorageService = keyStorageService;
+        this.colorService = colorService;
     }
 
     @Override
@@ -147,6 +151,19 @@ public class SMSecretConversionServiceImpl implements SMSecretConversionService 
         }
 
         return null;
+    }
+
+    protected void addCategoryInfoToSinglePassword(SessionInfo session, PasswordBean passwordBean) {
+        Category cat = session.getCategoryById(passwordBean.getCategory());
+        if (cat!=null) {
+            passwordBean.setCategoryName(cat.getCategory_name());
+            passwordBean.setCategoryBackground(colorService.parseColor('#'+cat.getCategory_colour()));
+            passwordBean.setCategoryForeground(colorService.getTextColorForBackground(passwordBean.getCategoryBackground()));
+        }
+    }
+
+    protected void addCategoryInfoToAllPasswords(SessionInfo session, List<PasswordBean> passwordList) {
+
     }
 
     private void parseSinglePassword(String sid, JsonObject topElement, List<PasswordBean> passwordBeanList) throws ParseException {

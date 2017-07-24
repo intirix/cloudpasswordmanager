@@ -11,6 +11,8 @@ import com.intirix.cloudpasswordmanager.services.backend.beans.Category;
 import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordBean;
 import com.intirix.cloudpasswordmanager.services.session.MockSessionService;
 import com.intirix.cloudpasswordmanager.services.settings.MockKeyStorageService;
+import com.intirix.cloudpasswordmanager.services.ui.ColorService;
+import com.intirix.cloudpasswordmanager.services.ui.ColorServiceImpl;
 import com.intirix.cloudpasswordmanager.services.ui.EventService;
 import com.intirix.cloudpasswordmanager.services.ui.MockEventService;
 import com.intirix.secretsmanager.clientv1.ApiClient;
@@ -65,6 +67,8 @@ public class SMSecretConversionServiceImplUnitSpec {
 
     private MockKeyStorageService keyStorageService;
 
+    private ColorService colorService;
+
     @Before
     public void setUp() throws IOException {
         sessionService = new MockSessionService();
@@ -72,6 +76,8 @@ public class SMSecretConversionServiceImplUnitSpec {
         eventService = new MockEventService();
 
         keyStorageService = new MockKeyStorageService();
+
+        colorService = new ColorServiceImpl();
 
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         IOUtils.copy(getClass().getResourceAsStream("/mock_rsa_key.enc"),buffer);
@@ -82,7 +88,7 @@ public class SMSecretConversionServiceImplUnitSpec {
         sessionService.start();
         sessionService.getCurrentSession().setPassword("password");
 
-        impl = new SMSecretConversionServiceImpl(sessionService, eventService, encryptionService, keyStorageService);
+        impl = new SMSecretConversionServiceImpl(sessionService, eventService, encryptionService, keyStorageService, colorService);
 
         interceptor = new Interceptor() {
             @Override
@@ -210,6 +216,58 @@ public class SMSecretConversionServiceImplUnitSpec {
         Assert.assertEquals("Communication", category2.getCategory_name());
         Assert.assertEquals("FF0000", category2.getCategory_colour());
         Assert.assertEquals("admin", category2.getUser_id());
+    }
+
+    @Test
+    public void verifyAddCategoryToPasswordWithoutCategoryDoesNotFail() {
+        PasswordBean pw = new PasswordBean();
+
+        pw.setCategory(null);
+
+        List<Category> categories = new ArrayList<>();
+        categories.add(new Category("1", "Email","FFF000"));
+        categories.add(new Category("2", "Games","000FFF"));
+        sessionService.getCurrentSession().setCategoryList(categories);
+
+        impl.addCategoryInfoToSinglePassword(sessionService.getCurrentSession(), pw);
+
+        Assert.assertNull(pw.getCategoryName());
+        Assert.assertEquals(0x00000000, pw.getCategoryBackground());
+        Assert.assertEquals(0x00000000, pw.getCategoryForeground());
+        Assert.assertNull(pw.getCategory());
+    }
+
+    @Test
+    public void verifyAddMissingCategoryToPasswordWithCategoryDoesNotFail() {
+        PasswordBean pw = new PasswordBean();
+
+        pw.setCategory("1");
+
+        impl.addCategoryInfoToSinglePassword(sessionService.getCurrentSession(), pw);
+
+        Assert.assertNull(pw.getCategoryName());
+        Assert.assertEquals(0x00000000, pw.getCategoryBackground());
+        Assert.assertEquals(0x00000000, pw.getCategoryForeground());
+        Assert.assertEquals("1", pw.getCategory());
+    }
+
+    @Test
+    public void verifyAddCategoryToSinglePassword() {
+        PasswordBean pw = new PasswordBean();
+
+        pw.setCategory("2");
+
+        List<Category> categories = new ArrayList<>();
+        categories.add(new Category("1", "Email","FFF000"));
+        categories.add(new Category("2", "Games","000FFF"));
+        sessionService.getCurrentSession().setCategoryList(categories);
+
+        impl.addCategoryInfoToSinglePassword(sessionService.getCurrentSession(), pw);
+
+        Assert.assertEquals("Games", pw.getCategoryName());
+        Assert.assertEquals(0xFF000FFF, pw.getCategoryBackground());
+        Assert.assertEquals(0xFFFFFFFF, pw.getCategoryForeground());
+        Assert.assertEquals("2", pw.getCategory());
     }
 
     private JsonObject parseMockJson(String filename) throws IOException {
