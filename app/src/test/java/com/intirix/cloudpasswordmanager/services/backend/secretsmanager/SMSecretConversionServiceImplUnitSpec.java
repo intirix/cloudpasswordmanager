@@ -270,6 +270,91 @@ public class SMSecretConversionServiceImplUnitSpec {
         Assert.assertEquals("2", pw.getCategory());
     }
 
+    @Test
+    public void verifyAddCategoryToAllPasswordsWithoutCategoryDoesNotFail() {
+        List<PasswordBean> passwordBeanList = new ArrayList<>();
+        PasswordBean pw1 = new PasswordBean();
+        passwordBeanList.add(pw1);
+
+        List<Category> categories = new ArrayList<>();
+        categories.add(new Category("1", "Email","FFF000"));
+        categories.add(new Category("2", "Games","000FFF"));
+        sessionService.getCurrentSession().setCategoryList(categories);
+
+        impl.addCategoryInfoToAllPasswords(sessionService.getCurrentSession(), passwordBeanList);
+
+        Assert.assertNull(pw1.getCategoryName());
+        Assert.assertEquals(0x00000000, pw1.getCategoryBackground());
+        Assert.assertEquals(0x00000000, pw1.getCategoryForeground());
+        Assert.assertNull(pw1.getCategory());
+    }
+
+    @Test
+    public void verifyAddMissingCategoryToAllPasswordsWithCategoryDoesNotFail() {
+        List<PasswordBean> passwordBeanList = new ArrayList<>();
+        PasswordBean pw1 = new PasswordBean();
+        pw1.setCategory("1");
+        passwordBeanList.add(pw1);
+
+        impl.addCategoryInfoToAllPasswords(sessionService.getCurrentSession(), passwordBeanList);
+
+        Assert.assertNull(pw1.getCategoryName());
+        Assert.assertEquals(0x00000000, pw1.getCategoryBackground());
+        Assert.assertEquals(0x00000000, pw1.getCategoryForeground());
+        Assert.assertEquals("1", pw1.getCategory());
+    }
+
+    @Test
+    public void verifyAddCategoriesToPasswords() {
+        List<PasswordBean> passwordBeanList = new ArrayList<>();
+        PasswordBean pw1 = new PasswordBean();
+        pw1.setCategory("2");
+        passwordBeanList.add(pw1);
+
+        PasswordBean pw2 = new PasswordBean();
+        pw2.setCategory("1");
+        passwordBeanList.add(pw2);
+
+        PasswordBean pw3 = new PasswordBean();
+        pw3.setCategory(null);
+        passwordBeanList.add(pw3);
+
+        PasswordBean pw4 = new PasswordBean();
+        pw4.setCategory("4");
+        passwordBeanList.add(pw4);
+
+        List<Category> categories = new ArrayList<>();
+        categories.add(new Category("1", "Email","FFF000"));
+        categories.add(new Category("2", "Games","000FFF"));
+        sessionService.getCurrentSession().setCategoryList(categories);
+
+        impl.addCategoryInfoToAllPasswords(sessionService.getCurrentSession(), passwordBeanList);
+
+        Assert.assertEquals("Games", pw1.getCategoryName());
+        Assert.assertEquals(0xFF000FFF, pw1.getCategoryBackground());
+        Assert.assertEquals(0xFFFFFFFF, pw1.getCategoryForeground());
+        Assert.assertEquals("2", pw1.getCategory());
+
+        Assert.assertEquals("Email", pw2.getCategoryName());
+        Assert.assertEquals(0xFFFFF000, pw2.getCategoryBackground());
+        Assert.assertEquals(0xFF000000, pw2.getCategoryForeground());
+        Assert.assertEquals("1", pw2.getCategory());
+
+        Assert.assertNull(pw3.getCategoryName());
+        Assert.assertEquals(0x00000000, pw3.getCategoryBackground());
+        Assert.assertEquals(0x00000000, pw3.getCategoryForeground());
+        Assert.assertNull(pw3.getCategory());
+
+        Assert.assertNull(pw4.getCategoryName());
+        Assert.assertEquals(0x00000000, pw4.getCategoryBackground());
+        Assert.assertEquals(0x00000000, pw4.getCategoryForeground());
+        Assert.assertEquals("4", pw4.getCategory());
+
+    }
+
+
+
+
     private JsonObject parseMockJson(String filename) throws IOException {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         IOUtils.copy(getClass().getResourceAsStream(filename),buffer);

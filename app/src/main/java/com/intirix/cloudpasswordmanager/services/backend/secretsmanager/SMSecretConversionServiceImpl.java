@@ -32,6 +32,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -163,6 +164,25 @@ public class SMSecretConversionServiceImpl implements SMSecretConversionService 
     }
 
     protected void addCategoryInfoToAllPasswords(SessionInfo session, List<PasswordBean> passwordList) {
+        // get a map of categories, because it is easier to work with and faster
+        final Map<String, Category> categoryMap = new HashMap<>();
+        if (session.getCategoryList()!=null) {
+            for (final Category cat : session.getCategoryList()) {
+                categoryMap.put(cat.getId(), cat);
+            }
+        }
+
+        if (passwordList!=null) {
+            for (final PasswordBean passwordBean: passwordList) {
+                if (passwordBean.getCategory()!=null && categoryMap.containsKey(passwordBean.getCategory())) {
+                    final Category cat = categoryMap.get(passwordBean.getCategory());
+
+                    passwordBean.setCategoryName(cat.getCategory_name());
+                    passwordBean.setCategoryBackground(colorService.parseColor('#'+cat.getCategory_colour()));
+                    passwordBean.setCategoryForeground(colorService.getTextColorForBackground(passwordBean.getCategoryBackground()));
+                }
+            }
+        }
 
     }
 
