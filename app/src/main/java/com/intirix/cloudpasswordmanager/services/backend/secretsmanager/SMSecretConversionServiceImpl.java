@@ -80,6 +80,7 @@ public class SMSecretConversionServiceImpl implements SMSecretConversionService 
 
     @Override
     public void processSecrets(SessionInfo session, Map<String, Secret> response) throws IOException {
+        final long t1 = System.currentTimeMillis();
 
         try {
             if (keyStorageService.isPrivateKeyStored()) {
@@ -91,6 +92,7 @@ public class SMSecretConversionServiceImpl implements SMSecretConversionService 
                 List<PasswordBean> passwordBeanList = new ArrayList<>();
 
                 for (final Secret secret : response.values()) {
+                    final long t2 = System.currentTimeMillis();
                     Map<String, Object> map = (Map<String, Object>) secret.getUsers();
                     Object obj = map.get(sessionService.getUsername());
 
@@ -108,6 +110,11 @@ public class SMSecretConversionServiceImpl implements SMSecretConversionService 
                         addCategoryInfoToAllPasswords(session, passwordBeanList);
                         eventService.postEvent(new CategoryListUpdatedEvent());
                     }
+                    final long t3 = System.currentTimeMillis();
+                    final long dt_decrypt = t3-t2;
+                    final long dt_elapsed = t3-t1;
+
+                    Log.d(TAG, "Decrypted secret, decryption="+dt_decrypt+"ms, elapsed="+dt_elapsed+"ms");
                 }
 
                 session.setPasswordBeanList(passwordBeanList);
@@ -225,6 +232,7 @@ public class SMSecretConversionServiceImpl implements SMSecretConversionService 
 
         bean.setUser_id(sessionService.getUsername());
         bean.setId(sid);
+        bean.setDecrypted(true);
 
         passwordBeanList.add(bean);
 

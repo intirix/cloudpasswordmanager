@@ -157,6 +157,7 @@ public class SMSecretConversionServiceImplUnitSpec {
 
         PasswordBean bean = passwordBeanList.get(0);
 
+        Assert.assertTrue(bean.isDecrypted());
         Assert.assertEquals("https://www.gmail.com", bean.getAddress());
         Assert.assertEquals("1", bean.getId());
         Assert.assertEquals("myuser", bean.getLoginName());
