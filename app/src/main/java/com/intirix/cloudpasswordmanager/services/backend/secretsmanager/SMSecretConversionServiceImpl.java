@@ -91,7 +91,8 @@ public class SMSecretConversionServiceImpl implements SMSecretConversionService 
 
                 List<PasswordBean> passwordBeanList = new ArrayList<>();
 
-                for (final Secret secret : response.values()) {
+                for (final String sid: response.keySet()) {
+                    final Secret secret = response.get(sid);
                     final long t2 = System.currentTimeMillis();
                     Map<String, Object> map = (Map<String, Object>) secret.getUsers();
                     Object obj = map.get(sessionService.getUsername());
@@ -103,7 +104,7 @@ public class SMSecretConversionServiceImpl implements SMSecretConversionService 
                     String secretString = new String(secretData, "UTF-8");
                     JsonElement topElement = new JsonParser().parse(secretString);
 
-                    SecretType parsedType = parseSecret(session, secret.getSid(), topElement.getAsJsonObject(), passwordBeanList);
+                    SecretType parsedType = parseSecret(session, sid, topElement.getAsJsonObject(), passwordBeanList);
 
                     // if we parsed the password categories, then backfill to the already parsed passwords
                     if (SecretType.PASSWORD_CATEGORY.equals(parsedType)) {
