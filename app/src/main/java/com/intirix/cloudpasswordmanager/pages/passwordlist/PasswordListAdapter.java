@@ -18,6 +18,7 @@ package com.intirix.cloudpasswordmanager.pages.passwordlist;
 import android.app.Activity;
 import android.support.v7.util.SortedList;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,12 +27,16 @@ import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordBean;
 import com.intirix.cloudpasswordmanager.services.session.SessionInfo;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by jeff on 7/12/16.
  */
 public class PasswordListAdapter extends RecyclerView.Adapter<PasswordListViewHolder> {
+
+    private static final String TAG = PasswordListAdapter.class.getSimpleName();
 
     private SessionInfo session;
 
@@ -66,13 +71,20 @@ public class PasswordListAdapter extends RecyclerView.Adapter<PasswordListViewHo
         if (newList==null||newList.size()==0) {
             sortedList.clear();
         } else {
+            Set<PasswordBean> toBeAdded = new HashSet<>(newList);
+
             for (int i = sortedList.size() - 1; i >= 0; i--) {
                 final PasswordBean model = sortedList.get(i);
                 if (!newList.contains(model)) {
+                    Log.d(TAG,"Removing item from password list");
                     sortedList.remove(model);
+                } else if (toBeAdded.contains(model)) {
+                    // de-duplicate
+                    toBeAdded.remove(model);
                 }
             }
-            sortedList.addAll(newList);
+            sortedList.addAll(toBeAdded);
+            Log.d(TAG,"Password list now has "+sortedList.size()+" items");
         }
         sortedList.endBatchedUpdates();
     }

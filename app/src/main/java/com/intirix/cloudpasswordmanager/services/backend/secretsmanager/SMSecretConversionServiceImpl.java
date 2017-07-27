@@ -84,7 +84,7 @@ public class SMSecretConversionServiceImpl implements SMSecretConversionService 
 
         try {
             if (keyStorageService.isPrivateKeyStored()) {
-                byte[] aesKey = encryptionService.keyExtend(sessionService.getUsername(), sessionService.getCurrentSession().getPassword());
+                byte[] aesKey = encryptionService.keyExtend(sessionService.getUsername(), session.getPassword());
                 byte[] encryptedPrivateKey = encryptionService.decodeBase64(keyStorageService.getEncryptedPrivateKey());
                 byte[] privateKey = encryptionService.decryptAES(aesKey, encryptedPrivateKey);
                 String privateKeyPem = new String(privateKey,"ASCII");
