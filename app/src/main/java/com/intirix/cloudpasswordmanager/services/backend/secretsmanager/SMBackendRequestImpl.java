@@ -1,5 +1,6 @@
 package com.intirix.cloudpasswordmanager.services.backend.secretsmanager;
 
+import android.os.AsyncTask;
 import android.util.Base64;
 import android.util.Log;
 
@@ -50,6 +51,8 @@ public class SMBackendRequestImpl implements BackendRequestInterface {
 
     private SMSecretConversionService conversionService;
 
+    private SMEncryptionService encryptionService;
+
     private boolean loginRunning = false;
 
     @Inject
@@ -58,6 +61,7 @@ public class SMBackendRequestImpl implements BackendRequestInterface {
         this.keyStorageService = keyStorageService;
         this.eventService = eventService;
         this.interceptor = new SMAuthenticationInterceptor(sessionService,keyStorageService,encryptionService);
+        this.encryptionService = encryptionService;
         this.conversionService = conversionService;
         client = new ApiClient();
     }
@@ -73,9 +77,28 @@ public class SMBackendRequestImpl implements BackendRequestInterface {
 
     @Override
     public void login() {
+        final SessionInfo session = sessionService.getCurrentSession();
         if (keyStorageService.isPrivateKeyStored()) {
-            eventService.postEvent(new LoginSuccessfulEvent());
-            downloadSecrets();
+
+            new AsyncTask<Void,Void,Void>() {
+                @Override
+                protected Void doInBackground(Void... params) {
+
+                    try {
+                        byte[] aesKey = encryptionService.keyExtend(sessionService.getUsername(), session.getPassword());
+                        byte[] encryptedPrivateKey = encryptionService.decodeBase64(keyStorageService.getEncryptedPrivateKey());
+                        encryptionService.decryptAES(aesKey, encryptedPrivateKey);
+                    } catch (Exception e) {
+                        Log.e(TAG,"Failed to decrypt key", e);
+                        eventService.postEvent(new FatalErrorEvent(e.getMessage()));
+                        return null;
+                    }
+
+                    eventService.postEvent(new LoginSuccessfulEvent());
+                    downloadSecrets();
+                    return null;
+                }
+            }.execute();
         } else {
             downloadEncryptedPrivateKey();
         }
