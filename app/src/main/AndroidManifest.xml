@@ -24,6 +24,9 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".pages.keys.ImportPrivateKeyActivity"
+            android:label="@string/login_import_key_label" />
+        <activity
             android:name=".pages.passwordlist.PasswordListActivity"
             android:label="@string/password_list_title" />
         <activity android:name=".pages.passworddetail.PasswordDetailActivity"

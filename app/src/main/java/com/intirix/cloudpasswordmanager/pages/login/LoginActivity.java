@@ -31,6 +31,7 @@ import com.intirix.cloudpasswordmanager.PasswordApplication;
 import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.pages.BaseActivity;
 import com.intirix.cloudpasswordmanager.pages.FatalErrorEvent;
+import com.intirix.cloudpasswordmanager.pages.keys.ImportPrivateKeyActivity;
 import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordListActivity;
 import com.intirix.cloudpasswordmanager.services.backend.PasswordRequestService;
 import com.intirix.cloudpasswordmanager.services.session.StorageType;
@@ -300,6 +301,13 @@ public class LoginActivity extends BaseActivity {
         errorMessageView.setText("");
         updateErrorMessageVisibility();
         updateLoginForm(true);
+    }
+
+    @OnClick(R.id.login_import_key_button)
+    public void onImportKey(View view) {
+        Intent intent = new Intent(LoginActivity.this, ImportPrivateKeyActivity.class);
+        startActivity(intent);
+
     }
 
     @OnItemSelected(R.id.login_storage_type)

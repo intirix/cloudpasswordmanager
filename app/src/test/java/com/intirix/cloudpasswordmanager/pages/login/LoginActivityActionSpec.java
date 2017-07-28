@@ -24,6 +24,7 @@ import com.intirix.cloudpasswordmanager.BuildConfig;
 import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.TestPasswordApplication;
 import com.intirix.cloudpasswordmanager.pages.FatalErrorEvent;
+import com.intirix.cloudpasswordmanager.pages.keys.ImportPrivateKeyActivity;
 import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordListActivity;
 import com.intirix.cloudpasswordmanager.services.session.MockSessionService;
 import com.intirix.cloudpasswordmanager.services.backend.PasswordRequestService;
@@ -436,4 +437,36 @@ public class LoginActivityActionSpec extends BaseTestCase {
         // verify that login() was called
         //EasyMock.verify(passwordRequestService);
     }
+
+
+    @Test
+    public void verifyNavigateToImportKey() throws Exception {
+        MockSessionService sessionService = (MockSessionService)serviceRef.sessionService();
+        sessionService.setStorageType(StorageType.SECRETS_MANAGER_API_V1);
+
+        // given the user is on the login page
+        ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class).create();
+        LoginActivity activity = controller.get();
+
+        PasswordRequestService passwordRequestService = activity.passwordRequestService;
+        EasyMock.expect(passwordRequestService.isLoginRunning()).andReturn(false).anyTimes();
+        EasyMock.replay(passwordRequestService);
+
+        controller.start().resume();
+
+
+        // when the user taps the login button
+        Button button = (Button)activity.findViewById(R.id.login_import_key_button);
+        button.performClick();
+
+        // then
+        ShadowActivity shadowActivity = Shadows.shadowOf(activity);
+        Intent intent = shadowActivity.peekNextStartedActivity();
+        Assert.assertNotNull(intent);
+        Assert.assertEquals(ImportPrivateKeyActivity.class.getName(), intent.getComponent().getClassName());
+
+
+        controller.pause().stop().destroy();
+    }
+
 }

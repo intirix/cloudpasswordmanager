@@ -68,6 +68,7 @@ public class PasswordListActivityLayoutSpec extends BaseTestCase {
         sessionService.getCurrentSession().setPassword(MOCK_PASS);
 
         PasswordBean pass1 = new PasswordBean();
+        pass1.setId("1");
         pass1.setWebsite("www.gmail.com");
         pass1.setLoginName("myGmailUsername");
         pass1.setCategory("5");
@@ -117,6 +118,7 @@ public class PasswordListActivityLayoutSpec extends BaseTestCase {
         sessionService.getCurrentSession().setPassword(MOCK_PASS);
 
         PasswordBean pass1 = new PasswordBean();
+        pass1.setId("0");
         pass1.setWebsite("www.gmail.com");
         pass1.setLoginName("myGmailUsername");
         pass1.setDecrypted(true);
