@@ -67,22 +67,34 @@
             android:layout_below="@id/login_pass"
             android:contentDescription="@string/login_error_description"/>
 
-        <Button
-            android:id="@+id/login_pin_button"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="left"
             android:layout_below="@id/login_error_message"
-            android:layout_alignParentLeft="true"
-            android:text="@string/login_pin_label"/>
+            android:layout_alignParentLeft="true">
+            <Button
+                android:id="@+id/login_pin_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/login_pin_label"/>
 
-        <Button
-            android:id="@+id/login_unpin_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/login_error_message"
-            android:layout_alignParentLeft="true"
-            android:text="@string/login_unpin_label"
-            android:visibility="gone"/>
+            <Button
+                android:id="@+id/login_unpin_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/login_unpin_label"
+                android:visibility="gone"/>
+
+            <Button
+                android:id="@+id/login_import_key_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/login_import_key_label"
+                android:visibility="visible"/>
+
+        </LinearLayout>
 
         <Button
             android:id="@+id/login_login_button"

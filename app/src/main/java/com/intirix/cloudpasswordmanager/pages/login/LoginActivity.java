@@ -49,6 +49,7 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import butterknife.OnItemSelected;
 import butterknife.OnTextChanged;
 
 public class LoginActivity extends BaseActivity {
@@ -91,6 +92,9 @@ public class LoginActivity extends BaseActivity {
 
     @BindView(R.id.login_unpin_button)
     View unpinButton;
+
+    @BindView(R.id.login_import_key_button)
+    View importKeyButton;
 
     ProgressDialog progressDialog;
 
@@ -184,6 +188,15 @@ public class LoginActivity extends BaseActivity {
             pinButton.setEnabled(true);
             unpinButton.setEnabled(true);
             urlInput.setEnabled(true);
+            importKeyButton.setEnabled(true);
+
+            if (storageTypeSpinner.getSelectedItemPosition()==0) {
+                importKeyButton.setEnabled(false);
+                importKeyButton.setVisibility(View.GONE);
+            } else {
+                importKeyButton.setEnabled(true);
+                importKeyButton.setVisibility(View.VISIBLE);
+            }
 
 
             if (url.length()==0) {
@@ -212,14 +225,14 @@ public class LoginActivity extends BaseActivity {
                 if (url.startsWith("https")) {
                     pinButton.setVisibility(View.VISIBLE);
                     pinButton.setEnabled(true);
-                    unpinButton.setVisibility(View.INVISIBLE);
+                    unpinButton.setVisibility(View.GONE);
                     unpinButton.setEnabled(false);
 
                     urlInput.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_lock_black_24dp, 0, 0, 0);
                 } else {
                     pinButton.setVisibility(View.VISIBLE);
                     pinButton.setEnabled(false);
-                    unpinButton.setVisibility(View.INVISIBLE);
+                    unpinButton.setVisibility(View.GONE);
                     unpinButton.setEnabled(false);
                     urlInput.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_no_encryption_black_24dp, 0, 0, 0);
                 }
@@ -287,6 +300,11 @@ public class LoginActivity extends BaseActivity {
         errorMessageView.setText("");
         updateErrorMessageVisibility();
         updateLoginForm(true);
+    }
+
+    @OnItemSelected(R.id.login_storage_type)
+    public void spinnerItemSelected(Spinner spinner, int position) {
+        updateLoginForm(false);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

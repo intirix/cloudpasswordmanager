@@ -106,6 +106,70 @@ public class LoginActivityLayoutSpec extends BaseTestCase {
     }
 
     @Test
+    public void verifyImportKeyButtonInvisbleByDefault() {
+        ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class).create().start().resume();
+        LoginActivity activity = controller.get();
+        activity.urlInput.setText("https://cloud.intirix.com");
+        activity.updateLoginForm(true);
+
+        Button pinButton = (Button)activity.findViewById(R.id.login_import_key_button);
+        Assert.assertEquals(View.GONE, pinButton.getVisibility());
+        Assert.assertFalse(pinButton.isEnabled());
+
+        controller.pause().stop().destroy();
+    }
+
+    @Test
+    public void verifyImportKeyButtonVisbleForSM() {
+        MockSessionService sessionService = (MockSessionService)serviceRef.sessionService();
+        sessionService.setStorageType(StorageType.SECRETS_MANAGER_API_V1);
+
+        ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class).create().start().resume();
+        LoginActivity activity = controller.get();
+
+        activity.urlInput.setText("https://cloud.intirix.com");
+
+        activity.updateLoginForm(true);
+
+        Button pinButton = (Button)activity.findViewById(R.id.login_import_key_button);
+        Assert.assertEquals(View.VISIBLE, pinButton.getVisibility());
+        Assert.assertTrue(pinButton.isEnabled());
+
+        controller.pause().stop().destroy();
+    }
+
+    @Test
+    public void verifyImportKeyButtonChangesVisibility() {
+        ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class).create().start().resume();
+        LoginActivity activity = controller.get();
+
+        activity.urlInput.setText("https://cloud.intirix.com");
+
+        activity.updateLoginForm(true);
+
+        Button pinButton = (Button)activity.findViewById(R.id.login_import_key_button);
+        Assert.assertEquals(View.GONE, pinButton.getVisibility());
+        Assert.assertFalse(pinButton.isEnabled());
+
+        activity.storageTypeSpinner.setSelection(1);
+        activity.updateLoginForm(false);
+
+        Assert.assertEquals(View.VISIBLE, pinButton.getVisibility());
+        Assert.assertTrue(pinButton.isEnabled());
+
+        activity.storageTypeSpinner.setSelection(0);
+        activity.updateLoginForm(false);
+
+        Assert.assertEquals(View.GONE, pinButton.getVisibility());
+        Assert.assertFalse(pinButton.isEnabled());
+
+
+        controller.pause().stop().destroy();
+    }
+
+
+
+    @Test
     public void verifyOwnCloudPasswordsIsDefaultStorageType() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.application);
         sharedPreferences.edit().putString(SessionServiceImpl.STORAGE_TYPE_KEY,"INVALID").commit();
