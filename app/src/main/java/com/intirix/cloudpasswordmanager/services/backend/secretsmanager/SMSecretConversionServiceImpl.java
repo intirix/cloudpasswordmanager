@@ -81,6 +81,7 @@ public class SMSecretConversionServiceImpl implements SMSecretConversionService 
     @Override
     public void processSecrets(SessionInfo session, Map<String, Secret> response) throws IOException {
         final long t1 = System.currentTimeMillis();
+        long loop = 0;
 
         try {
             if (keyStorageService.isPrivateKeyStored()) {
@@ -114,6 +115,14 @@ public class SMSecretConversionServiceImpl implements SMSecretConversionService 
                     final long t3 = System.currentTimeMillis();
                     final long dt_decrypt = t3-t2;
                     final long dt_elapsed = t3-t1;
+
+                    loop += dt_decrypt;
+                    if (loop>1000) {
+                        session.setPasswordBeanList(new ArrayList<PasswordBean>(passwordBeanList));
+
+                        eventService.postEvent(new PasswordListUpdatedEvent());
+                        loop = 0;
+                    }
 
                     Log.d(TAG, "Decrypted secret, decryption="+dt_decrypt+"ms, elapsed="+dt_elapsed+"ms");
                 }

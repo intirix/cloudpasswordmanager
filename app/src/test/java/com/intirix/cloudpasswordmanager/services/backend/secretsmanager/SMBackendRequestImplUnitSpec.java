@@ -98,9 +98,6 @@ public class SMBackendRequestImplUnitSpec {
         keyStorageService.saveEncryptedPrivateKey(encryptedPrivateKey);
         EasyMock.expectLastCall();
 
-        conversionService.processSecrets(EasyMock.anyObject(SessionInfo.class),EasyMock.anyObject(Map.class));
-        EasyMock.expectLastCall();
-
         Call<String> privateKeyCall = new MockCall<String>() {
             @Override
             public void enqueue(Callback<String> callback) {
@@ -119,7 +116,6 @@ public class SMBackendRequestImplUnitSpec {
         };
 
         EasyMock.expect(api.getUserEncryptedPrivateKey(username)).andReturn(privateKeyCall);
-        EasyMock.expect(api.getUserSecrets(username)).andReturn(secretsCall);
 
         EasyMock.replay(api,keyStorageService,conversionService);
         Assert.assertFalse(impl.isLoginRunning());
@@ -129,10 +125,7 @@ public class SMBackendRequestImplUnitSpec {
         eventService.assertEventType(0, LoginSuccessfulEvent.class);
         eventService.assertNumberOfPosts(1);
 
-        Assert.assertNotNull(sessionService.getCurrentSession().getPasswordBeanList());
-        Assert.assertNotNull(sessionService.getCurrentSession().getCategoryList());
-
-        EasyMock.verify(api,keyStorageService,conversionService);
+        EasyMock.verify(api,keyStorageService);
     }
 
     @Test
@@ -163,9 +156,6 @@ public class SMBackendRequestImplUnitSpec {
         keyStorageService.saveEncryptedPrivateKey(encryptedPrivateKey);
         EasyMock.expectLastCall();
 
-        conversionService.processSecrets(EasyMock.anyObject(SessionInfo.class),EasyMock.anyObject(Map.class));
-        EasyMock.expectLastCall();
-
         final String doubleEncoded = Base64.encodeToString(encryptedPrivateKey.getBytes("ASCII"),Base64.NO_WRAP);
 
         Call<String> privateKeyCall = new MockCall<String>() {
@@ -186,7 +176,6 @@ public class SMBackendRequestImplUnitSpec {
         };
 
         EasyMock.expect(api.getUserEncryptedPrivateKey(username)).andReturn(privateKeyCall);
-        EasyMock.expect(api.getUserSecrets(username)).andReturn(secretsCall);
 
         EasyMock.replay(api,keyStorageService,conversionService);
         Assert.assertFalse(impl.isLoginRunning());
@@ -196,10 +185,7 @@ public class SMBackendRequestImplUnitSpec {
         eventService.assertEventType(0, LoginSuccessfulEvent.class);
         eventService.assertNumberOfPosts(1);
 
-        Assert.assertNotNull(sessionService.getCurrentSession().getPasswordBeanList());
-        Assert.assertNotNull(sessionService.getCurrentSession().getCategoryList());
-
-        EasyMock.verify(api,keyStorageService,conversionService);
+        EasyMock.verify(api,keyStorageService);
     }
 
     @Test
@@ -266,9 +252,6 @@ public class SMBackendRequestImplUnitSpec {
         EasyMock.expect(keyStorageService.getEncryptedPrivateKey()).andReturn(encryptedPrivateKey).anyTimes();
         EasyMock.expectLastCall();
 
-        conversionService.processSecrets(EasyMock.anyObject(SessionInfo.class),EasyMock.anyObject(Map.class));
-        EasyMock.expectLastCall();
-
         Call<Map<String,Secret>> secretsCall = new MockCall<Map<String,Secret>>() {
             @Override
             public void enqueue(Callback<Map<String,Secret>> callback) {
@@ -276,8 +259,6 @@ public class SMBackendRequestImplUnitSpec {
                 callback.onResponse(null, Response.success(Collections.<String,Secret>emptyMap()));
             }
         };
-
-        EasyMock.expect(api.getUserSecrets(username)).andReturn(secretsCall);
 
         EasyMock.replay(api,keyStorageService,conversionService);
         Assert.assertFalse(impl.isLoginRunning());
@@ -287,11 +268,8 @@ public class SMBackendRequestImplUnitSpec {
         eventService.assertEventType(0, LoginSuccessfulEvent.class);
         eventService.assertNumberOfPosts(1);
 
-        Assert.assertNotNull(sessionService.getCurrentSession().getPasswordBeanList());
-        Assert.assertNotNull(sessionService.getCurrentSession().getCategoryList());
 
-
-        EasyMock.verify(api,keyStorageService,conversionService);
+        EasyMock.verify(api,keyStorageService);
     }
 
     @Test
@@ -316,6 +294,7 @@ public class SMBackendRequestImplUnitSpec {
         EasyMock.replay(api,keyStorageService);
         Assert.assertFalse(impl.isLoginRunning());
         impl.login();
+        impl.listPasswords();
         Assert.assertFalse(impl.isLoginRunning());
 
         eventService.assertNumberOfPosts(2);

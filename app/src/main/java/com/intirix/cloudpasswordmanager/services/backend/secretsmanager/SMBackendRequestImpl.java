@@ -95,7 +95,7 @@ public class SMBackendRequestImpl implements BackendRequestInterface {
                     }
 
                     eventService.postEvent(new LoginSuccessfulEvent());
-                    downloadSecrets();
+                    //downloadSecrets();
                     return null;
                 }
             }.execute();
@@ -138,7 +138,7 @@ public class SMBackendRequestImpl implements BackendRequestInterface {
 
                         keyStorageService.saveEncryptedPrivateKey(key);
                         eventService.postEvent(new LoginSuccessfulEvent());
-                        downloadSecrets();
+                        //downloadSecrets();
                     }
                 } catch (IOException e) {
                     Log.w(TAG, "downloadEncryptedPrivateKey() save failed", e);
