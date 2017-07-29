@@ -58,6 +58,8 @@
     <string name="password_detail_loginName_toast">Login name copied to clipboard</string>
     <string name="password_detail_password_toast">Password copied to clipboard</string>
 
+    <string name="import_key_clear">Delete Private Key</string>
+
     <string name="settings_title">Settings</string>
     <string name="settings_nav_label">Settings</string>
     <string name="settings_savepass_label">Password Policy:</string>

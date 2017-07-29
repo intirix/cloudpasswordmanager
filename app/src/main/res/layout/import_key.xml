@@ -11,6 +11,14 @@
         android:layout_alignParentRight="true"
         android:text="@string/login_import_key_label"/>
 
+    <Button
+        android:id="@+id/import_key_clear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@id/import_key_submit"
+        android:text="@string/import_key_clear"/>
+
     <EditText
         android:id="@+id/import_key_body"
         android:gravity="start|top"

@@ -14,6 +14,8 @@ import com.intirix.cloudpasswordmanager.services.settings.KeyStorageService;
 
 import java.io.IOException;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 
@@ -22,6 +24,7 @@ import butterknife.OnClick;
  */
 
 public class ImportPrivateKeyActivity extends BaseActivity {
+    @Inject
     KeyStorageService keyStorageService;
 
     @BindView(R.id.import_key_body)
@@ -36,6 +39,19 @@ public class ImportPrivateKeyActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         PasswordApplication.getSInjector(this).inject(this);
+    }
+
+    @OnClick(R.id.import_key_clear)
+    public void onClearKey(View view) {
+        try {
+            keyStorageService.clearEncryptedPrivateKey();
+        } catch (IOException e) {
+            // ignore
+        }
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+
     }
 
     @OnClick(R.id.import_key_submit)
