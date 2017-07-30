@@ -83,7 +83,13 @@ public class PasswordListAdapter extends RecyclerView.Adapter<PasswordListViewHo
                     toBeAdded.remove(model);
                 }
             }
-            sortedList.addAll(toBeAdded);
+            for (final PasswordBean bean: toBeAdded) {
+                try {
+                    sortedList.add((PasswordBean)bean.clone());
+                } catch (CloneNotSupportedException e) {
+                    // ignore
+                }
+            }
             Log.d(TAG,"Password list now has "+sortedList.size()+" items");
         }
         sortedList.endBatchedUpdates();

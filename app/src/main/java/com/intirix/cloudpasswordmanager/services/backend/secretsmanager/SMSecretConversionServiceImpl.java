@@ -124,7 +124,7 @@ public class SMSecretConversionServiceImpl implements SMSecretConversionService 
                         loop = 0;
                     }
 
-                    Log.d(TAG, "Decrypted secret, decryption="+dt_decrypt+"ms, elapsed="+dt_elapsed+"ms");
+                    Log.d(TAG, "Decrypted secret "+parsedType.name()+", decryption="+dt_decrypt+"ms, elapsed="+dt_elapsed+"ms");
                 }
 
                 session.setPasswordBeanList(passwordBeanList);
@@ -212,6 +212,21 @@ public class SMSecretConversionServiceImpl implements SMSecretConversionService 
     private PasswordBean parseSinglePassword(String sid, JsonObject topElement, List<PasswordBean> passwordBeanList) throws ParseException {
         PasswordBean bean = new PasswordBean();
 
+        if (topElement.has("category") && topElement.get("category").isJsonPrimitive()) {
+            bean.setCategory(topElement.get("category").getAsString());
+
+            if (sessionService.getCurrentSession().getCategoryList()!=null) {
+                for (final Category cat : sessionService.getCurrentSession().getCategoryList()) {
+                    if (cat.getId().equals(bean.getCategory())) {
+                        bean.setCategoryName(cat.getCategory_name());
+                        bean.setCategoryBackground(colorService.parseColor('#'+cat.getCategory_colour()));
+                        bean.setCategoryForeground(colorService.getTextColorForBackground(bean.getCategoryBackground()));
+
+                    }
+                }
+            }
+        }
+
         if (topElement.has("address") && topElement.get("address").isJsonPrimitive()) {
             bean.setAddress(topElement.get("address").getAsString());
         }
@@ -226,11 +241,27 @@ public class SMSecretConversionServiceImpl implements SMSecretConversionService 
 
         if (topElement.has("notes") && topElement.get("notes").isJsonPrimitive()) {
             bean.setNotes(topElement.get("notes").getAsString());
+            bean.setHasNotes(true);
         }
 
         if (topElement.has("password") && topElement.get("password").isJsonPrimitive()) {
             bean.setPass(topElement.get("password").getAsString());
             bean.setLength(bean.getPass().length());
+
+            for (char ch: bean.getPass().toCharArray()) {
+                if (Character.isDigit(ch)) {
+                    bean.setHasNumber(true);
+                }
+                if (Character.isUpperCase(ch)) {
+                    bean.setHasUpper(true);
+                }
+                if (Character.isLowerCase(ch)) {
+                    bean.setHasLower(true);
+                }
+                if (Character.isSpaceChar(ch)) {
+                    bean.setHasSpecial(true);
+                }
+            }
         }
 
         if (topElement.has("dateChanged") && topElement.get("dateChanged").isJsonPrimitive()) {
@@ -269,6 +300,7 @@ public class SMSecretConversionServiceImpl implements SMSecretConversionService 
 
             if (category.getCategory_colour()!=null && category.getCategory_colour()!=null) {
                 categories.add(category);
+                Log.d(TAG,"Parsed category: "+category.getCategory_name()+" - "+category.getCategory_colour());
             }
         }
     }

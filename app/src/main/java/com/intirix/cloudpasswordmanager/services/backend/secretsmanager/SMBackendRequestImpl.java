@@ -158,23 +158,30 @@ public class SMBackendRequestImpl implements BackendRequestInterface {
 
     private void downloadSecrets() {
         final SessionInfo session = sessionService.getCurrentSession();
-        Log.i(TAG, "Downloading the secrets");
-        Call<Map<String,Secret>> call = getApi().getUserSecrets(sessionService.getUsername());
+        Log.i(TAG, "Downloading the secrets, kicked off from "+Thread.currentThread().getName());
+        final Call<Map<String,Secret>> call = getApi().getUserSecrets(sessionService.getUsername());
         call.enqueue(new Callback<Map<String,Secret>>() {
             @Override
-            public void onResponse(Call<Map<String,Secret>> call, Response<Map<String,Secret>> response) {
+            public void onResponse(Call<Map<String,Secret>> call, final Response<Map<String,Secret>> response) {
                 if (response.body()!=null) {
-                    Log.d(TAG, "Downloaded " + response.body().size() + " secrets");
+                    Log.d(TAG, "Downloaded " + response.body().size() + " secrets on "+Thread.currentThread().getName());
                 }
                 session.setPasswordBeanList(Collections.<PasswordBean>emptyList());
                 session.setCategoryList(Collections.<Category>emptyList());
 
-                try {
-                    conversionService.processSecrets(session, response.body());
-                } catch (IOException e) {
-                    Log.w(TAG, "downloadSecrets() error", e);
-                    eventService.postEvent(new FatalErrorEvent(e.getMessage()));
-                }
+                new AsyncTask<Void,Void,Void>() {
+                    @Override
+                    protected Void doInBackground(Void... params) {
+                        try {
+                            Log.d(TAG, "Processing secrets on "+Thread.currentThread().getName()+" thread");
+                            conversionService.processSecrets(session, response.body());
+                        } catch (IOException e) {
+                            Log.w(TAG, "downloadSecrets() error", e);
+                            eventService.postEvent(new FatalErrorEvent(e.getMessage()));
+                        }
+                        return null;
+                    }
+                }.execute();
             }
 
             @Override

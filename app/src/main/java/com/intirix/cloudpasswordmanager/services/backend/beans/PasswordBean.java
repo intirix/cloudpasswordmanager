@@ -20,7 +20,7 @@ import java.util.Calendar;
 /**
  * Created by jeff on 6/28/16.
  */
-public class PasswordBean implements Comparable<PasswordBean> {
+public class PasswordBean implements Comparable<PasswordBean>, Cloneable {
 
     private String id;
 
@@ -222,6 +222,10 @@ public class PasswordBean implements Comparable<PasswordBean> {
         this.decrypted = decrypted;
     }
 
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -230,13 +234,60 @@ public class PasswordBean implements Comparable<PasswordBean> {
 
         PasswordBean that = (PasswordBean) o;
 
-        return getId().equals(that.getId());
+        if (isHasNotes() != that.isHasNotes()) return false;
+        if (getStrength() != that.getStrength()) return false;
+        if (getLength() != that.getLength()) return false;
+        if (isHasLower() != that.isHasLower()) return false;
+        if (isHasUpper() != that.isHasUpper()) return false;
+        if (isHasNumber() != that.isHasNumber()) return false;
+        if (isHasSpecial() != that.isHasSpecial()) return false;
+        if (getCategoryBackground() != that.getCategoryBackground()) return false;
+        if (getCategoryForeground() != that.getCategoryForeground()) return false;
+        if (isDecrypted() != that.isDecrypted()) return false;
+        if (getId() != null ? !getId().equals(that.getId()) : that.getId() != null) return false;
+        if (getUser_id() != null ? !getUser_id().equals(that.getUser_id()) : that.getUser_id() != null)
+            return false;
+        if (getWebsite() != null ? !getWebsite().equals(that.getWebsite()) : that.getWebsite() != null)
+            return false;
+        if (getAddress() != null ? !getAddress().equals(that.getAddress()) : that.getAddress() != null)
+            return false;
+        if (getLoginName() != null ? !getLoginName().equals(that.getLoginName()) : that.getLoginName() != null)
+            return false;
+        if (getPass() != null ? !getPass().equals(that.getPass()) : that.getPass() != null)
+            return false;
+        if (getNotes() != null ? !getNotes().equals(that.getNotes()) : that.getNotes() != null)
+            return false;
+        if (getCategory() != null ? !getCategory().equals(that.getCategory()) : that.getCategory() != null)
+            return false;
+        if (getCategoryName() != null ? !getCategoryName().equals(that.getCategoryName()) : that.getCategoryName() != null)
+            return false;
+        return getDateChanged() != null ? getDateChanged().equals(that.getDateChanged()) : that.getDateChanged() == null;
 
     }
 
     @Override
     public int hashCode() {
-        return getId().hashCode();
+        int result = getId() != null ? getId().hashCode() : 0;
+        result = 31 * result + (getUser_id() != null ? getUser_id().hashCode() : 0);
+        result = 31 * result + (getWebsite() != null ? getWebsite().hashCode() : 0);
+        result = 31 * result + (getAddress() != null ? getAddress().hashCode() : 0);
+        result = 31 * result + (getLoginName() != null ? getLoginName().hashCode() : 0);
+        result = 31 * result + (getPass() != null ? getPass().hashCode() : 0);
+        result = 31 * result + (getNotes() != null ? getNotes().hashCode() : 0);
+        result = 31 * result + (isHasNotes() ? 1 : 0);
+        result = 31 * result + getStrength();
+        result = 31 * result + getLength();
+        result = 31 * result + (isHasLower() ? 1 : 0);
+        result = 31 * result + (isHasUpper() ? 1 : 0);
+        result = 31 * result + (isHasNumber() ? 1 : 0);
+        result = 31 * result + (isHasSpecial() ? 1 : 0);
+        result = 31 * result + (getCategory() != null ? getCategory().hashCode() : 0);
+        result = 31 * result + getCategoryBackground();
+        result = 31 * result + getCategoryForeground();
+        result = 31 * result + (getCategoryName() != null ? getCategoryName().hashCode() : 0);
+        result = 31 * result + (getDateChanged() != null ? getDateChanged().hashCode() : 0);
+        result = 31 * result + (isDecrypted() ? 1 : 0);
+        return result;
     }
 
     @Override
