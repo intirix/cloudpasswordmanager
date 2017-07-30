@@ -27,6 +27,7 @@ import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.util.Collections;
@@ -90,7 +91,17 @@ public class SMBackendRequestImplUnitSpec {
         };
     }
 
-
+    @Test
+    public void verifyUrlFormats() throws MalformedURLException {
+        Assert.assertEquals("https://api.example.com/prod/v1/",impl.getUrl("https://api.example.com"));
+        Assert.assertEquals("https://api.example.com/prod/v1/",impl.getUrl("https://api.example.com/"));
+        Assert.assertEquals("https://api.example.com/prod/v1/",impl.getUrl("https://api.example.com/prod"));
+        Assert.assertEquals("https://api.example.com/prod/v1/",impl.getUrl("https://api.example.com/prod/v1"));
+        Assert.assertEquals("https://api.example.com/prod/v1/",impl.getUrl("https://api.example.com/prod/v1/"));
+        Assert.assertEquals("https://api.example.com/test/v1/",impl.getUrl("https://api.example.com/test"));
+        Assert.assertEquals("https://api.example.com/test/v1/",impl.getUrl("https://api.example.com/test/v1"));
+        Assert.assertEquals("https://api.example.com/test/v1/",impl.getUrl("https://api.example.com/test/v1/"));
+    }
 
     @Test
     public void verifyLoginWithoutLocalKeyDownloadsKey() throws IOException {

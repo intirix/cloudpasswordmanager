@@ -22,6 +22,8 @@ import com.intirix.secretsmanager.clientv1.api.DefaultApi;
 import com.intirix.secretsmanager.clientv1.model.Secret;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collections;
 import java.util.Map;
 
@@ -66,13 +68,32 @@ public class SMBackendRequestImpl implements BackendRequestInterface {
         client = new ApiClient();
     }
 
-    protected DefaultApi getApi() {
-        client.getAdapterBuilder().baseUrl(sessionService.getUrl());
+    protected DefaultApi getApi() throws MalformedURLException {
+        client.getAdapterBuilder().baseUrl(getUrl(sessionService.getUrl()));
         if (!client.getApiAuthorizations().containsKey("custom")) {
             client.addAuthorization("custom", interceptor);
         }
         DefaultApi api = client.createService(DefaultApi.class);
         return api;
+    }
+
+    protected String getUrl(String url) throws MalformedURLException {
+        URL u = new URL(url);
+        if (u.getPath().length()==0) {
+            return url+"/prod/v1/";
+        }
+
+        if (u.getPath().length()==1) {
+            return url+"prod/v1/";
+        }
+
+        if (u.getPath().endsWith("/v1")) {
+            return url+"/";
+        }
+        if (!u.getPath().endsWith("/v1/")) {
+            return url+"/v1/";
+        }
+        return url;
     }
 
     @Override
@@ -100,11 +121,16 @@ public class SMBackendRequestImpl implements BackendRequestInterface {
                 }
             }.execute();
         } else {
-            downloadEncryptedPrivateKey();
+            try {
+                downloadEncryptedPrivateKey();
+            } catch (MalformedURLException e) {
+                Log.e(TAG,"Failed to download key", e);
+                eventService.postEvent(new FatalErrorEvent(e.getMessage()));
+            }
         }
     }
 
-    private void downloadEncryptedPrivateKey() {
+    private void downloadEncryptedPrivateKey() throws MalformedURLException {
         Log.i(TAG, "Downloading the private key");
         Call<String> call = getApi().getUserEncryptedPrivateKey(sessionService.getUsername());
         loginRunning = true;
@@ -156,7 +182,7 @@ public class SMBackendRequestImpl implements BackendRequestInterface {
         });
     }
 
-    private void downloadSecrets() {
+    private void downloadSecrets() throws MalformedURLException {
         final SessionInfo session = sessionService.getCurrentSession();
         Log.i(TAG, "Downloading the secrets, kicked off from "+Thread.currentThread().getName());
         final Call<Map<String,Secret>> call = getApi().getUserSecrets(sessionService.getUsername());
@@ -204,6 +230,11 @@ public class SMBackendRequestImpl implements BackendRequestInterface {
 
     @Override
     public void listPasswords() {
-        downloadSecrets();
+        try {
+            downloadSecrets();
+        } catch (MalformedURLException e) {
+            Log.e(TAG,"Failed to download passwords", e);
+            eventService.postEvent(new FatalErrorEvent(e.getMessage()));
+        }
     }
 }
