@@ -209,7 +209,7 @@ public class LoginActivity extends BaseActivity {
                 new URL(url);
 
                 urlInput.setEnabled(false);
-                pinButton.setVisibility(View.INVISIBLE);
+                pinButton.setVisibility(View.GONE);
                 pinButton.setEnabled(false);
                 unpinButton.setVisibility(View.VISIBLE);
                 unpinButton.setEnabled(true);

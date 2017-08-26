@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.services.session.StorageType;
 
 /**
@@ -55,7 +56,7 @@ public class StorageTypeAdapter extends ArrayAdapter<StorageType> {
     @Override
     public View getDropDownView(int position, View convertView,
                                 ViewGroup parent) {
-        TextView label = (TextView)LayoutInflater.from(context).inflate(android.R.layout.simple_spinner_dropdown_item, null);
+        TextView label = (TextView)LayoutInflater.from(context).inflate(R.layout.storage_type_dropdown_item, null);
         label.setText(context.getText(values[position].getLabelResource()));
 
         return label;
