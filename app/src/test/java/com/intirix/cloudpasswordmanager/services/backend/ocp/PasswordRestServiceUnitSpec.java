@@ -32,6 +32,7 @@ import org.robolectric.annotation.Config;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 import okhttp3.Interceptor;
@@ -145,6 +146,23 @@ public class PasswordRestServiceUnitSpec {
 
         Assert.assertEquals(1, passwordList.size());
         PasswordResponse pr = passwordList.get(0);
+
+        Assert.assertEquals("5", pr.getId());
+        Assert.assertEquals(TESTUSER, pr.getUser_id());
+        Assert.assertEquals("www.github.com", pr.getWebsite());
+        Assert.assertEquals("password", pr.getPass());
+        Assert.assertEquals(221, pr.getProperties().length());
+        Assert.assertFalse(pr.isNotes());
+        Assert.assertEquals("0", pr.getDeleted());
+    }
+
+    @Test
+    public void testListPasswordsWithOneNewApi() throws IOException {
+        setMockResponseJson("/password-list-example1-map.json");
+        Map<String,PasswordResponse> passwordList = impl.listPasswordsV2().execute().body();
+
+        Assert.assertEquals(1, passwordList.size());
+        PasswordResponse pr = passwordList.values().iterator().next();
 
         Assert.assertEquals("5", pr.getId());
         Assert.assertEquals(TESTUSER, pr.getUser_id());

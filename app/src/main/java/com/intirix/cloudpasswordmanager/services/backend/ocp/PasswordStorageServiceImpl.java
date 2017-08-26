@@ -35,8 +35,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -132,8 +134,54 @@ public class PasswordStorageServiceImpl implements PasswordStorageService {
         });
     }
 
+    protected boolean shouldUseNewApi(String serverVersion) {
+        if (serverVersion==null) {
+            return true;
+        }
+
+        if (serverVersion.startsWith("18-")||serverVersion.equals("18")) {
+            return false;
+        }
+        if (serverVersion.startsWith("19-")||serverVersion.equals("19")) {
+            return false;
+        }
+
+        return true;
+    }
+
     @Override
     public void listPasswords(final PasswordListCallback cb) {
+        String version = sessionService.getCurrentSession().getPasswordServerAppVersion();
+        if (shouldUseNewApi(version)) {
+            listPasswordsV2(cb);
+        } else {
+            listPasswordsV1(cb);
+        }
+    }
+
+    private void listPasswordsV2(final PasswordListCallback cb) {
+        Call<Map<String,PasswordResponse>> call = getRestService().listPasswordsV2();
+        call.enqueue(new Callback<Map<String,PasswordResponse>>() {
+            @Override
+            public void onResponse(Call<Map<String,PasswordResponse>> call, Response<Map<String,PasswordResponse>> response) {
+                try {
+                    List<PasswordInfo> list = translatePasswordList(response.body().values());
+                    cb.onReturn(list);
+                } catch (Exception e) {
+                    Log.w(TAG, "listPasswords() errored", e);
+                    cb.onError("Error: " + e);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Map<String,PasswordResponse>> call, Throwable t) {
+                Log.w(TAG, "listPasswords() failed", t);
+                cb.onError("Failed: " + t);
+            }
+        });
+    }
+
+    private void listPasswordsV1(final PasswordListCallback cb) {
         Call<List<PasswordResponse>> call = getRestService().listPasswords();
         call.enqueue(new Callback<List<PasswordResponse>>() {
             @Override
@@ -143,7 +191,7 @@ public class PasswordStorageServiceImpl implements PasswordStorageService {
                     cb.onReturn(list);
                 } catch (Exception e) {
                     Log.w(TAG, "listPasswords() errored", e);
-                    cb.onError("Error: "+e);
+                    cb.onError("Error: " + e);
                 }
             }
 
@@ -156,7 +204,7 @@ public class PasswordStorageServiceImpl implements PasswordStorageService {
     }
 
     @NonNull
-    List<PasswordInfo> translatePasswordList(List<PasswordResponse> response) throws ParseException {
+    List<PasswordInfo> translatePasswordList(Collection<PasswordResponse> response) throws ParseException {
         List<PasswordInfo> list = new ArrayList<>();
         for (final PasswordResponse pr : response) {
             boolean valid = "0".equals(pr.getDeleted()) || "false".equals(pr.getDeleted());

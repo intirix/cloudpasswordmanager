@@ -42,6 +42,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import okhttp3.MediaType;
@@ -296,12 +297,24 @@ public class PasswordStorageServiceImplUnitSpec {
 
     }
 
+    @Test
+    public void verifyPasswordApiVersion() {
+        Assert.assertTrue(impl.shouldUseNewApi(null));
+        Assert.assertTrue(impl.shouldUseNewApi("20"));
+        Assert.assertTrue(impl.shouldUseNewApi("20-beta6"));
+        Assert.assertTrue(impl.shouldUseNewApi("21"));
+        Assert.assertTrue(impl.shouldUseNewApi("190"));
+        Assert.assertFalse(impl.shouldUseNewApi("18"));
+        Assert.assertFalse(impl.shouldUseNewApi("19"));
+        Assert.assertFalse(impl.shouldUseNewApi("19-beta1"));
+    }
 
     @Test
-    public void verifyEmptyPasswordResponseWorks() {
+    public void verifyLegacyEmptyPasswordResponseWorks() {
         sessionService.setUsername(TESTUSER);
         sessionService.start();
         sessionService.getCurrentSession().setPassword(TESTPASS);
+        sessionService.getCurrentSession().setPasswordServerAppVersion("19");
 
         final List<PasswordResponse> empty = Collections.emptyList();
         final AtomicInteger counter = new AtomicInteger(0);
@@ -335,11 +348,51 @@ public class PasswordStorageServiceImplUnitSpec {
 
     }
 
+
+    @Test
+    public void verifyEmptyPasswordResponseWorks() {
+        sessionService.setUsername(TESTUSER);
+        sessionService.start();
+        sessionService.getCurrentSession().setPassword(TESTPASS);
+
+        final Map<String,PasswordResponse> empty = Collections.emptyMap();
+        final AtomicInteger counter = new AtomicInteger(0);
+
+        PasswordListCallback cb = new PasswordListCallback() {
+            @Override
+            public void onReturn(List<PasswordInfo> passwords) {
+                Assert.assertEquals(0, passwords.size());
+                counter.incrementAndGet();
+            }
+
+            @Override
+            public void onError(String message) {
+                Assert.fail(message);
+            }
+        };
+
+        Call<Map<String,PasswordResponse>> call = new MockCall<Map<String,PasswordResponse>>() {
+            @Override
+            public void enqueue(Callback callback) {
+                callback.onResponse(this, Response.success(empty));
+            }
+        };
+
+        EasyMock.expect(restService.listPasswordsV2()).andReturn(call);
+        EasyMock.replay(restService);
+
+        impl.listPasswords(cb);
+        EasyMock.verify(restService);
+        Assert.assertEquals(1,counter.get());
+
+    }
+
     @Test
     public void verifyDeletedPasswordsAreRemoved() {
         sessionService.setUsername(TESTUSER);
         sessionService.start();
         sessionService.getCurrentSession().setPassword(TESTPASS);
+        sessionService.getCurrentSession().setPasswordServerAppVersion("19");
 
         final List<PasswordResponse> list = new ArrayList<>();
 
@@ -398,6 +451,7 @@ public class PasswordStorageServiceImplUnitSpec {
         sessionService.setUsername(TESTUSER);
         sessionService.start();
         sessionService.getCurrentSession().setPassword(TESTPASS);
+        sessionService.getCurrentSession().setPasswordServerAppVersion("19");
 
         final List<PasswordResponse> list = new ArrayList<>();
 
@@ -457,6 +511,7 @@ public class PasswordStorageServiceImplUnitSpec {
         sessionService.setUsername(TESTUSER);
         sessionService.start();
         sessionService.getCurrentSession().setPassword(TESTPASS);
+        sessionService.getCurrentSession().setPasswordServerAppVersion("19");
 
         final List<PasswordResponse> list = new ArrayList<>();
 
@@ -525,6 +580,7 @@ public class PasswordStorageServiceImplUnitSpec {
         sessionService.setUsername(TESTUSER);
         sessionService.start();
         sessionService.getCurrentSession().setPassword(TESTPASS);
+        sessionService.getCurrentSession().setPasswordServerAppVersion("19");
 
         final List<PasswordResponse> list = new ArrayList<>();
 

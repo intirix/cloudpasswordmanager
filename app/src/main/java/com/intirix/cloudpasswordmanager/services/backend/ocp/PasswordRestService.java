@@ -19,6 +19,7 @@ import com.intirix.cloudpasswordmanager.services.backend.beans.Category;
 import com.intirix.cloudpasswordmanager.services.backend.ocp.beans.PasswordResponse;
 
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -36,4 +37,7 @@ public interface PasswordRestService {
 
     @GET("passwords")
     Call<List<PasswordResponse>> listPasswords();
+
+    @GET("passwords")
+    Call<Map<String,PasswordResponse>> listPasswordsV2();
 }
