@@ -16,6 +16,7 @@
 package com.intirix.cloudpasswordmanager.pages;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -51,7 +52,11 @@ public abstract class SecureActivity extends BaseActivity {
         public void run() {
             try {
                 if (!autoLogoffService.isSessionStillValid()) {
-                    logoff();
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                        finishAffinity();
+                    } else {
+                        logoff();
+                    }
                 }
             } finally {
                 handler.postDelayed(autoLogoffChecker, AutoLogoffServiceImpl.TIMEOUT / 4);
