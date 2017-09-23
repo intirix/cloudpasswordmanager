@@ -31,6 +31,7 @@ import java.security.spec.InvalidKeySpecException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -306,11 +307,15 @@ public class SMSecretConversionServiceImpl implements SMSecretConversionService 
     }
 
     private byte[] decryptSecret(String privateKeyPem, Secret secret, byte[] encryptedKey) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeySpecException, IOException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException, ShortBufferException, NoSuchProviderException {
-        byte[] secretKey = encryptionService.decryptRSA(privateKeyPem, encryptedKey);
+        byte[] secretKeyPair = encryptionService.decryptRSA(privateKeyPem, encryptedKey);
+        byte[] aesKey = Arrays.copyOf(secretKeyPair,32);
+        byte[] hmacKey = Arrays.copyOfRange(secretKeyPair, 32, 64);
 
         byte[] encryptedSecret = encryptionService.decodeBase64(secret.getEncryptedSecret());
-
-        return encryptionService.decryptAES(secretKey, encryptedSecret);
+        if (encryptionService.verifyHmac(hmacKey, secret.getEncryptedSecret().getBytes("UTF-8"), secret.getHmac())) {
+            return encryptionService.decryptAES(aesKey, encryptedSecret);
+        }
+        throw new IOException("Failed HMAC verification");
     }
 
     private byte[] getEncryptedKey(Object obj) throws IOException {

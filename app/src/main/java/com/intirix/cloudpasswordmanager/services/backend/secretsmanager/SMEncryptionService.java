@@ -5,6 +5,7 @@ import android.util.Log;
 
 
 import org.spongycastle.crypto.generators.SCrypt;
+import org.spongycastle.util.encoders.Hex;
 import org.spongycastle.util.io.pem.PemObject;
 import org.spongycastle.util.io.pem.PemReader;
 
@@ -19,6 +20,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.SecureRandom;
 import java.security.Signature;
 import java.security.SignatureException;
 import java.security.spec.InvalidKeySpecException;
@@ -29,6 +31,7 @@ import java.util.Arrays;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.Mac;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.ShortBufferException;
 import javax.crypto.spec.IvParameterSpec;
@@ -44,6 +47,10 @@ public class SMEncryptionService {
 
     private KeyFactory rsaKeyFactory;
 
+    private SecureRandom random = new SecureRandom();
+
+    private byte[] hmacComparisonKey = generateKey(32);
+
     @Inject
     public SMEncryptionService() {
 
@@ -55,6 +62,16 @@ public class SMEncryptionService {
         }
     }
 
+    /**
+     * Generate a random key
+     * @param bytes
+     * @return
+     */
+    public byte[] generateKey(int bytes) {
+        byte[] key = new byte[bytes];
+        random.nextBytes(key);
+        return key;
+    }
 
     public byte[] keyExtend(String user, String password) {
         Charset ch = Charset.forName("ASCII");
@@ -63,6 +80,10 @@ public class SMEncryptionService {
 
     public byte[] decodeBase64(String input) throws IOException {
         return Base64.decode(input.getBytes("ASCII"),Base64.NO_WRAP);
+    }
+
+    public String encodeBase64(byte[] input) throws IOException {
+        return Base64.encodeToString(input, Base64.NO_WRAP);
     }
 
     public byte[] decryptAES(byte[] keyBytes, byte[] input) throws IOException, InvalidKeyException, NoSuchPaddingException, NoSuchAlgorithmException, NoSuchProviderException {
@@ -136,6 +157,12 @@ public class SMEncryptionService {
         */
     }
 
+    public byte[] encryptRSA(String pem, byte[] input) throws NoSuchPaddingException, NoSuchAlgorithmException, IOException, InvalidKeySpecException, BadPaddingException, IllegalBlockSizeException, InvalidKeyException {
+        final Cipher cipher = Cipher.getInstance("RSA/NONE/OAEPWithSHA256AndMGF1Padding");
+        cipher.init(Cipher.ENCRYPT_MODE, getPublicKey(pem));
+        return cipher.doFinal(input);
+    }
+
     private PrivateKey getPrivateKey(String pem) throws InvalidKeySpecException, IOException {
         PemReader pr = new PemReader(new StringReader(pem));
         PemObject po = pr.readPemObject();
@@ -156,6 +183,35 @@ public class SMEncryptionService {
         X509EncodedKeySpec spec = new X509EncodedKeySpec(po.getContent());
 
         return rsaKeyFactory.generatePublic(spec);
+    }
+
+    public String generateHmac(byte[] key, byte[] message) throws NoSuchAlgorithmException, InvalidKeyException {
+        Mac sha256_HMAC = Mac.getInstance("HmacSHA256");
+        SecretKeySpec secret_key = new SecretKeySpec(key, "HmacSHA256");
+        sha256_HMAC.init(secret_key);
+
+        byte[] hmac = sha256_HMAC.doFinal(message);
+        return Hex.toHexString(hmac);
+    }
+
+    /**
+     * Securely verify that the HMAC is correct
+     * @param key
+     * @param message
+     * @param mac
+     * @return
+     * @throws InvalidKeyException
+     * @throws NoSuchAlgorithmException
+     * @throws UnsupportedEncodingException
+     */
+    public boolean verifyHmac(byte[] key, byte[] message, String mac) throws InvalidKeyException, NoSuchAlgorithmException, UnsupportedEncodingException {
+        String mac2 = generateHmac(key, message);
+
+        String mac1b = generateHmac(hmacComparisonKey, mac.getBytes("UTF-8"));
+        String mac2b = generateHmac(hmacComparisonKey, mac2.getBytes("UTF-8"));
+
+
+        return mac1b.equals(mac2b);
     }
 
 }
