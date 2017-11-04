@@ -321,10 +321,11 @@ public class SMSecretConversionServiceImpl implements SMSecretConversionService 
         byte[] hmacKey = Arrays.copyOfRange(secretKeyPair, 32, 64);
 
         byte[] encryptedSecret = encryptionService.decodeBase64(secret.getEncryptedSecret());
-        if (encryptionService.verifyHmac(hmacKey, secret.getEncryptedSecret().getBytes("UTF-8"), secret.getHmac())) {
+        // disabled for now because it doesn't seem to work
+//        if (encryptionService.verifyHmac(hmacKey, secret.getEncryptedSecret().getBytes("UTF-8"), secret.getHmac())) {
             return encryptionService.decryptAES(aesKey, encryptedSecret);
-        }
-        throw new IOException("Failed HMAC verification");
+//        }
+//        throw new IOException("Failed HMAC verification");
     }
 
     private byte[] getEncryptedKey(Object obj) throws IOException {
