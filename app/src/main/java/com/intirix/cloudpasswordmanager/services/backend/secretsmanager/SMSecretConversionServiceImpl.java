@@ -146,7 +146,7 @@ public class SMSecretConversionServiceImpl implements SMSecretConversionService 
         if (topElement.has("type")) {
             String type = topElement.get("type").getAsString();
             if ("password".equals(type)) {
-                PasswordBean passwordBean = parseSinglePassword(sid, topElement, passwordBeanList);
+                PasswordBean passwordBean = parseSinglePassword(session, sid, topElement, passwordBeanList);
                 addCategoryInfoToSinglePassword(session, passwordBean);
 
                 return SecretType.PASSWORD;
@@ -210,12 +210,21 @@ public class SMSecretConversionServiceImpl implements SMSecretConversionService 
 
     }
 
-    private PasswordBean parseSinglePassword(String sid, JsonObject topElement, List<PasswordBean> passwordBeanList) throws ParseException {
+    private PasswordBean parseSinglePassword(SessionInfo session, String sid, JsonObject topElement, List<PasswordBean> passwordBeanList) throws ParseException {
         PasswordBean bean = new PasswordBean();
 
-        if (topElement.has("category") && topElement.get("category").isJsonPrimitive()) {
+        if (topElement.has("userCategory") && topElement.get("userCategory").isJsonObject()) {
+            JsonObject userCat = topElement.getAsJsonObject("userCategory");
+            if (userCat.has(session.getUsername()) && userCat.get(session.getUsername()).isJsonPrimitive()) {
+                bean.setCategory(userCat.getAsJsonPrimitive(session.getUsername()).getAsString());
+            }
+        }
+        if (bean.getCategory()==null && topElement.has("category") && topElement.get("category").isJsonPrimitive()) {
             bean.setCategory(topElement.get("category").getAsString());
 
+        }
+
+        if (bean.getCategory()!=null) {
             if (sessionService.getCurrentSession().getCategoryList()!=null) {
                 for (final Category cat : sessionService.getCurrentSession().getCategoryList()) {
                     if (cat.getId().equals(bean.getCategory())) {

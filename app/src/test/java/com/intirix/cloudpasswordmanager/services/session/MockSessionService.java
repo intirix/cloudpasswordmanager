@@ -37,6 +37,7 @@ public class MockSessionService implements SessionService {
     public void start() {
         started = true;
         currentSession = new SessionInfo();
+        currentSession.setUsername(username);
     }
 
     @Override

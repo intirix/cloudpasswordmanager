@@ -25,6 +25,8 @@ import java.util.List;
  */
 public class SessionInfo {
 
+    private String username;
+
     private String password;
 
     private long lastUserEvent = System.currentTimeMillis();
@@ -36,6 +38,14 @@ public class SessionInfo {
     private Object backendData;
 
     private String serverVersion;
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
     public void setPassword(String password) {
         this.password = password;

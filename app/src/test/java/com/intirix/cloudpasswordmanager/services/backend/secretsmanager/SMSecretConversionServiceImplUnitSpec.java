@@ -353,6 +353,37 @@ public class SMSecretConversionServiceImplUnitSpec {
 
     }
 
+    @Test
+    public void verifyPasswordMixedCategoryMissingUser() throws IOException, ParseException {
+        List<PasswordBean> passwordBeanList = new ArrayList<>();
+
+
+        Assert.assertEquals(SecretType.PASSWORD, impl.parseSecret(sessionService.getCurrentSession(), "1", parseMockJson("/mock_sm_password_mixed_categories.json"), passwordBeanList ));
+
+        Assert.assertEquals(1,passwordBeanList.size());
+
+        PasswordBean bean = passwordBeanList.get(0);
+
+        Assert.assertEquals("12",bean.getCategory());
+
+    }
+
+    @Test
+    public void verifyPasswordMixedCategoryFoundUser() throws IOException, ParseException {
+        List<PasswordBean> passwordBeanList = new ArrayList<>();
+
+
+        sessionService.setUsername("myuser");
+        sessionService.getCurrentSession().setUsername("myuser");
+        Assert.assertEquals(SecretType.PASSWORD, impl.parseSecret(sessionService.getCurrentSession(), "1", parseMockJson("/mock_sm_password_mixed_categories.json"), passwordBeanList ));
+
+        Assert.assertEquals(1,passwordBeanList.size());
+
+        PasswordBean bean = passwordBeanList.get(0);
+
+        Assert.assertEquals("13",bean.getCategory());
+
+    }
 
 
 
