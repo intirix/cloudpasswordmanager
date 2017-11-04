@@ -60,7 +60,7 @@ dependencies {
     annotationProcessor "com.google.dagger:dagger-compiler:2.11"
 
 
-    testCompile "org.robolectric:robolectric:3.1"
+    testCompile 'org.robolectric:robolectric:3.1'
     testCompile 'org.khronos:opengl-api:gl1.1-android-2.1_r1'
 
     testCompile 'org.easymock:easymock:3.1'
