@@ -26,7 +26,7 @@ import java.io.IOException;
 /**
  * SecretUserData
  */
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2017-07-15T18:23:16.205Z")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2017-11-19T01:54:47.421Z")
 public class SecretUserData {
   /**
    * Can the user write to the secret
@@ -105,7 +105,7 @@ public class SecretUserData {
   }
 
    /**
-   * The key that can decrypted the secret, encrypted by the user's private key
+   * The key that can decrypted the secret, encrypted by the user&#39;s private key
    * @return encryptedKey
   **/
   @ApiModelProperty(value = "The key that can decrypted the secret, encrypted by the user's private key")
@@ -158,6 +158,6 @@ public class SecretUserData {
     }
     return o.toString().replace("\n", "\n    ");
   }
-  
+
 }
 

@@ -26,16 +26,13 @@ import java.io.IOException;
 /**
  * Secret
  */
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2017-07-15T18:23:16.205Z")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2017-11-19T01:54:47.421Z")
 public class Secret {
   @SerializedName("sid")
   private String sid = null;
 
   @SerializedName("hmac")
   private String hmac = null;
-
-  @SerializedName("hmacKey")
-  private String hmacKey = null;
 
   @SerializedName("encryptedSecret")
   private String encryptedSecret = null;
@@ -80,24 +77,6 @@ public class Secret {
 
   public void setHmac(String hmac) {
     this.hmac = hmac;
-  }
-
-  public Secret hmacKey(String hmacKey) {
-    this.hmacKey = hmacKey;
-    return this;
-  }
-
-   /**
-   * key used to generate the HMAC
-   * @return hmacKey
-  **/
-  @ApiModelProperty(value = "key used to generate the HMAC")
-  public String getHmacKey() {
-    return hmacKey;
-  }
-
-  public void setHmacKey(String hmacKey) {
-    this.hmacKey = hmacKey;
   }
 
   public Secret encryptedSecret(String encryptedSecret) {
@@ -166,7 +145,6 @@ public class Secret {
     Secret secret = (Secret) o;
     return Objects.equals(this.sid, secret.sid) &&
         Objects.equals(this.hmac, secret.hmac) &&
-        Objects.equals(this.hmacKey, secret.hmacKey) &&
         Objects.equals(this.encryptedSecret, secret.encryptedSecret) &&
         Objects.equals(this.secretEncryptionProfile, secret.secretEncryptionProfile) &&
         Objects.equals(this.users, secret.users);
@@ -174,7 +152,7 @@ public class Secret {
 
   @Override
   public int hashCode() {
-    return Objects.hash(sid, hmac, hmacKey, encryptedSecret, secretEncryptionProfile, users);
+    return Objects.hash(sid, hmac, encryptedSecret, secretEncryptionProfile, users);
   }
 
 
@@ -185,7 +163,6 @@ public class Secret {
     
     sb.append("    sid: ").append(toIndentedString(sid)).append("\n");
     sb.append("    hmac: ").append(toIndentedString(hmac)).append("\n");
-    sb.append("    hmacKey: ").append(toIndentedString(hmacKey)).append("\n");
     sb.append("    encryptedSecret: ").append(toIndentedString(encryptedSecret)).append("\n");
     sb.append("    secretEncryptionProfile: ").append(toIndentedString(secretEncryptionProfile)).append("\n");
     sb.append("    users: ").append(toIndentedString(users)).append("\n");
@@ -203,6 +180,6 @@ public class Secret {
     }
     return o.toString().replace("\n", "\n    ");
   }
-  
+
 }
 

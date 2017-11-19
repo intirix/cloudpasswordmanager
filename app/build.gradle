@@ -52,7 +52,9 @@ android {
 }
 
 dependencies {
-    compile project(':secretsmanagerapiv1')
+    compile project(':secretsmanagerapiv1') {
+        //exclude module: "org.apache.oltu.oauth2.common"
+    }
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'

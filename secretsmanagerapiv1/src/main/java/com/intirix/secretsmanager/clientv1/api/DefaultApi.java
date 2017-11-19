@@ -2,14 +2,13 @@ package com.intirix.secretsmanager.clientv1.api;
 
 import com.intirix.secretsmanager.clientv1.CollectionFormats.*;
 
-
-
 import retrofit2.Call;
 import retrofit2.http.*;
 
 import okhttp3.RequestBody;
 
 import com.intirix.secretsmanager.clientv1.model.Secret;
+import com.intirix.secretsmanager.clientv1.model.SecretUserData;
 import com.intirix.secretsmanager.clientv1.model.User;
 
 import java.util.ArrayList;
@@ -156,6 +155,21 @@ public interface DefaultApi {
   @PUT("users/{username}/keys/public")
   Call<User> setUserPublicKey(
     @retrofit2.http.Path("username") String username, @retrofit2.http.Body String key
+  );
+
+  /**
+   * Share a secret
+   * 
+   * @param sid  (required)
+   * @param userdata  (required)
+   * @return Call&lt;Secret&gt;
+   */
+  @Headers({
+    "Content-Type:application/json"
+  })
+  @PUT("secrets/{sid}/users/{username}")
+  Call<Secret> shareSecret(
+    @retrofit2.http.Path("sid") String sid, @retrofit2.http.Body SecretUserData userdata
   );
 
   /**

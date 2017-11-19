@@ -26,6 +26,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -73,6 +74,9 @@ public class SMBackendRequestImpl implements BackendRequestInterface {
         if (!client.getApiAuthorizations().containsKey("custom")) {
             client.addAuthorization("custom", interceptor);
         }
+        client.getOkBuilder().connectTimeout(30, TimeUnit.SECONDS);
+        client.getOkBuilder().readTimeout(30, TimeUnit.SECONDS);
+        client.getOkBuilder().writeTimeout(30, TimeUnit.SECONDS);
         DefaultApi api = client.createService(DefaultApi.class);
         return api;
     }

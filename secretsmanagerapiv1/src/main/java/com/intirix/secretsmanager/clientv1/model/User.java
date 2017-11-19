@@ -26,7 +26,7 @@ import java.io.IOException;
 /**
  * User
  */
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2017-07-15T18:23:16.205Z")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2017-11-19T01:54:47.421Z")
 public class User {
   @SerializedName("username")
   private String username = null;
@@ -283,7 +283,7 @@ public class User {
   }
 
    /**
-   * What get's displayed as the user's name
+   * What get&#39;s displayed as the user&#39;s name
    * @return displayName
   **/
   @ApiModelProperty(value = "What get's displayed as the user's name")
@@ -344,6 +344,6 @@ public class User {
     }
     return o.toString().replace("\n", "\n    ");
   }
-  
+
 }
 
