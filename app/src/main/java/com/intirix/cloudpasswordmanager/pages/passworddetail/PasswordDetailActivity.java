@@ -19,12 +19,15 @@ import android.graphics.drawable.PaintDrawable;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.intirix.cloudpasswordmanager.PasswordApplication;
 import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.pages.SecureActivity;
+import com.intirix.cloudpasswordmanager.services.backend.PasswordRequestService;
 import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordBean;
 import com.intirix.cloudpasswordmanager.services.ui.ClipboardService;
 
@@ -77,10 +80,16 @@ public class PasswordDetailActivity extends SecureActivity {
     @BindView(R.id.password_detail_notes_value)
     TextView notes;
 
+    @BindView(R.id.password_detail_share)
+    ImageButton share;
+
     PasswordBean passwordBean;
 
     @Inject
     ClipboardService clipboardService;
+
+    @Inject
+    PasswordRequestService passwordRequestService;
 
     @Override
     protected int getLayoutId() {
@@ -173,7 +182,11 @@ public class PasswordDetailActivity extends SecureActivity {
         return true;
     }
 
-    private void updateForm() {
+    @OnClick(R.id.password_detail_share)
+    public void onClickSharePassword(View v) {
+    }
+
+    void updateForm() {
         website.setText(passwordBean.getWebsite());
         username.setText(passwordBean.getLoginName());
         password.setText(getString(R.string.password_detail_password_masked, passwordBean.getPass().length()));
@@ -194,6 +207,11 @@ public class PasswordDetailActivity extends SecureActivity {
             category.setBackgroundDrawable(bg);
         }
         category.setTextColor(passwordBean.getCategoryForeground());
+        if (passwordRequestService.backendSupportsSharingPasswords()) {
+            share.setVisibility(View.VISIBLE);
+        } else {
+            share.setVisibility(View.GONE);
+        }
     }
 
 }

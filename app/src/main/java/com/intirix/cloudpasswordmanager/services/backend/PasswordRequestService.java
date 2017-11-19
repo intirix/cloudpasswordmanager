@@ -40,4 +40,10 @@ public interface PasswordRequestService {
      * Request the list of passwords
      */
     public void listPasswords();
+
+    /**
+     * Does the backend support sharing passwords
+     * @return
+     */
+    public boolean backendSupportsSharingPasswords();
 }

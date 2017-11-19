@@ -69,6 +69,12 @@ public class SMBackendRequestImpl implements BackendRequestInterface {
         client = new ApiClient();
     }
 
+    @Override
+    public boolean backendSupportsSharingPasswords() {
+        return true;
+    }
+
+
     protected DefaultApi getApi() throws MalformedURLException {
         client.getAdapterBuilder().baseUrl(getUrl(sessionService.getUrl()));
         if (!client.getApiAuthorizations().containsKey("custom")) {

@@ -73,6 +73,11 @@ public class OCPBackendRequestImpl implements BackendRequestInterface {
     }
 
     @Override
+    public boolean backendSupportsSharingPasswords() {
+        return false;
+    }
+
+    @Override
     public void login() {
         final SessionInfo session = sessionService.getCurrentSession();
         session.setBackendData(new OCPSessionData());

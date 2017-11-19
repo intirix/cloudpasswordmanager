@@ -74,4 +74,9 @@ public class PasswordRequestServiceImpl implements PasswordRequestService {
     public void listPasswords() {
         getBackend().listPasswords();
     }
+
+    @Override
+    public boolean backendSupportsSharingPasswords() {
+        return getBackend().backendSupportsSharingPasswords();
+    }
 }
