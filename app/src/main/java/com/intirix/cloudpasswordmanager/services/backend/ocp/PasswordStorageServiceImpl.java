@@ -227,7 +227,11 @@ public class PasswordStorageServiceImpl implements PasswordStorageService {
 
         if (pr.getProperties()!=null && pr.getProperties().length()>2) {
             try {
-                String json = '{' + pr.getProperties() + '}';
+                String json = pr.getProperties();
+                if (!json.startsWith("{") && !json.endsWith("}")) {
+                    json = '{' + pr.getProperties() + '}';
+                }
+
                 JsonObject obj = new JsonParser().parse(json).getAsJsonObject();
 
                 if (obj.has("loginname")) {
