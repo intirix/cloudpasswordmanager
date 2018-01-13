@@ -174,6 +174,23 @@ public class PasswordRestServiceUnitSpec {
     }
 
     @Test
+    public void testListPasswordsWithOne_Api21() throws IOException {
+        setMockResponseJson("/password-list-example1-api21.json");
+        Map<String,PasswordResponse> passwordList = impl.listPasswordsV2().execute().body();
+
+        Assert.assertEquals(1, passwordList.size());
+        PasswordResponse pr = passwordList.values().iterator().next();
+
+        Assert.assertEquals("5", pr.getId());
+        Assert.assertEquals(TESTUSER, pr.getUser_id());
+        Assert.assertEquals("www.github.com", pr.getWebsite());
+        Assert.assertEquals("password", pr.getPass());
+        Assert.assertEquals(223, pr.getProperties().length());
+        Assert.assertFalse(pr.isNotes());
+        Assert.assertEquals("0", pr.getDeleted());
+    }
+
+    @Test
     public void testListPasswordsWithNotes() throws IOException {
         setMockResponseJson("/password-list-example2.json");
         List<PasswordResponse> passwordList = impl.listPasswords().execute().body();
