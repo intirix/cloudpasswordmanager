@@ -80,6 +80,7 @@ public class SMSecretConversionServiceImpl implements SMSecretConversionService 
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void processSecrets(SessionInfo session, Map<String, Secret> response) throws IOException {
         final long t1 = System.currentTimeMillis();
         long loop = 0;

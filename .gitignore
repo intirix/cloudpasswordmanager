@@ -3,6 +3,13 @@
 /local.properties
 /.idea/workspace.xml
 /.idea/libraries
+.idea/caches/
+.idea/codeStyles/
+.idea/copyright/
 .DS_Store
 /build
 /captures
+gradlew
+gradlew.bat
+projectFilesBackup/
+/gradle

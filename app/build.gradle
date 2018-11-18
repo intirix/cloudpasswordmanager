@@ -11,15 +11,14 @@ def getGitHash = { ->
 
 
 android {
-    compileSdkVersion 24
-    buildToolsVersion '26.0.2'
+    compileSdkVersion 28
 
     defaultConfig {
         applicationId "com.intirix.cloudpasswordmanager"
         minSdkVersion 15
-        targetSdkVersion 24
-        versionCode 14
-        versionName "1.5.0"
+        targetSdkVersion 28
+        versionCode 15
+        versionName "1.5.1"
     }
     signingConfigs {
         myrelease {
@@ -49,34 +48,44 @@ android {
         exclude 'META-INF/LICENSE'
         exclude 'META-INF/DEPENDENCIES'
     }
+
+    lintOptions {
+        checkReleaseBuilds false
+        // Or, if you prefer, you can continue to check for errors in release builds,
+        // but continue the build even when errors are found:
+        abortOnError false
+    }
 }
 
 dependencies {
-    compile project(':secretsmanagerapiv1') {
+    implementation project(':secretsmanagerapiv1') {
         //exclude module: "org.apache.oltu.oauth2.common"
     }
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    testCompile 'junit:junit:4.12'
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    testImplementation 'junit:junit:4.12'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
-    annotationProcessor 'com.squareup:javapoet:1.7.0'
+    annotationProcessor 'com.squareup:javapoet:1.9.0'
     annotationProcessor "com.google.dagger:dagger-compiler:2.11"
 
 
-    testCompile 'org.robolectric:robolectric:3.1'
-    testCompile 'org.khronos:opengl-api:gl1.1-android-2.1_r1'
+    testImplementation 'org.robolectric:robolectric:3.4.2'
+    testImplementation 'org.khronos:opengl-api:gl1.1-android-2.1_r1'
 
-    testCompile 'org.easymock:easymock:3.1'
-    testCompile group: 'commons-io', name: 'commons-io', version: '2.5'
+    testImplementation 'org.easymock:easymock:3.1'
+    testImplementation group: 'commons-io', name: 'commons-io', version: '2.5'
 
 
-    compile 'com.android.support:appcompat-v7:24.2.0'
-    compile 'com.jakewharton:butterknife:8.8.1'
-    compile 'com.google.dagger:dagger:2.11'
-    compile 'com.squareup.retrofit2:retrofit:2.1.0'
-    compile 'com.squareup.retrofit2:converter-gson:2.3.0'
-    compile 'com.android.support:design:24.2.0'
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'com.android.support:support-compat:28.0.0'
+    implementation 'com.android.support:animated-vector-drawable:28.0.0'
+    implementation 'com.jakewharton:butterknife:8.8.1'
+    implementation 'com.google.dagger:dagger:2.11'
+    implementation 'com.squareup.retrofit2:retrofit:2.3.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
+    implementation 'com.android.support:design:28.0.0'
+    //implementation group: 'javax.inject', name: 'javax.inject', version: '1'
 
-    compile 'org.greenrobot:eventbus:3.0.0'
+    implementation 'org.greenrobot:eventbus:3.0.0'
     //compile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.57'
-    compile group: 'com.madgag.spongycastle', name: 'prov', version: '1.56.0.0'
+    implementation group: 'com.madgag.spongycastle', name: 'prov', version: '1.56.0.0'
 }

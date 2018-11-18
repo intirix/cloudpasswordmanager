@@ -10,7 +10,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.0'
+        classpath 'com.android.tools.build:gradle:3.2.1'
         classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
     }
 }
@@ -26,11 +26,10 @@ if(hasProperty('target') && target == 'android') {
     apply plugin: 'com.github.dcendents.android-maven'
 
     android {
-        compileSdkVersion 25
-        buildToolsVersion '25.0.2'
+        compileSdkVersion 28
         defaultConfig {
             minSdkVersion 14
-            targetSdkVersion 25
+            targetSdkVersion 28
         }
         compileOptions {
             sourceCompatibility JavaVersion.VERSION_1_7
@@ -95,7 +94,7 @@ if(hasProperty('target') && target == 'android') {
 }
 
 ext {
-    oltu_version = "1.0.1"
+    oltu_version = "1.0.0"
     retrofit_version = "2.3.0"
     swagger_annotations_version = "1.5.15"
     junit_version = "4.12"
@@ -103,12 +102,14 @@ ext {
 }
 
 dependencies {
-    compile "com.squareup.retrofit2:retrofit:$retrofit_version"
-    compile "com.squareup.retrofit2:converter-scalars:$retrofit_version"
-    compile "com.squareup.retrofit2:converter-gson:$retrofit_version"
-    compile "io.swagger:swagger-annotations:$swagger_annotations_version"
-    compile "org.apache.oltu.oauth2:org.apache.oltu.oauth2.client:$oltu_version"
-    compile "org.threeten:threetenbp:$threetenbp_version"
+    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    implementation "com.squareup.retrofit2:converter-scalars:$retrofit_version"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
+    implementation "io.swagger:swagger-annotations:$swagger_annotations_version"
+    implementation("org.apache.oltu.oauth2:org.apache.oltu.oauth2.client:$oltu_version"){
+        //exclude group:'org.apache.oltu.oauth2' , module: 'org.apache.oltu.oauth2.common'
+    }
+    implementation "org.threeten:threetenbp:$threetenbp_version"
 
-    testCompile "junit:junit:$junit_version"
+    testImplementation "junit:junit:$junit_version"
 }
