@@ -24,7 +24,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 import java.security.KeyStoreException;
@@ -37,9 +37,9 @@ import javax.net.ssl.X509TrustManager;
 /**
  * Created by jeff on 8/9/16.
  */
-@RunWith(RobolectricGradleTestRunner.class)
-@Config(constants = BuildConfig.class,
-        application = TestPasswordApplication.class, sdk = 23)
+@RunWith(RobolectricTestRunner.class)
+
+
 public class CustomTrustManagerUnitSpec {
 
     private CustomTrustManager impl;

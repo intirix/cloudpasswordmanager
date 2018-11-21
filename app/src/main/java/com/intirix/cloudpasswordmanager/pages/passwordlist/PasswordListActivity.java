@@ -16,17 +16,22 @@
 package com.intirix.cloudpasswordmanager.pages.passwordlist;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.view.MenuItemCompat;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.intirix.cloudpasswordmanager.PasswordApplication;
 import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.pages.SecureActivity;
+import com.intirix.cloudpasswordmanager.pages.passwordadd.PasswordAddActivity;
+import com.intirix.cloudpasswordmanager.pages.passworddetail.PasswordDetailActivity;
+import com.intirix.cloudpasswordmanager.services.backend.PasswordRequestService;
 import com.intirix.cloudpasswordmanager.services.ui.FilterPasswordService;
 
 import org.greenrobot.eventbus.Subscribe;
@@ -35,12 +40,16 @@ import org.greenrobot.eventbus.ThreadMode;
 import javax.inject.Inject;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 
 public class PasswordListActivity extends SecureActivity implements SearchView.OnQueryTextListener {
 
     public static final String SAVED_SEARCH_QUERY = "SAVED_SEARCH_QUERY";
     @BindView(R.id.password_list_recycler)
     RecyclerView recyclerView;
+
+    @BindView(R.id.password_list_add_button)
+    FloatingActionButton addButton;
 
     PasswordListAdapter adapter;
 
@@ -50,6 +59,9 @@ public class PasswordListActivity extends SecureActivity implements SearchView.O
 
     @Inject
     FilterPasswordService filterPasswordService;
+
+    @Inject
+    PasswordRequestService passwordRequestService;
 
     @Override
     protected int getLayoutId() {
@@ -83,6 +95,12 @@ public class PasswordListActivity extends SecureActivity implements SearchView.O
     protected void onResume() {
         super.onResume();
 
+        if (passwordRequestService.backendSupportsAddingPassword()) {
+            addButton.show();
+        } else {
+            addButton.hide();
+        }
+
         updateProgressDialog();
         filter();
     }
@@ -113,11 +131,17 @@ public class PasswordListActivity extends SecureActivity implements SearchView.O
         getMenuInflater().inflate(R.menu.password_list_action, menu);
 
         final MenuItem searchItem = menu.findItem(R.id.action_search);
-        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        final SearchView searchView = (SearchView)searchItem.getActionView();
         searchView.setOnQueryTextListener(this);
         searchView.setQuery(filterString, false);
 
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @OnClick(R.id.password_list_add_button)
+    public void onAddPassword(View view) {
+        Intent intent = new Intent(this, PasswordAddActivity.class);
+        startActivity(intent);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

@@ -34,7 +34,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
@@ -59,9 +59,9 @@ import okhttp3.internal.tls.OkHostnameVerifier;
 /**
  * Created by jeff on 8/9/16.
  */
-@RunWith(RobolectricGradleTestRunner.class)
-@Config(constants = BuildConfig.class,
-        application = TestPasswordApplication.class, sdk = 23)
+@RunWith(RobolectricTestRunner.class)
+
+
 public class CertPinningServiceImplUnitSpec {
 
     private CertPinningServiceImpl impl;

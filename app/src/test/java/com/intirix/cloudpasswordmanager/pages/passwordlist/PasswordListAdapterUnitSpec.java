@@ -10,9 +10,9 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
-import org.robolectric.util.ActivityController;
+import org.robolectric.android.controller.ActivityController;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,9 +21,9 @@ import java.util.List;
  * Created by jeff on 7/26/17.
  */
 
-@RunWith(RobolectricGradleTestRunner.class)
-@Config(constants = BuildConfig.class,
-        application = TestPasswordApplication.class, sdk = 23)
+@RunWith(RobolectricTestRunner.class)
+
+
 public class PasswordListAdapterUnitSpec extends BaseTestCase {
 
     @Test

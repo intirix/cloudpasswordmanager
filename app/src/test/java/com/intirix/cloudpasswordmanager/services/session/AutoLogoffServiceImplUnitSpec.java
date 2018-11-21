@@ -22,15 +22,15 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 /**
  * Created by jeff on 7/29/16.
  */
-@RunWith(RobolectricGradleTestRunner.class)
-@Config(constants = BuildConfig.class,
-        application = TestPasswordApplication.class, sdk = 23)
+@RunWith(RobolectricTestRunner.class)
+
+
 public class AutoLogoffServiceImplUnitSpec {
 
     private MockSessionService sessionService;

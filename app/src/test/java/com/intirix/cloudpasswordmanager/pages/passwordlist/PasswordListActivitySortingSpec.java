@@ -33,11 +33,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RobolectricTestRunner;
 import org.robolectric.Shadows;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowActivity;
-import org.robolectric.util.ActivityController;
+import org.robolectric.android.controller.ActivityController;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,9 +45,9 @@ import java.util.List;
 /**
  * Created by jeff on 8/17/16.
  */
-@RunWith(RobolectricGradleTestRunner.class)
-@Config(constants = BuildConfig.class,
-        application = TestPasswordApplication.class, sdk = 23)
+@RunWith(RobolectricTestRunner.class)
+
+
 public class PasswordListActivitySortingSpec extends BaseTestCase {
 
     private static final String MOCK_URL = "https://www.example.com/owncloud";

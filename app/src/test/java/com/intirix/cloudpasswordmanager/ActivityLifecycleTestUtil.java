@@ -20,7 +20,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import org.robolectric.Robolectric;
-import org.robolectric.util.ActivityController;
+import org.robolectric.android.controller.ActivityController;
 
 /**
  * Created by jeff on 7/5/16.
@@ -33,7 +33,7 @@ public class ActivityLifecycleTestUtil {
      * @param <T>
      * @return
      */
-    public static <T extends Activity>ActivityController<T> recreateActivity(ActivityController<T> controller) {
+    public static <T extends Activity> ActivityController<T> recreateActivity(ActivityController<T> controller) {
         Intent origIntent = controller.getIntent();
 
         final Bundle state = new Bundle();
@@ -43,9 +43,10 @@ public class ActivityLifecycleTestUtil {
         controller.destroy();
 
         // recreate the activity from the bundle
-        controller = (ActivityController<T>) Robolectric.buildActivity(controller.get().getClass());
-        if (origIntent!=null) {
-            controller.withIntent(origIntent);
+        if (origIntent==null) {
+            controller = (ActivityController<T>) Robolectric.buildActivity(controller.get().getClass());
+        } else {
+            controller = (ActivityController<T>) Robolectric.buildActivity(controller.get().getClass(),origIntent);
         }
 
         controller.create(state).start().restoreInstanceState(state).resume().visible();

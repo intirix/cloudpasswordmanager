@@ -55,6 +55,12 @@ android {
         // but continue the build even when errors are found:
         abortOnError false
     }
+    //enableUnitTestBinaryResources=true
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
 }
 
 dependencies {
@@ -68,7 +74,8 @@ dependencies {
     annotationProcessor "com.google.dagger:dagger-compiler:2.11"
 
 
-    testImplementation 'org.robolectric:robolectric:3.4.2'
+    //testImplementation 'org.robolectric:robolectric:3.4.2'
+    testImplementation "org.robolectric:robolectric:4.0"
     testImplementation 'org.khronos:opengl-api:gl1.1-android-2.1_r1'
 
     testImplementation 'org.easymock:easymock:3.1'

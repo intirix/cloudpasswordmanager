@@ -23,7 +23,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 import java.io.IOException;
@@ -44,9 +44,9 @@ import retrofit2.Response;
  * Created by jeff on 7/14/17.
  */
 
-@RunWith(RobolectricGradleTestRunner.class)
-@Config(constants = BuildConfig.class,
-        application = TestPasswordApplication.class, sdk = 23)
+@RunWith(RobolectricTestRunner.class)
+
+
 public class SMBackendRequestImplUnitSpec {
 
     private SMBackendRequestImpl impl;

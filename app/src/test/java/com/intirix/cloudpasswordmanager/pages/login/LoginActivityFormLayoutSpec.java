@@ -30,16 +30,16 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
-import org.robolectric.util.ActivityController;
+import org.robolectric.android.controller.ActivityController;
 
 /**
  * Created by jeff on 6/19/16.
  */
-@RunWith(RobolectricGradleTestRunner.class)
-@Config(constants = BuildConfig.class,
-        application = TestPasswordApplication.class, sdk = 23)
+@RunWith(RobolectricTestRunner.class)
+
+
 public class LoginActivityFormLayoutSpec extends BaseTestCase {
 
     @Test
@@ -64,7 +64,7 @@ public class LoginActivityFormLayoutSpec extends BaseTestCase {
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.putExtra(LoginActivity.PARAM_ERROR_MESSAGE, "ERROR");
 
-        ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class).withIntent(intent).create().start().resume();
+        ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class,intent).create().start().resume();
         LoginActivity activity = controller.get();
 
         Assert.assertEquals("", activity.urlInput.getText().toString());
@@ -85,7 +85,7 @@ public class LoginActivityFormLayoutSpec extends BaseTestCase {
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.putExtra(LoginActivity.PARAM_ERROR_MESSAGE, "ERROR");
 
-        ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class).withIntent(intent).create().start().resume();
+        ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class,intent).create().start().resume();
         LoginActivity activity = controller.get();
 
         Assert.assertEquals("", activity.urlInput.getText().toString());

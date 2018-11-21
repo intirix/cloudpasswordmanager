@@ -20,6 +20,7 @@ import com.intirix.cloudpasswordmanager.pages.SecureActivity;
 import com.intirix.cloudpasswordmanager.pages.about.AboutActivity;
 import com.intirix.cloudpasswordmanager.pages.keys.ImportPrivateKeyActivity;
 import com.intirix.cloudpasswordmanager.pages.login.LoginActivity;
+import com.intirix.cloudpasswordmanager.pages.passwordadd.PasswordAddActivity;
 import com.intirix.cloudpasswordmanager.pages.passworddetail.PasswordDetailActivity;
 import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordListActivity;
 import com.intirix.cloudpasswordmanager.pages.settings.SettingsActivity;
@@ -46,6 +47,7 @@ public interface ServiceRef {
     void inject(SecureActivity activity);
     void inject(PasswordListActivity activity);
     void inject(PasswordDetailActivity activity);
+    void inject(PasswordAddActivity activity);
     void inject(AboutActivity activity);
     void inject(SettingsActivity activity);
     void inject(SettingsFragment fragment);

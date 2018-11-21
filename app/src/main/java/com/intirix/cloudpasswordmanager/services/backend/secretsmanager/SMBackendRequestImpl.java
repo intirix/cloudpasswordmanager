@@ -63,10 +63,9 @@ public class SMBackendRequestImpl implements BackendRequestInterface {
         this.sessionService = sessionService;
         this.keyStorageService = keyStorageService;
         this.eventService = eventService;
-        this.interceptor = new SMAuthenticationInterceptor(sessionService,keyStorageService,encryptionService);
+        this.interceptor = new SMAuthenticationInterceptor(sessionService, keyStorageService, encryptionService);
         this.encryptionService = encryptionService;
         this.conversionService = conversionService;
-        client = new ApiClient();
     }
 
     @Override
@@ -74,8 +73,16 @@ public class SMBackendRequestImpl implements BackendRequestInterface {
         return true;
     }
 
+    @Override
+    public boolean backendSupportsAddingPasswords() {
+        return true;
+    }
 
     protected DefaultApi getApi() throws MalformedURLException {
+        // lazy load so that Robolectric won't throw errors loading the library
+        if (client==null) {
+            client = new ApiClient();
+        }
         client.getAdapterBuilder().baseUrl(getUrl(sessionService.getUrl()));
         if (!client.getApiAuthorizations().containsKey("custom")) {
             client.addAuthorization("custom", interceptor);

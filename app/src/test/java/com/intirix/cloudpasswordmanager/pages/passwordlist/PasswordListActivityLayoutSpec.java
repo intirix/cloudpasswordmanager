@@ -21,17 +21,19 @@ import android.view.View;
 import com.intirix.cloudpasswordmanager.BaseTestCase;
 import com.intirix.cloudpasswordmanager.BuildConfig;
 import com.intirix.cloudpasswordmanager.TestPasswordApplication;
+import com.intirix.cloudpasswordmanager.services.backend.PasswordRequestService;
 import com.intirix.cloudpasswordmanager.services.session.SessionService;
 import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordBean;
 
+import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RobolectricTestRunner;
 import org.robolectric.Shadows;
+import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
-import org.robolectric.util.ActivityController;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,9 +41,7 @@ import java.util.List;
 /**
  * Created by jeff on 6/19/16.
  */
-@RunWith(RobolectricGradleTestRunner.class)
-@Config(constants = BuildConfig.class,
-        application = TestPasswordApplication.class, sdk = 23)
+@RunWith(RobolectricTestRunner.class)
 public class PasswordListActivityLayoutSpec extends BaseTestCase {
 
     @Test
@@ -142,6 +142,78 @@ public class PasswordListActivityLayoutSpec extends BaseTestCase {
         Assert.assertEquals(pass1.getLoginName(), vh.loginName.getText().toString());
         Assert.assertEquals(View.GONE, vh.categoryName.getVisibility());
 
+        controller.pause().stop().destroy();
+
+    }
+
+    @Test
+    public void verifyAddButtonVisibleForSM() {
+        SessionService sessionService = serviceRef.sessionService();
+
+        final String MOCK_URL = "https://www.example.com/owncloud";
+        final String MOCK_USER = "myusername";
+        final String MOCK_PASS = "mypassword";
+
+        sessionService.setUrl(MOCK_URL);
+        sessionService.setUsername(MOCK_USER);
+        sessionService.start();
+        sessionService.getCurrentSession().setPassword(MOCK_PASS);
+
+        PasswordBean pass1 = new PasswordBean();
+        pass1.setId("0");
+        pass1.setWebsite("www.gmail.com");
+        pass1.setLoginName("myGmailUsername");
+        pass1.setDecrypted(true);
+        List<PasswordBean> passwords = new ArrayList<>();
+        passwords.add(pass1);
+        sessionService.getCurrentSession().setPasswordBeanList(passwords);
+
+        ActivityController<PasswordListActivity> controller = Robolectric.buildActivity(PasswordListActivity.class).create().start();
+        PasswordListActivity activity = controller.get();
+
+        PasswordRequestService passwordRequestService = activity.passwordRequestService;
+        EasyMock.expect(passwordRequestService.backendSupportsAddingPassword()).andReturn(true).anyTimes();
+        EasyMock.replay(passwordRequestService);
+
+        controller.resume();
+
+        Assert.assertEquals(View.VISIBLE, activity.addButton.getVisibility());
+        controller.pause().stop().destroy();
+
+    }
+
+    @Test
+    public void verifyAddButtonInvisibleForOCP() {
+        SessionService sessionService = serviceRef.sessionService();
+
+        final String MOCK_URL = "https://www.example.com/owncloud";
+        final String MOCK_USER = "myusername";
+        final String MOCK_PASS = "mypassword";
+
+        sessionService.setUrl(MOCK_URL);
+        sessionService.setUsername(MOCK_USER);
+        sessionService.start();
+        sessionService.getCurrentSession().setPassword(MOCK_PASS);
+
+        PasswordBean pass1 = new PasswordBean();
+        pass1.setId("0");
+        pass1.setWebsite("www.gmail.com");
+        pass1.setLoginName("myGmailUsername");
+        pass1.setDecrypted(true);
+        List<PasswordBean> passwords = new ArrayList<>();
+        passwords.add(pass1);
+        sessionService.getCurrentSession().setPasswordBeanList(passwords);
+
+        ActivityController<PasswordListActivity> controller = Robolectric.buildActivity(PasswordListActivity.class).create().start();
+        PasswordListActivity activity = controller.get();
+
+        PasswordRequestService passwordRequestService = activity.passwordRequestService;
+        EasyMock.expect(passwordRequestService.backendSupportsAddingPassword()).andReturn(false).anyTimes();
+        EasyMock.replay(passwordRequestService);
+
+        controller.resume();
+
+        Assert.assertEquals(View.GONE, activity.addButton.getVisibility());
         controller.pause().stop().destroy();
 
     }

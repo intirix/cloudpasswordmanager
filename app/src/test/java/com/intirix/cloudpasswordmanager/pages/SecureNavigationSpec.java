@@ -38,20 +38,20 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RobolectricTestRunner;
 import org.robolectric.Shadows;
 import org.robolectric.annotation.Config;
 import org.robolectric.fakes.RoboMenu;
 import org.robolectric.shadows.ShadowActivity;
 import org.robolectric.shadows.ShadowListView;
-import org.robolectric.util.ActivityController;
+import org.robolectric.android.controller.ActivityController;
 
 /**
  * Created by jeff on 10/3/16.
  */
-@RunWith(RobolectricGradleTestRunner.class)
-@Config(constants = BuildConfig.class,
-        application = TestPasswordApplication.class, sdk = 23)
+@RunWith(RobolectricTestRunner.class)
+
+
 public class SecureNavigationSpec extends BaseTestCase {
 
     private ActivityController<PasswordListActivity> controller;

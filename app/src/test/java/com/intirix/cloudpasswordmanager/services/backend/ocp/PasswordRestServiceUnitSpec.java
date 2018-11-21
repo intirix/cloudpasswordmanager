@@ -26,7 +26,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 import java.io.IOException;
@@ -48,9 +48,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * Specification for the REST service impl that gets generated my Retrofit
  * Created by jeff on 6/26/16.
  */
-@RunWith(RobolectricGradleTestRunner.class)
-@Config(constants = BuildConfig.class,
-        application = TestPasswordApplication.class, sdk = 23)
+@RunWith(RobolectricTestRunner.class)
+
+
 public class PasswordRestServiceUnitSpec {
 
     public static final String TESTUSER = "testuser";

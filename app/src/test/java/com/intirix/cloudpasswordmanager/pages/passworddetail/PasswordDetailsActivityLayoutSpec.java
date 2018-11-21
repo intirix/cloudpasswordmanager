@@ -30,9 +30,9 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
-import org.robolectric.util.ActivityController;
+import org.robolectric.android.controller.ActivityController;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,9 +40,9 @@ import java.util.List;
 /**
  * Created by jeff on 6/19/16.
  */
-@RunWith(RobolectricGradleTestRunner.class)
-@Config(constants = BuildConfig.class,
-        application = TestPasswordApplication.class, sdk = 23)
+@RunWith(RobolectricTestRunner.class)
+
+
 public class PasswordDetailsActivityLayoutSpec extends BaseTestCase {
 
     @Test
@@ -72,7 +72,7 @@ public class PasswordDetailsActivityLayoutSpec extends BaseTestCase {
         Intent intent = new Intent();
         intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_ID, bean.getId());
 
-        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class).withIntent(intent).create().start().resume();
+        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class,intent).create().start().resume();
         PasswordDetailActivity activity = controller.get();
 
 
@@ -120,7 +120,7 @@ public class PasswordDetailsActivityLayoutSpec extends BaseTestCase {
         Intent intent = new Intent();
         intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_ID, bean.getId());
 
-        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class).withIntent(intent).create().start().resume();
+        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class,intent).create().start().resume();
         PasswordDetailActivity activity = controller.get();
 
         MockPasswordRequestService passwordRequestService = new MockPasswordRequestService();
@@ -162,7 +162,7 @@ public class PasswordDetailsActivityLayoutSpec extends BaseTestCase {
         Intent intent = new Intent();
         intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_ID, bean.getId());
 
-        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class).withIntent(intent).create().start().resume();
+        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class,intent).create().start().resume();
         PasswordDetailActivity activity = controller.get();
 
         MockPasswordRequestService passwordRequestService = new MockPasswordRequestService();

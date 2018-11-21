@@ -46,4 +46,10 @@ public interface PasswordRequestService {
      * @return
      */
     public boolean backendSupportsSharingPasswords();
+
+    /**
+     * Does the backend support adding a password
+     * @return
+     */
+    public boolean backendSupportsAddingPassword();
 }

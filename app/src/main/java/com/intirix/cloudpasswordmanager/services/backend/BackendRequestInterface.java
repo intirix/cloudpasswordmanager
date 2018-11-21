@@ -46,4 +46,10 @@ public interface BackendRequestInterface {
      * @return
      */
     public boolean backendSupportsSharingPasswords();
+
+    /**
+     * Does this backend support adding a new password
+     * @return
+     */
+    public boolean backendSupportsAddingPasswords();
 }

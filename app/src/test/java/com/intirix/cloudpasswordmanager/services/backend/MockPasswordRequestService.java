@@ -8,6 +8,8 @@ public class MockPasswordRequestService implements PasswordRequestService {
 
     private boolean supportSharing = false;
 
+    private boolean supportAdding = false;
+
     @Override
     public void login() {
 
@@ -35,5 +37,14 @@ public class MockPasswordRequestService implements PasswordRequestService {
 
     public void setSupportSharing(boolean supportSharing) {
         this.supportSharing = supportSharing;
+    }
+
+    @Override
+    public boolean backendSupportsAddingPassword() {
+        return supportAdding;
+    }
+
+    public void setSupportAdding(boolean supportAdding) {
+        this.supportAdding = supportAdding;
     }
 }

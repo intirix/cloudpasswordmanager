@@ -35,7 +35,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RobolectricTestRunner;
 import org.robolectric.Shadows;
 import org.robolectric.annotation.Config;
 import org.robolectric.fakes.RoboMenu;
@@ -43,7 +43,7 @@ import org.robolectric.shadows.ShadowActivity;
 import org.robolectric.shadows.ShadowClipboardManager;
 import org.robolectric.shadows.ShadowLooper;
 import org.robolectric.shadows.ShadowToast;
-import org.robolectric.util.ActivityController;
+import org.robolectric.android.controller.ActivityController;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,9 +51,9 @@ import java.util.List;
 /**
  * Created by jeff on 6/19/16.
  */
-@RunWith(RobolectricGradleTestRunner.class)
-@Config(constants = BuildConfig.class,
-        application = TestPasswordApplication.class, sdk = 23)
+@RunWith(RobolectricTestRunner.class)
+
+
 public class PasswordDetailsActivityActionSpec extends BaseTestCase {
 
     @Test
@@ -71,7 +71,7 @@ public class PasswordDetailsActivityActionSpec extends BaseTestCase {
     public void verifyEmptySessionLogsUserOff() throws Exception {
         Intent intent = new Intent();
         intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_ID, "123");
-        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class).withIntent(intent).create().start().resume();
+        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class,intent).create().start().resume();
         PasswordDetailActivity activity = controller.get();
 
         controller.pause().stop().destroy();
@@ -93,7 +93,7 @@ public class PasswordDetailsActivityActionSpec extends BaseTestCase {
 
         Intent intent = new Intent();
         intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_ID, "54645");
-        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class).withIntent(intent).create().start().resume();
+        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class,intent).create().start().resume();
         PasswordDetailActivity activity = controller.get();
 
         controller.pause().stop().destroy();
@@ -120,7 +120,7 @@ public class PasswordDetailsActivityActionSpec extends BaseTestCase {
 
         Intent intent = new Intent();
         intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_ID, bean.getId());
-        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class).withIntent(intent).create().start().resume();
+        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class,intent).create().start().resume();
         PasswordDetailActivity activity = controller.get();
 
         controller.pause().stop().destroy();
@@ -138,7 +138,7 @@ public class PasswordDetailsActivityActionSpec extends BaseTestCase {
         Intent intent = new Intent();
         intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_ID, bean.getId());
 
-        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class).withIntent(intent).create().start().resume();
+        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class,intent).create().start().resume();
         PasswordDetailActivity activity = controller.get();
 
 
@@ -168,14 +168,13 @@ public class PasswordDetailsActivityActionSpec extends BaseTestCase {
         Intent intent = new Intent();
         intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_ID, bean.getId());
 
-        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class).withIntent(intent).create().start().resume();
+        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class,intent).create().start().resume();
         PasswordDetailActivity activity = controller.get();
 
         activity.passwordCopyAction.performClick();
 
         ClipboardManager clipboard = (ClipboardManager)activity.getSystemService(Context.CLIPBOARD_SERVICE);
-        ShadowClipboardManager shadowClipboardManager = Shadows.shadowOf(clipboard);
-        ClipData primaryClip = shadowClipboardManager.getPrimaryClip();
+        ClipData primaryClip = clipboard.getPrimaryClip();
         Assert.assertNotNull("Missing expected clipboard paste", primaryClip);
         Assert.assertEquals(1, primaryClip.getItemCount());
         Assert.assertEquals(bean.getPass(), primaryClip.getItemAt(0).getText().toString());
@@ -193,14 +192,13 @@ public class PasswordDetailsActivityActionSpec extends BaseTestCase {
         Intent intent = new Intent();
         intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_ID, bean.getId());
 
-        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class).withIntent(intent).create().start().resume();
+        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class,intent).create().start().resume();
         PasswordDetailActivity activity = controller.get();
 
         activity.password.performLongClick();
 
         ClipboardManager clipboard = (ClipboardManager)activity.getSystemService(Context.CLIPBOARD_SERVICE);
-        ShadowClipboardManager shadowClipboardManager = Shadows.shadowOf(clipboard);
-        ClipData primaryClip = shadowClipboardManager.getPrimaryClip();
+        ClipData primaryClip = clipboard.getPrimaryClip();
         Assert.assertNotNull("Missing expected clipboard paste", primaryClip);
         Assert.assertEquals(1, primaryClip.getItemCount());
         Assert.assertEquals(bean.getPass(), primaryClip.getItemAt(0).getText().toString());
@@ -218,14 +216,13 @@ public class PasswordDetailsActivityActionSpec extends BaseTestCase {
         Intent intent = new Intent();
         intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_ID, bean.getId());
 
-        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class).withIntent(intent).create().start().resume();
+        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class,intent).create().start().resume();
         PasswordDetailActivity activity = controller.get();
 
         activity.username.performLongClick();
 
         ClipboardManager clipboard = (ClipboardManager)activity.getSystemService(Context.CLIPBOARD_SERVICE);
-        ShadowClipboardManager shadowClipboardManager = Shadows.shadowOf(clipboard);
-        ClipData primaryClip = shadowClipboardManager.getPrimaryClip();
+        ClipData primaryClip = clipboard.getPrimaryClip();
         Assert.assertNotNull("Missing expected clipboard paste", primaryClip);
         Assert.assertEquals(1, primaryClip.getItemCount());
         Assert.assertEquals(bean.getLoginName(), primaryClip.getItemAt(0).getText().toString());
@@ -244,14 +241,13 @@ public class PasswordDetailsActivityActionSpec extends BaseTestCase {
         Intent intent = new Intent();
         intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_ID, bean.getId());
 
-        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class).withIntent(intent).create().start().resume();
+        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class,intent).create().start().resume();
         PasswordDetailActivity activity = controller.get();
 
         activity.website.performLongClick();
 
         ClipboardManager clipboard = (ClipboardManager)activity.getSystemService(Context.CLIPBOARD_SERVICE);
-        ShadowClipboardManager shadowClipboardManager = Shadows.shadowOf(clipboard);
-        ClipData primaryClip = shadowClipboardManager.getPrimaryClip();
+        ClipData primaryClip = clipboard.getPrimaryClip();
         Assert.assertNotNull("Missing expected clipboard paste", primaryClip);
         Assert.assertEquals(1, primaryClip.getItemCount());
         Assert.assertEquals(bean.getAddress(), primaryClip.getItemAt(0).getText().toString());
@@ -269,14 +265,13 @@ public class PasswordDetailsActivityActionSpec extends BaseTestCase {
         Intent intent = new Intent();
         intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_ID, bean.getId());
 
-        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class).withIntent(intent).create().start().resume();
+        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class,intent).create().start().resume();
         PasswordDetailActivity activity = controller.get();
 
         activity.website.performLongClick();
 
         ClipboardManager clipboard = (ClipboardManager)activity.getSystemService(Context.CLIPBOARD_SERVICE);
-        ShadowClipboardManager shadowClipboardManager = Shadows.shadowOf(clipboard);
-        ClipData primaryClip = shadowClipboardManager.getPrimaryClip();
+        ClipData primaryClip = clipboard.getPrimaryClip();
         Assert.assertNotNull("Missing expected clipboard paste", primaryClip);
         Assert.assertEquals(1, primaryClip.getItemCount());
         Assert.assertEquals(bean.getWebsite(), primaryClip.getItemAt(0).getText().toString());
@@ -320,7 +315,7 @@ public class PasswordDetailsActivityActionSpec extends BaseTestCase {
         Intent intent = new Intent();
         intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_ID, bean.getId());
 
-        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class).withIntent(intent).create().start().resume();
+        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class,intent).create().start().resume();
         PasswordDetailActivity activity = controller.get();
 
 
@@ -370,11 +365,11 @@ public class PasswordDetailsActivityActionSpec extends BaseTestCase {
         Intent intent = new Intent();
         intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_ID, bean.getId());
 
-        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class).withIntent(intent).create().start().resume();
+        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class,intent).create().start().resume();
         PasswordDetailActivity activity = controller.get();
 
         ShadowActivity sact = Shadows.shadowOf(activity);
-        sact.onCreateOptionsMenu(new RoboMenu(activity));
+        //sact.onCreateOptionsMenu(new RoboMenu(activity));
         Shadows.shadowOf(activity.findViewById(R.id.my_toolbar)).dump();
         sact.clickMenuItem(R.id.menuitem_logout);
 

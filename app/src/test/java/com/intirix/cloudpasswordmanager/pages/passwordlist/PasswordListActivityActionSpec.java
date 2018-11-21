@@ -23,7 +23,9 @@ import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.TestPasswordApplication;
 import com.intirix.cloudpasswordmanager.pages.FatalErrorEvent;
 import com.intirix.cloudpasswordmanager.pages.login.LoginActivity;
+import com.intirix.cloudpasswordmanager.pages.passwordadd.PasswordAddActivity;
 import com.intirix.cloudpasswordmanager.pages.passworddetail.PasswordDetailActivity;
+import com.intirix.cloudpasswordmanager.services.backend.PasswordRequestService;
 import com.intirix.cloudpasswordmanager.services.backend.ocp.beans.OCPSessionData;
 import com.intirix.cloudpasswordmanager.services.session.SessionService;
 import com.intirix.cloudpasswordmanager.services.backend.beans.Category;
@@ -36,12 +38,12 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RobolectricTestRunner;
 import org.robolectric.Shadows;
 import org.robolectric.annotation.Config;
 import org.robolectric.fakes.RoboMenu;
 import org.robolectric.shadows.ShadowActivity;
-import org.robolectric.util.ActivityController;
+import org.robolectric.android.controller.ActivityController;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -50,9 +52,9 @@ import java.util.List;
 /**
  * Created by jeff on 6/19/16.
  */
-@RunWith(RobolectricGradleTestRunner.class)
-@Config(constants = BuildConfig.class,
-        application = TestPasswordApplication.class, sdk = 23)
+@RunWith(RobolectricTestRunner.class)
+
+
 public class PasswordListActivityActionSpec extends BaseTestCase {
 
     @Ignore
@@ -94,7 +96,9 @@ public class PasswordListActivityActionSpec extends BaseTestCase {
         PasswordListActivity activity = controller.get();
 
         ShadowActivity sact = Shadows.shadowOf(activity);
-        sact.onCreateOptionsMenu(new RoboMenu(activity));
+        // this became protected
+        // maybe I don't need to invoke it anymore to create the menu
+//        sact.onCreateOptionsMenu(new RoboMenu(activity));
         Shadows.shadowOf(activity.findViewById(R.id.my_toolbar)).dump();
         sact.clickMenuItem(R.id.menuitem_logout);
 
@@ -319,6 +323,40 @@ public class PasswordListActivityActionSpec extends BaseTestCase {
         controller.pause().stop().destroy();
 
     }
+
+
+    @Test
+    public void verifyAddButtonClicked() {
+        SessionService sessionService = serviceRef.sessionService();
+
+        final String MOCK_URL = "https://www.example.com/owncloud";
+        final String MOCK_USER = "myusername";
+        final String MOCK_PASS = "mypassword";
+
+        sessionService.setUrl(MOCK_URL);
+        sessionService.setUsername(MOCK_USER);
+        sessionService.start();
+        sessionService.getCurrentSession().setPassword(MOCK_PASS);
+        sessionService.getCurrentSession().setPasswordBeanList(Collections.<PasswordBean>emptyList());
+
+        ActivityController<PasswordListActivity> controller = Robolectric.buildActivity(PasswordListActivity.class).create().start();
+        PasswordListActivity activity = controller.get();
+        PasswordRequestService passwordRequestService = activity.passwordRequestService;
+        EasyMock.expect(passwordRequestService.backendSupportsAddingPassword()).andReturn(true).anyTimes();
+        EasyMock.replay(passwordRequestService);
+
+
+        activity.addButton.performClick();
+
+        ShadowActivity sact = Shadows.shadowOf(activity);
+        Intent intent = sact.peekNextStartedActivity();
+        Assert.assertNotNull("We should be changing activity, but we are not", intent);
+        Assert.assertEquals("Changing to wrong activity", PasswordAddActivity.class.getName(), intent.getComponent().getClassName());
+
+        controller.pause().stop().destroy();
+
+    }
+
 
 
     protected void assertLogOff(PasswordListActivity activity) {

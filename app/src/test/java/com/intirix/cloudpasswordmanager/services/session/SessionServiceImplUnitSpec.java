@@ -24,16 +24,16 @@ import com.intirix.cloudpasswordmanager.TestPasswordApplication;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
 /**
  * Created by jeff on 6/20/16.
  */
-@RunWith(RobolectricGradleTestRunner.class)
-@Config(constants = BuildConfig.class,
-        application = TestPasswordApplication.class, sdk = 23)
+@RunWith(RobolectricTestRunner.class)
+
+
 public class SessionServiceImplUnitSpec {
 
     public static final String TESTURL = "https://www.example.com/owncloud";
