@@ -383,13 +383,4 @@ public class PasswordDetailsActivityActionSpec extends BaseTestCase {
     }
 
 
-    protected void assertLogOff(Activity activity) {
-        // verify that we are starting the LoginActivity
-        ShadowActivity shadowActivity = Shadows.shadowOf(activity);
-        Intent intent = shadowActivity.peekNextStartedActivity();
-        Assert.assertNotNull("We expected to change activity, but are not", intent);
-        Assert.assertEquals(LoginActivity.class.getName(), intent.getComponent().getClassName());
-        Assert.assertEquals(Intent.FLAG_ACTIVITY_CLEAR_TASK, intent.getFlags() & Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        Assert.assertEquals(Intent.FLAG_ACTIVITY_NEW_TASK, intent.getFlags() & Intent.FLAG_ACTIVITY_NEW_TASK);
-    }
 }

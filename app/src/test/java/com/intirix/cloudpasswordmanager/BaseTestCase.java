@@ -15,14 +15,20 @@
  */
 package com.intirix.cloudpasswordmanager;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 
 import com.intirix.cloudpasswordmanager.injection.CloudPasswordManagerModule;
 import com.intirix.cloudpasswordmanager.injection.MockCloudPasswordManagerModule;
 import com.intirix.cloudpasswordmanager.injection.ServiceRef;
+import com.intirix.cloudpasswordmanager.pages.login.LoginActivity;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.robolectric.RuntimeEnvironment;
+import org.robolectric.Shadows;
+import org.robolectric.shadows.ShadowActivity;
 
 /**
  * Created by jeff on 6/19/16.
@@ -49,4 +55,13 @@ public class BaseTestCase {
         return new MockCloudPasswordManagerModule(RuntimeEnvironment.application);
     }
 
+    protected void assertLogOff(Activity activity) {
+        // verify that we are starting the LoginActivity
+        ShadowActivity shadowActivity = Shadows.shadowOf(activity);
+        Intent intent = shadowActivity.peekNextStartedActivity();
+        Assert.assertNotNull("We expected to change activity, but are not", intent);
+        Assert.assertEquals(LoginActivity.class.getName(), intent.getComponent().getClassName());
+        Assert.assertEquals(Intent.FLAG_ACTIVITY_CLEAR_TASK, intent.getFlags() & Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        Assert.assertEquals(Intent.FLAG_ACTIVITY_NEW_TASK, intent.getFlags() & Intent.FLAG_ACTIVITY_NEW_TASK);
+    }
 }

@@ -1,5 +1,7 @@
 package com.intirix.cloudpasswordmanager.services.backend;
 
+import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordBean;
+
 /**
  * Created by jeff on 11/19/17.
  */
@@ -18,6 +20,16 @@ public class MockPasswordRequestService implements PasswordRequestService {
     @Override
     public boolean isLoginRunning() {
         return false;
+    }
+
+    @Override
+    public boolean isCrudRunning() {
+        return false;
+    }
+
+    @Override
+    public void addPassword(PasswordBean bean) {
+
     }
 
     @Override

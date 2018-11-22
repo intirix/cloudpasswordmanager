@@ -211,4 +211,16 @@ public class OCPBackendRequestImpl implements BackendRequestInterface {
         }
         return (OCPSessionData)session.getBackendData();
     }
+
+    // Unimplemented
+
+    @Override
+    public boolean isCrudRunning() {
+        return false;
+    }
+
+    @Override
+    public void addPassword(PasswordBean bean) {
+
+    }
 }

@@ -15,6 +15,9 @@
  */
 package com.intirix.cloudpasswordmanager.services.backend;
 
+import com.intirix.cloudpasswordmanager.pages.passwordadd.PasswordAddActivity;
+import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordBean;
+
 /**
  * Created by jeff on 6/29/16.
  */
@@ -32,6 +35,12 @@ public interface BackendRequestInterface {
     public boolean isLoginRunning();
 
     /**
+     * Is a crud request still running
+     * @return
+     */
+    public boolean isCrudRunning();
+
+    /**
      * Request the list of categories
      */
     public void listCategories();
@@ -40,6 +49,12 @@ public interface BackendRequestInterface {
      * Request the list of passwords
      */
     public void listPasswords();
+
+    /**
+     * Add a password
+     * @param bean
+     */
+    public void addPassword(PasswordBean bean);
 
     /**
      * Does this backend support sharing passwords

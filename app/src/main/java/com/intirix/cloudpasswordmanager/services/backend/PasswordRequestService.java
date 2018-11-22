@@ -15,6 +15,8 @@
  */
 package com.intirix.cloudpasswordmanager.services.backend;
 
+import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordBean;
+
 /**
  * Created by jeff on 6/29/16.
  */
@@ -30,6 +32,12 @@ public interface PasswordRequestService {
      * @return
      */
     public boolean isLoginRunning();
+
+    /**
+     * Is a create/update/delete request still running
+     * @return
+     */
+    public boolean isCrudRunning();
 
     /**
      * Request the list of categories
@@ -52,4 +60,10 @@ public interface PasswordRequestService {
      * @return
      */
     public boolean backendSupportsAddingPassword();
+
+    /**
+     * Add a password
+     * @param bean
+     */
+    public void addPassword(PasswordBean bean);
 }

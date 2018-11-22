@@ -15,6 +15,7 @@
  */
 package com.intirix.cloudpasswordmanager.services.backend;
 
+import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordBean;
 import com.intirix.cloudpasswordmanager.services.backend.ocp.OCPBackendRequestImpl;
 import com.intirix.cloudpasswordmanager.services.backend.secretsmanager.SMBackendRequestImpl;
 import com.intirix.cloudpasswordmanager.services.session.SessionService;
@@ -63,6 +64,18 @@ public class PasswordRequestServiceImpl implements PasswordRequestService {
             return false;
         }
         return getBackend().isLoginRunning();
+    }
+
+    @Override
+    public boolean isCrudRunning() {
+        return getBackend().isCrudRunning();
+    }
+
+    @Override
+    public void addPassword(PasswordBean bean) {
+        if (getBackend().backendSupportsAddingPasswords()) {
+            getBackend().addPassword(bean);
+        }
     }
 
     @Override

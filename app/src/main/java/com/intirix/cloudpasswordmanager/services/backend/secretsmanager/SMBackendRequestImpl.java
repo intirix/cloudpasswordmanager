@@ -241,6 +241,16 @@ public class SMBackendRequestImpl implements BackendRequestInterface {
     }
 
     @Override
+    public boolean isCrudRunning() {
+        return false;
+    }
+
+    @Override
+    public void addPassword(PasswordBean bean) {
+
+    }
+
+    @Override
     public void listCategories() {
 
     }
