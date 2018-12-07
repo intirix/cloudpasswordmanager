@@ -31,11 +31,20 @@ import org.robolectric.annotation.Config;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.spec.InvalidKeySpecException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.ShortBufferException;
 
 import okhttp3.Interceptor;
 import okhttp3.MediaType;
@@ -48,8 +57,6 @@ import okhttp3.ResponseBody;
  */
 
 @RunWith(RobolectricTestRunner.class)
-
-@Ignore
 public class SMSecretConversionServiceImplUnitSpec {
 
     private MockEventService eventService;
@@ -60,7 +67,7 @@ public class SMSecretConversionServiceImplUnitSpec {
 
     private String responseJson;
 
-    private DefaultApi api;
+    //private DefaultApi api;
 
     private MockSessionService sessionService;
 
@@ -69,6 +76,8 @@ public class SMSecretConversionServiceImplUnitSpec {
     private MockKeyStorageService keyStorageService;
 
     private ColorService colorService;
+
+    private String publicKey;
 
     @Before
     public void setUp() throws IOException {
@@ -83,6 +92,10 @@ public class SMSecretConversionServiceImplUnitSpec {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         IOUtils.copy(getClass().getResourceAsStream("/mock_rsa_key.enc"),buffer);
         keyStorageService.saveEncryptedPrivateKey(buffer.toString("ASCII"));
+
+        buffer.reset();
+        IOUtils.copy(getClass().getResourceAsStream("/mock_rsa_pub.pem"),buffer);
+        publicKey = buffer.toString("ASCII");
 
 
         sessionService.setUsername("admin");
@@ -105,10 +118,10 @@ public class SMSecretConversionServiceImplUnitSpec {
             }
         };
 
-        ApiClient client = new ApiClient();
-        client.addAuthorization("mock",interceptor);
+        //ApiClient client = new ApiClient();
+        //client.addAuthorization("mock",interceptor);
 
-        api = client.createService(DefaultApi.class);
+        //api = client.createService(DefaultApi.class);
 
     }
 
@@ -126,6 +139,7 @@ public class SMSecretConversionServiceImplUnitSpec {
         eventService.assertEventType(CategoryListUpdatedEvent.class);
     }
 
+    /*
     @Test
     public void verifyDecryption() throws IOException {
         loadMock("/mock_secret_empty.json");
@@ -136,6 +150,7 @@ public class SMSecretConversionServiceImplUnitSpec {
         eventService.assertEventType(CategoryListUpdatedEvent.class);
         Assert.assertEquals(1,sessionService.getCurrentSession().getPasswordBeanList().size());
     }
+    */
 
     @Test
     public void verifyEmptyObject() throws IOException, ParseException {
@@ -386,6 +401,33 @@ public class SMSecretConversionServiceImplUnitSpec {
 
     }
 
+    @Test
+    public void verifyCreateSecretFromPasswordBean() throws IOException, NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException, ShortBufferException, NoSuchPaddingException, BadPaddingException, ParseException, InvalidKeySpecException, IllegalBlockSizeException {
+        byte[] aesKey = encryptionService.keyExtend(sessionService.getUsername(), sessionService.getCurrentSession().getPassword());
+        byte[] encryptedPrivateKey = encryptionService.decodeBase64(keyStorageService.getEncryptedPrivateKey());
+        byte[] privateKey = encryptionService.decryptAES(aesKey, encryptedPrivateKey);
+        String privateKeyPem = new String(privateKey,"ASCII");
+
+
+        PasswordBean bean = new PasswordBean();
+        bean.setWebsite("test.com");
+        Secret secret = impl.createSecretFromPasswordBean(sessionService.getCurrentSession(),publicKey, bean);
+
+        List<PasswordBean> list = new ArrayList<>(1);
+
+        SecretType t = impl.parseSecret(sessionService.getCurrentSession(), privateKeyPem,list,"1", secret);
+        Assert.assertEquals(SecretType.PASSWORD, t);
+
+        // parseSecret should have added an item to the list
+        Assert.assertEquals(1, list.size());
+        PasswordBean other = list.get(0);
+
+        // verify the fields were encrypted/decrypted correctly
+        Assert.assertEquals(bean.getWebsite(), other.getWebsite());
+
+        // make sure the object was actually recreated
+        Assert.assertNotSame(bean, other);
+    }
 
 
     private JsonObject parseMockJson(String filename) throws IOException {

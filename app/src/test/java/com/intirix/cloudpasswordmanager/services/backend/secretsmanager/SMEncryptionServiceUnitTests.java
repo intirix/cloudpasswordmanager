@@ -65,7 +65,15 @@ public class SMEncryptionServiceUnitTests {
     }
 
     @Test
-    public void verifyEncryptionDecryption() throws IOException, NoSuchAlgorithmException, NoSuchProviderException, NoSuchPaddingException, InvalidKeyException, InvalidKeySpecException, IllegalBlockSizeException, BadPaddingException, ShortBufferException {
+    public void verifyAESEncryptionDecryption() throws IOException, NoSuchProviderException, InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException {
+        byte[] key = impl.generateKey(32);
+        byte[] data = impl.generateKey(64);
+        byte[] cipher = impl.encryptAES(key, data);
+        Assert.assertNotEquals(impl.encodeBase64(data), impl.encodeBase64(cipher));
+    }
+
+    @Test
+    public void verifyRSAEncryptionDecryption() throws IOException, NoSuchAlgorithmException, NoSuchProviderException, NoSuchPaddingException, InvalidKeyException, InvalidKeySpecException, IllegalBlockSizeException, BadPaddingException, ShortBufferException {
         byte[] privateKey = impl.decryptAES(impl.keyExtend("admin","password"),impl.decodeBase64(encryptedPrivateKey));
         String pem = new String(privateKey, "ASCII");
 

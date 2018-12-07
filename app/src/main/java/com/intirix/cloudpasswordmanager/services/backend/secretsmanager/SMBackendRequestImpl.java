@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.intirix.cloudpasswordmanager.pages.FatalErrorEvent;
 import com.intirix.cloudpasswordmanager.pages.login.LoginSuccessfulEvent;
+import com.intirix.cloudpasswordmanager.pages.passwordadd.PasswordAddedEvent;
 import com.intirix.cloudpasswordmanager.pages.passwordlist.CategoryListUpdatedEvent;
 import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordListUpdatedEvent;
 import com.intirix.cloudpasswordmanager.services.backend.BackendRequestInterface;
@@ -57,6 +58,8 @@ public class SMBackendRequestImpl implements BackendRequestInterface {
     private SMEncryptionService encryptionService;
 
     private boolean loginRunning = false;
+
+    private boolean crudRunning = false;
 
     @Inject
     public SMBackendRequestImpl(SessionService sessionService, KeyStorageService keyStorageService, EventService eventService, SMEncryptionService encryptionService, SMSecretConversionService conversionService) {
@@ -242,12 +245,20 @@ public class SMBackendRequestImpl implements BackendRequestInterface {
 
     @Override
     public boolean isCrudRunning() {
-        return false;
+        return crudRunning;
     }
 
     @Override
     public void addPassword(PasswordBean bean) {
-
+        crudRunning = true;
+        new AsyncTask<Void,Void,Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                crudRunning = false;
+                eventService.postEvent(new PasswordAddedEvent());
+                return null;
+            }
+        }.execute();
     }
 
     @Override

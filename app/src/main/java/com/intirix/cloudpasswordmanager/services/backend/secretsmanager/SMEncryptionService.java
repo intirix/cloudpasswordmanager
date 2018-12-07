@@ -86,6 +86,35 @@ public class SMEncryptionService {
         return Base64.encodeToString(input, Base64.NO_WRAP);
     }
 
+    public byte[] encryptAES(byte[] keyBytes, byte[] input) throws NoSuchPaddingException, NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException, IOException {
+        byte[] ivData = generateKey(AES_BLOCK_SIZE);
+        IvParameterSpec ivspec = new IvParameterSpec(ivData);
+        SecretKeySpec key = new SecretKeySpec(keyBytes, "AES");
+        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS7Padding", "BC");
+
+        try {
+            cipher.init(Cipher.ENCRYPT_MODE, key, ivspec);
+        } catch (InvalidAlgorithmParameterException e) {
+            throw new IOException(e);
+        }
+
+        byte[] encrypted;
+
+        try {
+            encrypted = cipher.doFinal(input);
+        } catch (BadPaddingException e) {
+            throw new IOException(e);
+        } catch (IllegalBlockSizeException e) {
+            throw new IOException(e);
+        }
+
+        byte[] output = new byte[ivData.length+encrypted.length];
+        System.arraycopy(ivData, 0, output, 0, ivData.length);
+        System.arraycopy(encrypted, 0, output, ivData.length, encrypted.length);
+
+        return output;
+    }
+
     public byte[] decryptAES(byte[] keyBytes, byte[] input) throws IOException, InvalidKeyException, NoSuchPaddingException, NoSuchAlgorithmException, NoSuchProviderException {
         byte[] ivData = Arrays.copyOf(input, AES_BLOCK_SIZE);
         byte[] encrypted = Arrays.copyOfRange(input, AES_BLOCK_SIZE, input.length);

@@ -24,6 +24,8 @@ import com.intirix.secretsmanager.clientv1.model.Secret;
 import com.intirix.secretsmanager.clientv1.model.SecretUserData;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
+import java.nio.charset.Charset;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -36,6 +38,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -97,17 +100,7 @@ public class SMSecretConversionServiceImpl implements SMSecretConversionService 
                 for (final String sid: response.keySet()) {
                     final Secret secret = response.get(sid);
                     final long t2 = System.currentTimeMillis();
-                    Map<String, Object> map = (Map<String, Object>) secret.getUsers();
-                    Object obj = map.get(sessionService.getUsername());
-
-                    byte[] encryptedKey = getEncryptedKey(obj);
-
-                    byte[] secretData = decryptSecret(privateKeyPem, secret, encryptedKey);
-
-                    String secretString = new String(secretData, "UTF-8");
-                    JsonElement topElement = new JsonParser().parse(secretString);
-
-                    SecretType parsedType = parseSecret(session, sid, topElement.getAsJsonObject(), passwordBeanList);
+                    SecretType parsedType = parseSecret(session, privateKeyPem, passwordBeanList, sid, secret);
 
                     // if we parsed the password categories, then backfill to the already parsed passwords
                     if (SecretType.PASSWORD_CATEGORY.equals(parsedType)) {
@@ -141,6 +134,20 @@ public class SMSecretConversionServiceImpl implements SMSecretConversionService 
             throw new IOException(e);
         }
 
+    }
+
+    protected SecretType parseSecret(SessionInfo session, String privateKeyPem, List<PasswordBean> passwordBeanList, String sid, Secret secret) throws IOException, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeySpecException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException, ShortBufferException, NoSuchProviderException, ParseException {
+        Map<String, Object> map = (Map<String, Object>) secret.getUsers();
+        Object obj = map.get(sessionService.getUsername());
+
+        byte[] encryptedKey = getEncryptedKey(obj);
+
+        byte[] secretData = decryptSecret(privateKeyPem, secret, encryptedKey);
+
+        String secretString = new String(secretData, "UTF-8");
+        JsonElement topElement = new JsonParser().parse(secretString);
+
+        return parseSecret(session, sid, topElement.getAsJsonObject(), passwordBeanList);
     }
 
     protected SecretType parseSecret(SessionInfo session, String sid, JsonObject topElement, List<PasswordBean> passwordBeanList) throws ParseException{
@@ -340,5 +347,49 @@ public class SMSecretConversionServiceImpl implements SMSecretConversionService 
             encryptedKey = encryptionService.decodeBase64(sud.get("encryptedKey").toString());
         }
         return encryptedKey;
+    }
+
+    @Override
+    public Secret createSecretFromPasswordBean(SessionInfo session, String publicKeyPem, PasswordBean bean) throws IOException {
+        JsonObject obj = new JsonObject();
+        obj.addProperty("type", "password");
+        obj.addProperty("random", UUID.randomUUID().toString());
+        obj.addProperty("website", bean.getWebsite());
+        obj.addProperty("address", bean.getAddress());
+        obj.addProperty("loginName", bean.getLoginName());
+        obj.addProperty("password", bean.getPass());
+        obj.addProperty("notes", bean.getNotes());
+        obj.addProperty("category", bean.getCategory());
+        obj.addProperty("dateChanges", "");
+        String secretString = obj.toString();
+
+        byte[] aesKey = encryptionService.generateKey(32);
+        byte[] hmacKey = encryptionService.generateKey(32);
+        byte[] bothKeys = new byte[aesKey.length+hmacKey.length];
+        System.arraycopy(aesKey, 0, bothKeys, 0, aesKey.length);
+        System.arraycopy(hmacKey, 0, bothKeys, aesKey.length, hmacKey.length);
+
+        try {
+            byte[] encryptedSecret = encryptionService.encryptAES(aesKey, secretString.getBytes(Charset.forName("UTF-8")));
+            byte[] encryptedKeys = encryptionService.encryptRSA(publicKeyPem, bothKeys);
+            String hmac = encryptionService.generateHmac(hmacKey, encryptedSecret);
+
+            Secret secret = new Secret();
+            secret.setEncryptedSecret(encryptionService.encodeBase64(encryptedSecret));
+            secret.setHmac(hmac);
+            secret.setSecretEncryptionProfile("1");
+
+            final Map<String, SecretUserData> userDataMap = new HashMap<>();
+            secret.setUsers(userDataMap);
+
+            SecretUserData userData = new SecretUserData();
+            userData.setCanWrite(SecretUserData.CanWriteEnum.Y);
+            userData.setEncryptedKey(encryptionService.encodeBase64(encryptedKeys));
+            userDataMap.put(sessionService.getUsername(), userData);
+
+            return secret;
+        } catch (Exception e) {
+            throw new IOException(e);
+        }
     }
 }
