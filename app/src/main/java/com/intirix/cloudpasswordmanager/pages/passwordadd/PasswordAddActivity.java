@@ -75,6 +75,14 @@ public class PasswordAddActivity extends SecureActivity {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        if (progressDialog!=null) {
+            progressDialog.dismiss();
+        }
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.password_add_action, menu);
         return super.onCreateOptionsMenu(menu);

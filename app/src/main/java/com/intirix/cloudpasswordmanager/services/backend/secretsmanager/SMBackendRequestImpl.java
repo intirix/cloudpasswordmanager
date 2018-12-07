@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 import android.util.Base64;
 import android.util.Log;
 
+import com.intirix.cloudpasswordmanager.pages.ErrorEvent;
 import com.intirix.cloudpasswordmanager.pages.FatalErrorEvent;
 import com.intirix.cloudpasswordmanager.pages.login.LoginSuccessfulEvent;
 import com.intirix.cloudpasswordmanager.pages.passwordadd.PasswordAddedEvent;
@@ -73,7 +74,7 @@ public class SMBackendRequestImpl implements BackendRequestInterface {
 
     @Override
     public boolean backendSupportsSharingPasswords() {
-        return true;
+        return false;
     }
 
     @Override
@@ -249,16 +250,55 @@ public class SMBackendRequestImpl implements BackendRequestInterface {
     }
 
     @Override
-    public void addPassword(PasswordBean bean) {
+    public void addPassword(final PasswordBean bean) {
         crudRunning = true;
-        new AsyncTask<Void,Void,Void>() {
-            @Override
-            protected Void doInBackground(Void... voids) {
-                crudRunning = false;
-                eventService.postEvent(new PasswordAddedEvent());
-                return null;
-            }
-        }.execute();
+        try {
+            Call<String> call = getApi().getUserPublicKey(sessionService.getUsername());
+            call.enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+                    final String publicKey = response.body();
+                    try {
+                        Secret secret = conversionService.createSecretFromPasswordBean(sessionService.getCurrentSession(), publicKey, bean);
+                        getApi().addSecret(secret).enqueue(new Callback<Secret>() {
+                            @Override
+                            public void onResponse(Call<Secret> call, Response<Secret> response) {
+                                crudRunning = false;
+                                if (response.isSuccessful()) {
+                                    Log.i(TAG, "addPassword() successfully added secret");
+                                    eventService.postEvent(new PasswordAddedEvent());
+                                } else {
+                                    Log.w(TAG, "addPassword() got code="+response.code()+" trying to add secret");
+                                    eventService.postEvent(new ErrorEvent("Response: " + response.code()));
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<Secret> call, Throwable t) {
+                                crudRunning = false;
+                                Log.w(TAG, "addPassword() add secret failed", t);
+                                eventService.postEvent(new ErrorEvent(t.getMessage()));
+                            }
+                        });
+                    } catch (Exception e) {
+                        crudRunning = false;
+                        eventService.postEvent(new ErrorEvent(e.getMessage()));
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<String> call, Throwable t) {
+                    Log.w(TAG, "addPassword() download public key failed", t);
+                    crudRunning = false;
+                    eventService.postEvent(new ErrorEvent(t.getMessage()));
+                }
+            });
+
+
+        } catch (Exception e) {
+            crudRunning = false;
+            eventService.postEvent(new ErrorEvent(e.getMessage()));
+        }
     }
 
     @Override
