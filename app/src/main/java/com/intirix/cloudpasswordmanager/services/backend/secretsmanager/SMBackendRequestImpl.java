@@ -22,11 +22,14 @@ import com.intirix.cloudpasswordmanager.services.ui.EventService;
 import com.intirix.secretsmanager.clientv1.ApiClient;
 import com.intirix.secretsmanager.clientv1.api.DefaultApi;
 import com.intirix.secretsmanager.clientv1.model.Secret;
+import com.intirix.secretsmanager.clientv1.model.User;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -313,6 +316,34 @@ public class SMBackendRequestImpl implements BackendRequestInterface {
         } catch (MalformedURLException e) {
             Log.e(TAG,"Failed to download passwords", e);
             eventService.postEvent(new FatalErrorEvent(e.getMessage()));
+        }
+    }
+
+    @Override
+    public void listUsers() {
+        try {
+            getApi().listUsers().enqueue(new Callback<Map<String, User>>() {
+                @Override
+                public void onResponse(Call<Map<String, User>> call, Response<Map<String, User>> response) {
+                    if (response.isSuccessful()) {
+                        final List<String> users = new ArrayList<>();
+                        users.addAll(response.body().keySet());
+                        Collections.sort(users);
+                        sessionService.getCurrentSession().setServerUsers(users);
+                    } else {
+                        eventService.postEvent(new ErrorEvent("Code: "+response.code()));
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Map<String, User>> call, Throwable t) {
+                    Log.e(TAG, "Failed to get the users", t);
+                    eventService.postEvent(new ErrorEvent(t.getMessage()));
+                }
+            });
+        } catch (MalformedURLException e) {
+            Log.e(TAG, "Failed to get the users", e);
+            eventService.postEvent(new ErrorEvent(e.getMessage()));
         }
     }
 }

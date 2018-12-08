@@ -223,4 +223,9 @@ public class OCPBackendRequestImpl implements BackendRequestInterface {
     public void addPassword(PasswordBean bean) {
 
     }
+
+    @Override
+    public void listUsers() {
+
+    }
 }

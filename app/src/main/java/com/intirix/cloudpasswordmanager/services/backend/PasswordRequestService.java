@@ -50,6 +50,11 @@ public interface PasswordRequestService {
     public void listPasswords();
 
     /**
+     * List the users of the system
+     */
+    public void listUsers();
+
+    /**
      * Does the backend support sharing passwords
      * @return
      */

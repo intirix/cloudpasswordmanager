@@ -35,6 +35,8 @@ public class SessionInfo {
 
     private List<PasswordBean> passwordBeanList;
 
+    private List<String> serverUsers;
+
     private Object backendData;
 
     private String serverVersion;
@@ -61,6 +63,14 @@ public class SessionInfo {
 
     public void setCategoryList(List<Category> list) {
         categoryList = list;
+    }
+
+    public List<String> getServerUsers() {
+        return serverUsers;
+    }
+
+    public void setServerUsers(List<String> serverUsers) {
+        this.serverUsers = serverUsers;
     }
 
     public void setPasswordServerAppVersion(String version) {

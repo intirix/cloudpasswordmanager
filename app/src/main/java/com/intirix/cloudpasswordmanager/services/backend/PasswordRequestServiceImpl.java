@@ -89,6 +89,13 @@ public class PasswordRequestServiceImpl implements PasswordRequestService {
     }
 
     @Override
+    public void listUsers() {
+        if (getBackend().backendSupportsSharingPasswords()) {
+            getBackend().listUsers();
+        }
+    }
+
+    @Override
     public boolean backendSupportsSharingPasswords() {
         return getBackend().backendSupportsSharingPasswords();
     }

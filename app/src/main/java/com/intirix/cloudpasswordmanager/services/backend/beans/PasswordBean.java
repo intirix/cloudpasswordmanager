@@ -15,7 +15,10 @@
  */
 package com.intirix.cloudpasswordmanager.services.backend.beans;
 
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by jeff on 6/28/16.
@@ -62,6 +65,8 @@ public class PasswordBean implements Comparable<PasswordBean>, Cloneable {
 
     private boolean decrypted;
 
+    private final Set<String> sharedUsers = new HashSet<>();
+
     public String getAddress() {
         return address;
     }
@@ -76,6 +81,18 @@ public class PasswordBean implements Comparable<PasswordBean>, Cloneable {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public void clearSharedUsers() {
+        sharedUsers.clear();
+    }
+
+    public void addSharedUsers(String...users) {
+        this.sharedUsers.addAll(Arrays.asList(users));
+    }
+
+    public Set<String> getSharedUsers() {
+        return sharedUsers;
     }
 
     public Calendar getDateChanged() {

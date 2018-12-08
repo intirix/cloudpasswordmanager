@@ -51,6 +51,11 @@ public interface BackendRequestInterface {
     public void listPasswords();
 
     /**
+     * List the users of the system
+     */
+    public void listUsers();
+
+    /**
      * Add a password
      * @param bean
      */

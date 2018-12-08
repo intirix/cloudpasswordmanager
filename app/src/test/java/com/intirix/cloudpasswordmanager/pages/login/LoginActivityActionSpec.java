@@ -128,6 +128,8 @@ public class LoginActivityActionSpec extends BaseTestCase {
         EasyMock.expectLastCall();
         passwordRequestService.listCategories();
         EasyMock.expectLastCall();
+        passwordRequestService.listUsers();
+        EasyMock.expectLastCall();
         EasyMock.replay(passwordRequestService);
 
         controller.start().resume();

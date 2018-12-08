@@ -19,19 +19,16 @@ import android.content.Intent;
 import android.view.View;
 
 import com.intirix.cloudpasswordmanager.BaseTestCase;
-import com.intirix.cloudpasswordmanager.BuildConfig;
 import com.intirix.cloudpasswordmanager.R;
-import com.intirix.cloudpasswordmanager.TestPasswordApplication;
 import com.intirix.cloudpasswordmanager.services.backend.MockPasswordRequestService;
-import com.intirix.cloudpasswordmanager.services.session.SessionService;
 import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordBean;
+import com.intirix.cloudpasswordmanager.services.session.SessionService;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
 import org.robolectric.android.controller.ActivityController;
 
 import java.util.ArrayList;
@@ -43,10 +40,10 @@ import java.util.List;
 @RunWith(RobolectricTestRunner.class)
 
 
-public class PasswordDetailsActivityLayoutSpec extends BaseTestCase {
+public class PasswordDetailsActivityFormLayoutSpec extends BaseTestCase {
 
     @Test
-    public void verifyBaseLayout() throws Exception {
+    public void verifyShareListSaysNoneWhenNotShared() {
         SessionService sessionService = serviceRef.sessionService();
 
         List<PasswordBean> passwords = new ArrayList<>();
@@ -63,58 +60,12 @@ public class PasswordDetailsActivityLayoutSpec extends BaseTestCase {
         bean.setHasSpecial(true);
         bean.setCategoryName("Social");
         bean.setNotes("My facebook login");
+        bean.addSharedUsers("myuser");
 
         passwords.add(bean);
 
         sessionService.start();
-        sessionService.getCurrentSession().setPasswordBeanList(passwords);
-
-        Intent intent = new Intent();
-        intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_ID, bean.getId());
-
-        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class,intent).create().start().resume();
-        PasswordDetailActivity activity = controller.get();
-
-
-        Assert.assertEquals("Password Details", activity.getTitle().toString());
-        Assert.assertEquals(bean.getWebsite(), activity.website.getText().toString());
-        Assert.assertEquals(bean.getLoginName(), activity.username.getText().toString());
-        Assert.assertEquals("********{"+bean.getPass().length()+'}', activity.password.getText().toString());
-        Assert.assertFalse(activity.passwordContainsLower.isEnabled());
-        Assert.assertFalse(activity.passwordContainsNumber.isEnabled());
-        Assert.assertTrue(activity.passwordContainsSpecial.isEnabled());
-        Assert.assertTrue(activity.passwordContainsUpper.isEnabled());
-        Assert.assertNotNull(activity.passwordCopyAction);
-        Assert.assertEquals(View.INVISIBLE, activity.passwordHideAction.getVisibility());
-        Assert.assertEquals(View.VISIBLE, activity.passwordShowAction.getVisibility());
-        Assert.assertEquals(bean.getCategoryName(), activity.category.getText().toString());
-        Assert.assertEquals(bean.getNotes(), activity.notes.getText().toString());
-
-        controller.pause().stop().destroy();
-    }
-
-    @Test
-    public void verifyShareButtonVisibleWhenSharingAvailable() {
-        SessionService sessionService = serviceRef.sessionService();
-
-        List<PasswordBean> passwords = new ArrayList<>();
-
-        PasswordBean bean = new PasswordBean();
-
-        bean.setWebsite("www.facebook.com");
-        bean.setId("4324");
-        bean.setLoginName("markz");
-        bean.setPass("ABCD!@#$");
-        bean.setHasLower(false);
-        bean.setHasUpper(true);
-        bean.setHasNumber(false);
-        bean.setHasSpecial(true);
-        bean.setCategoryName("Social");
-        bean.setNotes("My facebook login");
-
-        passwords.add(bean);
-
-        sessionService.start();
+        sessionService.setUsername("myuser");
         sessionService.getCurrentSession().setPasswordBeanList(passwords);
 
         Intent intent = new Intent();
@@ -129,16 +80,13 @@ public class PasswordDetailsActivityLayoutSpec extends BaseTestCase {
         passwordRequestService.setSupportSharing(true);
         activity.updateForm();
 
-        Assert.assertEquals(View.VISIBLE,activity.findViewById(R.id.password_detail_share).getVisibility());
-        Assert.assertEquals(View.VISIBLE,activity.findViewById(R.id.password_detail_share_label).getVisibility());
-        Assert.assertEquals(View.VISIBLE,activity.findViewById(R.id.password_detail_share_value).getVisibility());
-
+        Assert.assertEquals("None", activity.shareValue.getText().toString());
 
         controller.pause().stop().destroy();
     }
 
     @Test
-    public void verifyShareButtonNotVisibleWhenSharingUnavailable() {
+    public void verifyShareListSaysNoneWhenUnknownSharing() {
         SessionService sessionService = serviceRef.sessionService();
 
         List<PasswordBean> passwords = new ArrayList<>();
@@ -156,9 +104,13 @@ public class PasswordDetailsActivityLayoutSpec extends BaseTestCase {
         bean.setCategoryName("Social");
         bean.setNotes("My facebook login");
 
+        // make sure it is empty
+        bean.clearSharedUsers();
+
         passwords.add(bean);
 
         sessionService.start();
+        sessionService.setUsername("myuser");
         sessionService.getCurrentSession().setPasswordBeanList(passwords);
 
         Intent intent = new Intent();
@@ -170,15 +122,60 @@ public class PasswordDetailsActivityLayoutSpec extends BaseTestCase {
         MockPasswordRequestService passwordRequestService = new MockPasswordRequestService();
         activity.passwordRequestService = passwordRequestService;
 
-        passwordRequestService.setSupportSharing(false);
+        passwordRequestService.setSupportSharing(true);
         activity.updateForm();
 
-        Assert.assertNotEquals(View.VISIBLE,activity.findViewById(R.id.password_detail_share).getVisibility());
-        Assert.assertNotEquals(View.VISIBLE,activity.findViewById(R.id.password_detail_share_label).getVisibility());
-        Assert.assertNotEquals(View.VISIBLE,activity.findViewById(R.id.password_detail_share_value).getVisibility());
-
+        Assert.assertEquals("None", activity.shareValue.getText().toString());
 
         controller.pause().stop().destroy();
     }
+
+
+
+
+    @Test
+    public void verifyShareListSaysOneWhenShared() {
+        SessionService sessionService = serviceRef.sessionService();
+
+        List<PasswordBean> passwords = new ArrayList<>();
+
+        PasswordBean bean = new PasswordBean();
+
+        bean.setWebsite("www.facebook.com");
+        bean.setId("4324");
+        bean.setLoginName("markz");
+        bean.setPass("ABCD!@#$");
+        bean.setHasLower(false);
+        bean.setHasUpper(true);
+        bean.setHasNumber(false);
+        bean.setHasSpecial(true);
+        bean.setCategoryName("Social");
+        bean.setNotes("My facebook login");
+        bean.addSharedUsers("myuser","otheruser");
+
+        passwords.add(bean);
+
+        sessionService.start();
+        sessionService.setUsername("myuser");
+        sessionService.getCurrentSession().setPasswordBeanList(passwords);
+
+        Intent intent = new Intent();
+        intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_ID, bean.getId());
+
+        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class,intent).create().start().resume();
+        PasswordDetailActivity activity = controller.get();
+
+        MockPasswordRequestService passwordRequestService = new MockPasswordRequestService();
+        activity.passwordRequestService = passwordRequestService;
+
+        passwordRequestService.setSupportSharing(true);
+        activity.updateForm();
+
+        Assert.assertEquals("1", activity.shareValue.getText().toString());
+
+        controller.pause().stop().destroy();
+    }
+
+
 
 }

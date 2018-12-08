@@ -336,6 +336,7 @@ public class LoginActivity extends BaseActivity {
 
         passwordRequestService.listPasswords();
         passwordRequestService.listCategories();
+        passwordRequestService.listUsers();
 
         Intent intent = new Intent(LoginActivity.this, PasswordListActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);

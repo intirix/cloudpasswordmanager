@@ -43,6 +43,11 @@ public class MockPasswordRequestService implements PasswordRequestService {
     }
 
     @Override
+    public void listUsers() {
+
+    }
+
+    @Override
     public boolean backendSupportsSharingPasswords() {
         return supportSharing;
     }

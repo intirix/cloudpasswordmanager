@@ -60,6 +60,8 @@
     <string name="password_detail_password_contains_number">2</string>
     <string name="password_detail_password_contains_symbol">$</string>
     <string name="password_detail_category_label">Category:</string>
+    <string name="password_detail_share_label">Users Shared With:</string>
+    <string name="password_detail_share_value_none">None</string>
     <string name="password_detail_notes_label">Notes:</string>
 
     <string name="password_detail_website_toast">URL copied to clipboard</string>

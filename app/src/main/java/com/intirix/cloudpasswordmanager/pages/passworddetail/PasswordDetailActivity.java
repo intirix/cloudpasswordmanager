@@ -31,7 +31,9 @@ import com.intirix.cloudpasswordmanager.services.backend.PasswordRequestService;
 import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordBean;
 import com.intirix.cloudpasswordmanager.services.ui.ClipboardService;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -76,6 +78,12 @@ public class PasswordDetailActivity extends SecureActivity {
 
     @BindView(R.id.password_detail_category_value)
     TextView category;
+
+    @BindView(R.id.password_detail_share_label)
+    TextView shareLabel;
+
+    @BindView(R.id.password_detail_share_value)
+    TextView shareValue;
 
     @BindView(R.id.password_detail_notes_value)
     TextView notes;
@@ -209,8 +217,21 @@ public class PasswordDetailActivity extends SecureActivity {
         category.setTextColor(passwordBean.getCategoryForeground());
         if (passwordRequestService.backendSupportsSharingPasswords()) {
             share.setVisibility(View.VISIBLE);
+            shareLabel.setVisibility(View.VISIBLE);
+            shareValue.setVisibility(View.VISIBLE);
+            Set<String> sharedUsers = new HashSet<>();
+            sharedUsers.addAll(passwordBean.getSharedUsers());
+            sharedUsers.remove(sessionService.getUsername());
+            if (sharedUsers.size()>0) {
+                shareValue.setText(""+sharedUsers.size());
+            } else {
+                shareValue.setText(R.string.password_detail_share_value_none);
+            }
         } else {
             share.setVisibility(View.GONE);
+            shareLabel.setVisibility(View.GONE);
+            shareValue.setVisibility(View.GONE);
+            shareValue.setText(R.string.password_detail_share_value_none);
         }
     }
 
