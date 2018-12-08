@@ -17,6 +17,7 @@ package com.intirix.cloudpasswordmanager.services.backend.beans;
 
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -89,6 +90,10 @@ public class PasswordBean implements Comparable<PasswordBean>, Cloneable {
 
     public void addSharedUsers(String...users) {
         this.sharedUsers.addAll(Arrays.asList(users));
+    }
+
+    public void addSharedUsers(Collection<String> users) {
+        this.sharedUsers.addAll(users);
     }
 
     public Set<String> getSharedUsers() {

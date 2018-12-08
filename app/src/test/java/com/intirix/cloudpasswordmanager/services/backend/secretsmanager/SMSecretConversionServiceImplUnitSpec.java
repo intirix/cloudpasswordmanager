@@ -18,6 +18,7 @@ import com.intirix.cloudpasswordmanager.services.ui.MockEventService;
 import com.intirix.secretsmanager.clientv1.ApiClient;
 import com.intirix.secretsmanager.clientv1.api.DefaultApi;
 import com.intirix.secretsmanager.clientv1.model.Secret;
+import com.intirix.secretsmanager.clientv1.model.SecretUserData;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
@@ -39,7 +40,9 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -157,7 +160,7 @@ public class SMSecretConversionServiceImplUnitSpec {
         List<PasswordBean> passwordBeanList = new ArrayList<>();
 
 
-        Assert.assertNull(impl.parseSecret(sessionService.getCurrentSession(), "1", new JsonParser().parse("{}").getAsJsonObject(), passwordBeanList));
+        Assert.assertNull(impl.parseSecretFromJson(sessionService.getCurrentSession(), "1", null, new JsonParser().parse("{}").getAsJsonObject(), passwordBeanList));
 
         Assert.assertEquals(0, passwordBeanList.size());
     }
@@ -166,8 +169,12 @@ public class SMSecretConversionServiceImplUnitSpec {
     public void verifyPasswordFields() throws IOException, ParseException {
         List<PasswordBean> passwordBeanList = new ArrayList<>();
 
+        Map<String,SecretUserData> userMap = new HashMap<>();
+        userMap.put("myuser", new SecretUserData());
+        Secret secret = new Secret();
+        secret.setUsers(userMap);
 
-        Assert.assertEquals(SecretType.PASSWORD, impl.parseSecret(sessionService.getCurrentSession(), "1", parseMockJson("/mock_sm_password.json"), passwordBeanList ));
+        Assert.assertEquals(SecretType.PASSWORD, impl.parseSecretFromJson(sessionService.getCurrentSession(), "1", secret, parseMockJson("/mock_sm_password.json"), passwordBeanList ));
 
         Assert.assertEquals(1,passwordBeanList.size());
 
@@ -186,6 +193,30 @@ public class SMSecretConversionServiceImplUnitSpec {
         Assert.assertEquals(3, bean.getDateChanged().get(Calendar.DAY_OF_MONTH));
         Assert.assertEquals(10, bean.getLength());
 
+
+    }
+    @Test
+    public void verifySharedUserField() throws IOException, ParseException {
+        List<PasswordBean> passwordBeanList = new ArrayList<>();
+
+        Map<String,SecretUserData> userMap = new HashMap<>();
+        userMap.put("myuser", new SecretUserData());
+        userMap.put("myuser2", new SecretUserData());
+        Secret secret = new Secret();
+        secret.setUsers(userMap);
+
+        Assert.assertEquals(SecretType.PASSWORD, impl.parseSecretFromJson(sessionService.getCurrentSession(), "1", secret, parseMockJson("/mock_sm_password.json"), passwordBeanList ));
+
+        Assert.assertEquals(1,passwordBeanList.size());
+
+        PasswordBean bean = passwordBeanList.get(0);
+
+        Assert.assertTrue(bean.isDecrypted());
+
+        Assert.assertEquals(2, bean.getSharedUsers().size());
+        Assert.assertTrue(bean.getSharedUsers().contains("myuser"));
+        Assert.assertTrue(bean.getSharedUsers().contains("myuser2"));
+
     }
 
     @Test
@@ -193,7 +224,7 @@ public class SMSecretConversionServiceImplUnitSpec {
         List<PasswordBean> passwordBeanList = new ArrayList<>();
 
 
-        Assert.assertEquals(SecretType.PASSWORD, impl.parseSecret(sessionService.getCurrentSession(), "1", parseMockJson("/mock_sm_password_bad_types.json"), passwordBeanList ));
+        Assert.assertEquals(SecretType.PASSWORD, impl.parseSecretFromJson(sessionService.getCurrentSession(), "1", null, parseMockJson("/mock_sm_password_bad_types.json"), passwordBeanList ));
 
         Assert.assertEquals(1,passwordBeanList.size());
 
@@ -216,7 +247,7 @@ public class SMSecretConversionServiceImplUnitSpec {
         List<PasswordBean> passwordBeanList = new ArrayList<>();
 
 
-        Assert.assertEquals(SecretType.PASSWORD_CATEGORY, impl.parseSecret(sessionService.getCurrentSession(), "1", parseMockJson("/mock_sm_categories.json"), passwordBeanList ));
+        Assert.assertEquals(SecretType.PASSWORD_CATEGORY, impl.parseSecretFromJson(sessionService.getCurrentSession(), "1", null, parseMockJson("/mock_sm_categories.json"), passwordBeanList ));
 
         Assert.assertEquals(0,passwordBeanList.size());
 
@@ -373,8 +404,9 @@ public class SMSecretConversionServiceImplUnitSpec {
     public void verifyPasswordMixedCategoryMissingUser() throws IOException, ParseException {
         List<PasswordBean> passwordBeanList = new ArrayList<>();
 
+        Secret secret = new Secret();
 
-        Assert.assertEquals(SecretType.PASSWORD, impl.parseSecret(sessionService.getCurrentSession(), "1", parseMockJson("/mock_sm_password_mixed_categories.json"), passwordBeanList ));
+        Assert.assertEquals(SecretType.PASSWORD, impl.parseSecretFromJson(sessionService.getCurrentSession(), "1", secret, parseMockJson("/mock_sm_password_mixed_categories.json"), passwordBeanList ));
 
         Assert.assertEquals(1,passwordBeanList.size());
 
@@ -388,10 +420,11 @@ public class SMSecretConversionServiceImplUnitSpec {
     public void verifyPasswordMixedCategoryFoundUser() throws IOException, ParseException {
         List<PasswordBean> passwordBeanList = new ArrayList<>();
 
+        Secret secret = new Secret();
 
         sessionService.setUsername("myuser");
         sessionService.getCurrentSession().setUsername("myuser");
-        Assert.assertEquals(SecretType.PASSWORD, impl.parseSecret(sessionService.getCurrentSession(), "1", parseMockJson("/mock_sm_password_mixed_categories.json"), passwordBeanList ));
+        Assert.assertEquals(SecretType.PASSWORD, impl.parseSecretFromJson(sessionService.getCurrentSession(), "1", secret, parseMockJson("/mock_sm_password_mixed_categories.json"), passwordBeanList ));
 
         Assert.assertEquals(1,passwordBeanList.size());
 

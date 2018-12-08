@@ -147,14 +147,14 @@ public class SMSecretConversionServiceImpl implements SMSecretConversionService 
         String secretString = new String(secretData, "UTF-8");
         JsonElement topElement = new JsonParser().parse(secretString);
 
-        return parseSecret(session, sid, topElement.getAsJsonObject(), passwordBeanList);
+        return parseSecretFromJson(session, sid, secret, topElement.getAsJsonObject(), passwordBeanList);
     }
 
-    protected SecretType parseSecret(SessionInfo session, String sid, JsonObject topElement, List<PasswordBean> passwordBeanList) throws ParseException{
+    protected SecretType parseSecretFromJson(SessionInfo session, String sid, Secret secret, JsonObject topElement, List<PasswordBean> passwordBeanList) throws ParseException{
         if (topElement.has("type")) {
             String type = topElement.get("type").getAsString();
             if ("password".equals(type)) {
-                PasswordBean passwordBean = parseSinglePassword(session, sid, topElement, passwordBeanList);
+                PasswordBean passwordBean = parseSinglePassword(session, sid, secret, topElement, passwordBeanList);
                 addCategoryInfoToSinglePassword(session, passwordBean);
 
                 return SecretType.PASSWORD;
@@ -218,8 +218,13 @@ public class SMSecretConversionServiceImpl implements SMSecretConversionService 
 
     }
 
-    private PasswordBean parseSinglePassword(SessionInfo session, String sid, JsonObject topElement, List<PasswordBean> passwordBeanList) throws ParseException {
+    private PasswordBean parseSinglePassword(SessionInfo session, String sid, Secret secret, JsonObject topElement, List<PasswordBean> passwordBeanList) throws ParseException {
         PasswordBean bean = new PasswordBean();
+
+        if (secret!=null && secret.getUsers()!=null) {
+            Map<String, Object> map = (Map<String, Object>) secret.getUsers();
+            bean.addSharedUsers(map.keySet());
+        }
 
         if (topElement.has("userCategory") && topElement.get("userCategory").isJsonObject()) {
             JsonObject userCat = topElement.getAsJsonObject("userCategory");
