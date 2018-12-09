@@ -127,9 +127,9 @@ public class PasswordDetailsActivityLayoutSpec extends BaseTestCase {
         PasswordDetailActivity activity = controller.get();
         MockPasswordRequestService passwordRequestService = new MockPasswordRequestService();
         activity.passwordRequestService = passwordRequestService;
+        passwordRequestService.setSupportSharing(true);
         controller.resume();
 
-        passwordRequestService.setSupportSharing(true);
         activity.updateForm();
 
         Assert.assertEquals(View.VISIBLE,activity.findViewById(R.id.password_detail_share).getVisibility());

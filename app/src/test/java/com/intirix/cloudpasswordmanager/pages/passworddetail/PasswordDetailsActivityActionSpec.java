@@ -59,8 +59,11 @@ public class PasswordDetailsActivityActionSpec extends BaseTestCase {
 
     @Test
     public void verifyNoIntentLogsUserOff() throws Exception {
-        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class).create().start().resume();
+        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class).create().start();
         PasswordDetailActivity activity = controller.get();
+        MockPasswordRequestService passwordRequestService = new MockPasswordRequestService();
+        activity.passwordRequestService = passwordRequestService;
+        controller.resume();
 
         controller.pause().stop().destroy();
 
@@ -72,8 +75,11 @@ public class PasswordDetailsActivityActionSpec extends BaseTestCase {
     public void verifyEmptySessionLogsUserOff() throws Exception {
         Intent intent = new Intent();
         intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_ID, "123");
-        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class,intent).create().start().resume();
+        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class,intent).create().start();
         PasswordDetailActivity activity = controller.get();
+        MockPasswordRequestService passwordRequestService = new MockPasswordRequestService();
+        activity.passwordRequestService = passwordRequestService;
+        controller.resume();
 
         controller.pause().stop().destroy();
 
