@@ -14,6 +14,7 @@
 package com.intirix.secretsmanager.clientv1.model;
 
 import java.util.Objects;
+import java.util.Arrays;
 import com.google.gson.TypeAdapter;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
@@ -22,11 +23,14 @@ import com.google.gson.stream.JsonWriter;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Secret
  */
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2017-11-19T01:54:47.421Z")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2018-12-09T00:53:54.666Z")
 public class Secret {
   @SerializedName("sid")
   private String sid = null;
@@ -41,7 +45,7 @@ public class Secret {
   private String secretEncryptionProfile = null;
 
   @SerializedName("users")
-  private Object users = null;
+  private Map<String, SecretUserData> users = null;
 
   public Secret sid(String sid) {
     this.sid = sid;
@@ -115,8 +119,16 @@ public class Secret {
     this.secretEncryptionProfile = secretEncryptionProfile;
   }
 
-  public Secret users(Object users) {
+  public Secret users(Map<String, SecretUserData> users) {
     this.users = users;
+    return this;
+  }
+
+  public Secret putUsersItem(String key, SecretUserData usersItem) {
+    if (this.users == null) {
+      this.users = new HashMap<String, SecretUserData>();
+    }
+    this.users.put(key, usersItem);
     return this;
   }
 
@@ -125,11 +137,11 @@ public class Secret {
    * @return users
   **/
   @ApiModelProperty(value = "")
-  public Object getUsers() {
+  public Map<String, SecretUserData> getUsers() {
     return users;
   }
 
-  public void setUsers(Object users) {
+  public void setUsers(Map<String, SecretUserData> users) {
     this.users = users;
   }
 

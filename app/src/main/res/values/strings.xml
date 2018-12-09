@@ -12,6 +12,11 @@
     <string name="storage_type_owncloud_passwords">OwnCloud Passwords</string>
     <string name="storage_type_secrets_manager_v1">Secrets Manager</string>
 
+    <string name="info_download_pubkey_message">Downloading public key for %s</string>
+    <string name="info_encrypt_message">Encrypting secret for %s</string>
+    <string name="info_update_secret_message">Uploading secret for %s</string>
+    <string name="error_user_has_not_key">User %s does not have a key</string>
+
     <string name="login_url_hint">https://mycloud.example.com/owncloud</string>
     <string name="login_user_hint">Username</string>
     <string name="login_pass_hint">Password</string>
@@ -63,6 +68,12 @@
     <string name="password_detail_share_label">Users Shared With:</string>
     <string name="password_detail_share_value_none">None</string>
     <string name="password_detail_notes_label">Notes:</string>
+    <string name="password_detail_share_dialog_title">Select Users</string>
+    <string name="password_detail_share_dialog_share_button">Update Access</string>
+    <string name="password_detail_share_dialog_cancel_button">Cancel</string>
+    <string name="password_detail_progress_message">Updating Password</string>
+    <string name="password_detail_info_download_message">Downloading Secret</string>
+    <string name="password_detail_info_decrypt_message">Decrypting Secret</string>
 
     <string name="password_detail_website_toast">URL copied to clipboard</string>
     <string name="password_detail_loginName_toast">Login name copied to clipboard</string>

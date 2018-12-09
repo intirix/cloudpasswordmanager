@@ -73,16 +73,6 @@ public class OCPBackendRequestImpl implements BackendRequestInterface {
     }
 
     @Override
-    public boolean backendSupportsSharingPasswords() {
-        return false;
-    }
-
-    @Override
-    public boolean backendSupportsAddingPasswords() {
-        return false;
-    }
-
-    @Override
     public void login() {
         final SessionInfo session = sessionService.getCurrentSession();
         session.setBackendData(new OCPSessionData());
@@ -217,11 +207,6 @@ public class OCPBackendRequestImpl implements BackendRequestInterface {
     @Override
     public boolean isCrudRunning() {
         return false;
-    }
-
-    @Override
-    public void addPassword(PasswordBean bean) {
-
     }
 
     @Override

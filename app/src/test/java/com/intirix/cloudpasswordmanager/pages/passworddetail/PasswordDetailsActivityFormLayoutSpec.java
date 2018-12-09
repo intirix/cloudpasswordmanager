@@ -71,13 +71,13 @@ public class PasswordDetailsActivityFormLayoutSpec extends BaseTestCase {
         Intent intent = new Intent();
         intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_ID, bean.getId());
 
-        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class,intent).create().start().resume();
+        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class,intent).create().start();
         PasswordDetailActivity activity = controller.get();
-
         MockPasswordRequestService passwordRequestService = new MockPasswordRequestService();
         activity.passwordRequestService = passwordRequestService;
-
         passwordRequestService.setSupportSharing(true);
+        controller.resume();
+
         activity.updateForm();
 
         Assert.assertEquals("None", activity.shareValue.getText().toString());
@@ -116,13 +116,13 @@ public class PasswordDetailsActivityFormLayoutSpec extends BaseTestCase {
         Intent intent = new Intent();
         intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_ID, bean.getId());
 
-        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class,intent).create().start().resume();
+        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class,intent).create().start();
         PasswordDetailActivity activity = controller.get();
-
         MockPasswordRequestService passwordRequestService = new MockPasswordRequestService();
         activity.passwordRequestService = passwordRequestService;
-
         passwordRequestService.setSupportSharing(true);
+        controller.resume();
+
         activity.updateForm();
 
         Assert.assertEquals("None", activity.shareValue.getText().toString());
@@ -162,13 +162,14 @@ public class PasswordDetailsActivityFormLayoutSpec extends BaseTestCase {
         Intent intent = new Intent();
         intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_ID, bean.getId());
 
-        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class,intent).create().start().resume();
+        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class,intent).create().start();
         PasswordDetailActivity activity = controller.get();
-
         MockPasswordRequestService passwordRequestService = new MockPasswordRequestService();
         activity.passwordRequestService = passwordRequestService;
-
         passwordRequestService.setSupportSharing(true);
+        controller.resume();
+
+
         activity.updateForm();
 
         Assert.assertEquals("1", activity.shareValue.getText().toString());

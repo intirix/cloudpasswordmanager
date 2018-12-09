@@ -17,6 +17,8 @@ package com.intirix.cloudpasswordmanager.services.backend;
 
 import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordBean;
 
+import java.util.Set;
+
 /**
  * Created by jeff on 6/29/16.
  */
@@ -71,4 +73,26 @@ public interface PasswordRequestService {
      * @param bean
      */
     public void addPassword(PasswordBean bean);
+
+    /**
+     * Share a password with a user
+     * @param bean
+     * @param user
+     */
+    public void sharePassword(PasswordBean bean, String user);
+
+    /**
+     * Stop sharing a password with a user
+     * @param bean
+     * @param user
+     */
+    public void unsharePassword(PasswordBean bean, String user);
+
+    /**
+     * Update the sharing of a password
+     * @param bean
+     * @param usersToAdd
+     * @param usersToRemove
+     */
+    public void updateSharingForPassword(PasswordBean bean, Set<String> usersToAdd, Set<String> usersToRemove);
 }

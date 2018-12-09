@@ -28,6 +28,7 @@ import com.intirix.cloudpasswordmanager.BuildConfig;
 import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.TestPasswordApplication;
 import com.intirix.cloudpasswordmanager.pages.login.LoginActivity;
+import com.intirix.cloudpasswordmanager.services.backend.MockPasswordRequestService;
 import com.intirix.cloudpasswordmanager.services.session.SessionService;
 import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordBean;
 
@@ -93,8 +94,11 @@ public class PasswordDetailsActivityActionSpec extends BaseTestCase {
 
         Intent intent = new Intent();
         intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_ID, "54645");
-        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class,intent).create().start().resume();
+        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class,intent).create().start();
         PasswordDetailActivity activity = controller.get();
+        MockPasswordRequestService passwordRequestService = new MockPasswordRequestService();
+        activity.passwordRequestService = passwordRequestService;
+        controller.resume();
 
         controller.pause().stop().destroy();
 
@@ -120,8 +124,11 @@ public class PasswordDetailsActivityActionSpec extends BaseTestCase {
 
         Intent intent = new Intent();
         intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_ID, bean.getId());
-        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class,intent).create().start().resume();
+        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class,intent).create().start();
         PasswordDetailActivity activity = controller.get();
+        MockPasswordRequestService passwordRequestService = new MockPasswordRequestService();
+        activity.passwordRequestService = passwordRequestService;
+        controller.resume();
 
         controller.pause().stop().destroy();
 
@@ -138,8 +145,11 @@ public class PasswordDetailsActivityActionSpec extends BaseTestCase {
         Intent intent = new Intent();
         intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_ID, bean.getId());
 
-        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class,intent).create().start().resume();
+        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class,intent).create().start();
         PasswordDetailActivity activity = controller.get();
+        MockPasswordRequestService passwordRequestService = new MockPasswordRequestService();
+        activity.passwordRequestService = passwordRequestService;
+        controller.resume();
 
 
         Assert.assertEquals("********{"+bean.getPass().length()+'}', activity.password.getText().toString());
@@ -168,8 +178,11 @@ public class PasswordDetailsActivityActionSpec extends BaseTestCase {
         Intent intent = new Intent();
         intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_ID, bean.getId());
 
-        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class,intent).create().start().resume();
+        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class,intent).create().start();
         PasswordDetailActivity activity = controller.get();
+        MockPasswordRequestService passwordRequestService = new MockPasswordRequestService();
+        activity.passwordRequestService = passwordRequestService;
+        controller.resume();
 
         activity.passwordCopyAction.performClick();
 
@@ -192,8 +205,11 @@ public class PasswordDetailsActivityActionSpec extends BaseTestCase {
         Intent intent = new Intent();
         intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_ID, bean.getId());
 
-        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class,intent).create().start().resume();
+        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class,intent).create().start();
         PasswordDetailActivity activity = controller.get();
+        MockPasswordRequestService passwordRequestService = new MockPasswordRequestService();
+        activity.passwordRequestService = passwordRequestService;
+        controller.resume();
 
         activity.password.performLongClick();
 
@@ -216,8 +232,11 @@ public class PasswordDetailsActivityActionSpec extends BaseTestCase {
         Intent intent = new Intent();
         intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_ID, bean.getId());
 
-        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class,intent).create().start().resume();
+        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class,intent).create().start();
         PasswordDetailActivity activity = controller.get();
+        MockPasswordRequestService passwordRequestService = new MockPasswordRequestService();
+        activity.passwordRequestService = passwordRequestService;
+        controller.resume();
 
         activity.username.performLongClick();
 
@@ -241,8 +260,11 @@ public class PasswordDetailsActivityActionSpec extends BaseTestCase {
         Intent intent = new Intent();
         intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_ID, bean.getId());
 
-        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class,intent).create().start().resume();
+        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class,intent).create().start();
         PasswordDetailActivity activity = controller.get();
+        MockPasswordRequestService passwordRequestService = new MockPasswordRequestService();
+        activity.passwordRequestService = passwordRequestService;
+        controller.resume();
 
         activity.website.performLongClick();
 
@@ -265,8 +287,11 @@ public class PasswordDetailsActivityActionSpec extends BaseTestCase {
         Intent intent = new Intent();
         intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_ID, bean.getId());
 
-        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class,intent).create().start().resume();
+        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class,intent).create().start();
         PasswordDetailActivity activity = controller.get();
+        MockPasswordRequestService passwordRequestService = new MockPasswordRequestService();
+        activity.passwordRequestService = passwordRequestService;
+        controller.resume();
 
         activity.website.performLongClick();
 
@@ -315,8 +340,11 @@ public class PasswordDetailsActivityActionSpec extends BaseTestCase {
         Intent intent = new Intent();
         intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_ID, bean.getId());
 
-        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class,intent).create().start().resume();
+        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class,intent).create().start();
         PasswordDetailActivity activity = controller.get();
+        MockPasswordRequestService passwordRequestService = new MockPasswordRequestService();
+        activity.passwordRequestService = passwordRequestService;
+        controller.resume();
 
 
         Assert.assertEquals("********{"+bean.getPass().length()+'}', activity.password.getText().toString());
@@ -365,8 +393,11 @@ public class PasswordDetailsActivityActionSpec extends BaseTestCase {
         Intent intent = new Intent();
         intent.putExtra(PasswordDetailActivity.KEY_PASSWORD_ID, bean.getId());
 
-        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class,intent).create().start().resume();
+        ActivityController<PasswordDetailActivity> controller = Robolectric.buildActivity(PasswordDetailActivity.class,intent).create().start();
         PasswordDetailActivity activity = controller.get();
+        MockPasswordRequestService passwordRequestService = new MockPasswordRequestService();
+        activity.passwordRequestService = passwordRequestService;
+        controller.resume();
 
         ShadowActivity sact = Shadows.shadowOf(activity);
         //sact.onCreateOptionsMenu(new RoboMenu(activity));

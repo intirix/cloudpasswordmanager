@@ -24,6 +24,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
 import java.io.IOException;
@@ -83,7 +84,7 @@ public class SMBackendRequestImplUnitSpec {
         SMEncryptionService encryptionService = new SMEncryptionService();
 
         conversionService = EasyMock.createMock(SMSecretConversionService.class);
-        impl = new SMBackendRequestImpl(sessionService, keyStorageService, eventService, encryptionService, conversionService) {
+        impl = new SMBackendRequestImpl(RuntimeEnvironment.application, sessionService, keyStorageService, eventService, encryptionService, conversionService) {
             @Override
             protected DefaultApi getApi() {
                 return api;

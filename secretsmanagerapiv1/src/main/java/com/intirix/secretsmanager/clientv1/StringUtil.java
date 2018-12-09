@@ -13,7 +13,7 @@
 
 package com.intirix.secretsmanager.clientv1;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2017-11-19T01:54:47.421Z")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2018-12-09T00:53:54.666Z")
 public class StringUtil {
   /**
    * Check if the given array contains the given value (with case-insensitive comparison).

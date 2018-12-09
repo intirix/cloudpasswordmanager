@@ -462,6 +462,22 @@ public class SMSecretConversionServiceImplUnitSpec {
         Assert.assertNotSame(bean, other);
     }
 
+    @Test
+    public void testGetKeyForSecret() throws Exception {
+        byte[] userAesKey = encryptionService.keyExtend(sessionService.getUsername(), sessionService.getCurrentSession().getPassword());
+        byte[] encryptedPrivateKey = encryptionService.decodeBase64(keyStorageService.getEncryptedPrivateKey());
+        byte[] privateKey = encryptionService.decryptAES(userAesKey, encryptedPrivateKey);
+        String privateKeyPem = new String(privateKey,"ASCII");
+
+
+        PasswordBean bean = new PasswordBean();
+        bean.setWebsite("test.com");
+        Secret secret = impl.createSecretFromPasswordBean(sessionService.getCurrentSession(),publicKey, bean);
+
+        byte[] secretKeyPair = impl.getKeyForSecret(sessionService.getCurrentSession(), secret);
+        Assert.assertEquals(64, secretKeyPair.length);
+    }
+
 
     private JsonObject parseMockJson(String filename) throws IOException {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();

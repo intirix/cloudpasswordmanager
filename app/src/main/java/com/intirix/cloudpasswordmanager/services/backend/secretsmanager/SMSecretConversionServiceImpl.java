@@ -7,6 +7,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.intirix.cloudpasswordmanager.pages.FatalErrorEvent;
+import com.intirix.cloudpasswordmanager.pages.passworddetail.PasswordUpdatedEvent;
 import com.intirix.cloudpasswordmanager.pages.passwordlist.CategoryListUpdatedEvent;
 import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordListUpdatedEvent;
 import com.intirix.cloudpasswordmanager.services.backend.beans.Category;
@@ -136,8 +137,54 @@ public class SMSecretConversionServiceImpl implements SMSecretConversionService 
 
     }
 
+    @Override
+    public void updateSecret(SessionInfo session, Secret secret) throws IOException {
+        final long t1 = System.currentTimeMillis();
+        long loop = 0;
+
+        try {
+            if (keyStorageService.isPrivateKeyStored()) {
+                byte[] aesKey = encryptionService.keyExtend(sessionService.getUsername(), session.getPassword());
+                byte[] encryptedPrivateKey = encryptionService.decodeBase64(keyStorageService.getEncryptedPrivateKey());
+                byte[] privateKey = encryptionService.decryptAES(aesKey, encryptedPrivateKey);
+                String privateKeyPem = new String(privateKey,"ASCII");
+
+                List<PasswordBean> passwordBeanList = new ArrayList<>();
+                final String sid = secret.getSid();
+
+                final long t2 = System.currentTimeMillis();
+                SecretType parsedType = parseSecret(session, privateKeyPem, passwordBeanList, sid, secret);
+
+                // if we parsed the password categories, then backfill to the already parsed passwords
+                if (SecretType.PASSWORD_CATEGORY.equals(parsedType)) {
+                    addCategoryInfoToAllPasswords(session, passwordBeanList);
+                    eventService.postEvent(new CategoryListUpdatedEvent());
+                }
+                final long t3 = System.currentTimeMillis();
+                final long dt_decrypt = t3-t2;
+                final long dt_elapsed = t3-t1;
+
+                Log.d(TAG, "Decrypted secret "+parsedType.name()+", decryption="+dt_decrypt+"ms, elapsed="+dt_elapsed+"ms");
+
+                for (int i = 0; i<session.getPasswordBeanList().size(); i++) {
+                    if (sid.equals(session.getPasswordBeanList().get(i).getId())) {
+                        Log.d(TAG,"Replacing password "+i+" with newly decrypted secret");
+                        session.getPasswordBeanList().set(i, passwordBeanList.get(0));
+                    }
+                }
+
+                eventService.postEvent(new PasswordUpdatedEvent());
+            } else {
+                eventService.postEvent(new FatalErrorEvent("Decryption key not available"));
+            }
+        } catch (Exception e){
+            Log.w(TAG,"Failed to decrypt secrets", e);
+            throw new IOException(e);
+        }
+    }
+
     protected SecretType parseSecret(SessionInfo session, String privateKeyPem, List<PasswordBean> passwordBeanList, String sid, Secret secret) throws IOException, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeySpecException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException, ShortBufferException, NoSuchProviderException, ParseException {
-        Map<String, Object> map = (Map<String, Object>) secret.getUsers();
+        Map<String, ?> map = (Map<String, ?>) secret.getUsers();
         Object obj = map.get(sessionService.getUsername());
 
         byte[] encryptedKey = getEncryptedKey(obj);
@@ -222,7 +269,7 @@ public class SMSecretConversionServiceImpl implements SMSecretConversionService 
         PasswordBean bean = new PasswordBean();
 
         if (secret!=null && secret.getUsers()!=null) {
-            Map<String, Object> map = (Map<String, Object>) secret.getUsers();
+            Map<String, ?> map = (Map<String, ?>) secret.getUsers();
             bean.addSharedUsers(map.keySet());
         }
 
@@ -396,5 +443,36 @@ public class SMSecretConversionServiceImpl implements SMSecretConversionService 
         } catch (Exception e) {
             throw new IOException(e);
         }
+    }
+
+    @Override
+    public byte[] getKeyForSecret(SessionInfo session, Secret secret) throws IOException, NoSuchAlgorithmException, NoSuchProviderException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, InvalidKeySpecException, ShortBufferException, BadPaddingException {
+        Log.d(TAG,"Generating user aes256 key");
+        byte[] userAesKey = encryptionService.keyExtend(sessionService.getUsername(), session.getPassword());
+        byte[] encryptedPrivateKey = encryptionService.decodeBase64(keyStorageService.getEncryptedPrivateKey());
+        Log.d(TAG,"Decrypting RSA key");
+        byte[] privateKey = encryptionService.decryptAES(userAesKey, encryptedPrivateKey);
+        String privateKeyPem = new String(privateKey,"ASCII");
+
+        Map<String, ?> map = (Map<String, ?>) secret.getUsers();
+        Object obj = map.get(sessionService.getUsername());
+
+        byte[] encryptedKey = getEncryptedKey(obj);
+        Log.d(TAG,"Decrypting secret key");
+        byte[] secretKeyPair = encryptionService.decryptRSA(privateKeyPem, encryptedKey);
+        //byte[] aesKey = Arrays.copyOf(secretKeyPair,32);
+        Log.d(TAG, "Returning keypair");
+
+        return secretKeyPair;
+    }
+
+    @Override
+    public SecretUserData createUserData(SessionInfo session, Secret secret, String user, String publicKeyPem, byte[] secretKeyPair) throws NoSuchPaddingException, NoSuchAlgorithmException, IOException, BadPaddingException, IllegalBlockSizeException, InvalidKeyException, InvalidKeySpecException {
+        SecretUserData data = new SecretUserData();
+        data.setCanWrite(SecretUserData.CanWriteEnum.Y);
+        byte[] encryptedKeys = encryptionService.encryptRSA(publicKeyPem, secretKeyPair);
+
+        data.setEncryptedKey(encryptionService.encodeBase64(encryptedKeys));
+        return data;
     }
 }

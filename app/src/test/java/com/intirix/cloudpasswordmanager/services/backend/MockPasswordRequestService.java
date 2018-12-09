@@ -2,6 +2,8 @@ package com.intirix.cloudpasswordmanager.services.backend;
 
 import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordBean;
 
+import java.util.Set;
+
 /**
  * Created by jeff on 11/19/17.
  */
@@ -44,6 +46,21 @@ public class MockPasswordRequestService implements PasswordRequestService {
 
     @Override
     public void listUsers() {
+
+    }
+
+    @Override
+    public void sharePassword(PasswordBean bean, String user) {
+
+    }
+
+    @Override
+    public void unsharePassword(PasswordBean bean, String user) {
+
+    }
+
+    @Override
+    public void updateSharingForPassword(PasswordBean bean, Set<String> usersToAdd, Set<String> usersToRemove) {
 
     }
 

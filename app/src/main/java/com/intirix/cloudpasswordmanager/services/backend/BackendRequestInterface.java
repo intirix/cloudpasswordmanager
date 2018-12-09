@@ -55,21 +55,4 @@ public interface BackendRequestInterface {
      */
     public void listUsers();
 
-    /**
-     * Add a password
-     * @param bean
-     */
-    public void addPassword(PasswordBean bean);
-
-    /**
-     * Does this backend support sharing passwords
-     * @return
-     */
-    public boolean backendSupportsSharingPasswords();
-
-    /**
-     * Does this backend support adding a new password
-     * @return
-     */
-    public boolean backendSupportsAddingPasswords();
 }

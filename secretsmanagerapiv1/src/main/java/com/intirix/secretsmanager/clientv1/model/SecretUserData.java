@@ -14,6 +14,7 @@
 package com.intirix.secretsmanager.clientv1.model;
 
 import java.util.Objects;
+import java.util.Arrays;
 import com.google.gson.TypeAdapter;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
@@ -26,7 +27,7 @@ import java.io.IOException;
 /**
  * SecretUserData
  */
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2017-11-19T01:54:47.421Z")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2018-12-09T00:53:54.666Z")
 public class SecretUserData {
   /**
    * Can the user write to the secret
@@ -78,6 +79,56 @@ public class SecretUserData {
   @SerializedName("canWrite")
   private CanWriteEnum canWrite = null;
 
+  /**
+   * Can the user share to the secret
+   */
+  @JsonAdapter(CanShareEnum.Adapter.class)
+  public enum CanShareEnum {
+    Y("Y"),
+    
+    N("N");
+
+    private String value;
+
+    CanShareEnum(String value) {
+      this.value = value;
+    }
+
+    public String getValue() {
+      return value;
+    }
+
+    @Override
+    public String toString() {
+      return String.valueOf(value);
+    }
+
+    public static CanShareEnum fromValue(String text) {
+      for (CanShareEnum b : CanShareEnum.values()) {
+        if (String.valueOf(b.value).equals(text)) {
+          return b;
+        }
+      }
+      return null;
+    }
+
+    public static class Adapter extends TypeAdapter<CanShareEnum> {
+      @Override
+      public void write(final JsonWriter jsonWriter, final CanShareEnum enumeration) throws IOException {
+        jsonWriter.value(enumeration.getValue());
+      }
+
+      @Override
+      public CanShareEnum read(final JsonReader jsonReader) throws IOException {
+        String value = jsonReader.nextString();
+        return CanShareEnum.fromValue(String.valueOf(value));
+      }
+    }
+  }
+
+  @SerializedName("canShare")
+  private CanShareEnum canShare = null;
+
   @SerializedName("encryptedKey")
   private String encryptedKey = null;
 
@@ -97,6 +148,24 @@ public class SecretUserData {
 
   public void setCanWrite(CanWriteEnum canWrite) {
     this.canWrite = canWrite;
+  }
+
+  public SecretUserData canShare(CanShareEnum canShare) {
+    this.canShare = canShare;
+    return this;
+  }
+
+   /**
+   * Can the user share to the secret
+   * @return canShare
+  **/
+  @ApiModelProperty(value = "Can the user share to the secret")
+  public CanShareEnum getCanShare() {
+    return canShare;
+  }
+
+  public void setCanShare(CanShareEnum canShare) {
+    this.canShare = canShare;
   }
 
   public SecretUserData encryptedKey(String encryptedKey) {
@@ -128,12 +197,13 @@ public class SecretUserData {
     }
     SecretUserData secretUserData = (SecretUserData) o;
     return Objects.equals(this.canWrite, secretUserData.canWrite) &&
+        Objects.equals(this.canShare, secretUserData.canShare) &&
         Objects.equals(this.encryptedKey, secretUserData.encryptedKey);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(canWrite, encryptedKey);
+    return Objects.hash(canWrite, canShare, encryptedKey);
   }
 
 
@@ -143,6 +213,7 @@ public class SecretUserData {
     sb.append("class SecretUserData {\n");
     
     sb.append("    canWrite: ").append(toIndentedString(canWrite)).append("\n");
+    sb.append("    canShare: ").append(toIndentedString(canShare)).append("\n");
     sb.append("    encryptedKey: ").append(toIndentedString(encryptedKey)).append("\n");
     sb.append("}");
     return sb.toString();

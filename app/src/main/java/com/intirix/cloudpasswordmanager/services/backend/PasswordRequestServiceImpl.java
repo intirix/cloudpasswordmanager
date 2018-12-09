@@ -21,6 +21,8 @@ import com.intirix.cloudpasswordmanager.services.backend.secretsmanager.SMBacken
 import com.intirix.cloudpasswordmanager.services.session.SessionService;
 import com.intirix.cloudpasswordmanager.services.session.StorageType;
 
+import java.util.Set;
+
 import javax.inject.Inject;
 
 /**
@@ -53,6 +55,19 @@ public class PasswordRequestServiceImpl implements PasswordRequestService {
         return null;
     }
 
+    private <T> T getBackend(Class<T> klass) {
+        return (T)getBackend();
+    }
+
+    /**
+     * Does the backend support a particular interface
+     * @param klass
+     * @return
+     */
+    private boolean backendSupportsInterface(Class<?> klass) {
+        return klass.isAssignableFrom(getBackend().getClass());
+    }
+
     @Override
     public void login() {
         getBackend().login();
@@ -73,8 +88,42 @@ public class PasswordRequestServiceImpl implements PasswordRequestService {
 
     @Override
     public void addPassword(PasswordBean bean) {
-        if (getBackend().backendSupportsAddingPasswords()) {
-            getBackend().addPassword(bean);
+        if (backendSupportsAddingPassword()) {
+            getBackend(BackendRequestAddPasswordInterface.class).addPassword(bean);
+        }
+    }
+
+    @Override
+    public void sharePassword(PasswordBean bean, String user) {
+        if (backendSupportsSharingPasswords()) {
+            getBackend(BackendRequestShareInterface.class).sharePassword(bean,user);
+        }
+    }
+
+    @Override
+    public void unsharePassword(PasswordBean bean, String user) {
+        if (backendSupportsSharingPasswords()) {
+            getBackend(BackendRequestShareInterface.class).unsharePassword(bean,user);
+        }
+    }
+
+    @Override
+    public void updateSharingForPassword(PasswordBean bean, Set<String> usersToAdd, Set<String> usersToRemove) {
+        if (backendSupportsSharingPasswords()) {
+            // attempt to let the backend handle the request
+            if (backendSupportsInterface(BackendRequestBatchShareInterface.class)) {
+                getBackend(BackendRequestBatchShareInterface.class).updateSharingForPassword(bean,usersToAdd, usersToRemove);
+            } else {
+                // if the backend can't handle a single request, then just fire off a
+                // bunch of requests at once
+                BackendRequestShareInterface shareInterface = getBackend(BackendRequestShareInterface.class);
+                for (final String user: usersToAdd) {
+                    shareInterface.sharePassword(bean, user);
+                }
+                for (final String user: usersToRemove) {
+                    shareInterface.unsharePassword(bean, user);
+                }
+            }
         }
     }
 
@@ -90,18 +139,19 @@ public class PasswordRequestServiceImpl implements PasswordRequestService {
 
     @Override
     public void listUsers() {
-        if (getBackend().backendSupportsSharingPasswords()) {
+        if (backendSupportsSharingPasswords()) {
             getBackend().listUsers();
         }
     }
 
     @Override
     public boolean backendSupportsSharingPasswords() {
-        return getBackend().backendSupportsSharingPasswords();
+        return backendSupportsInterface(BackendRequestShareInterface.class) ||
+                backendSupportsInterface(BackendRequestBatchShareInterface.class);
     }
 
     @Override
     public boolean backendSupportsAddingPassword() {
-        return getBackend().backendSupportsAddingPasswords();
+        return backendSupportsInterface(BackendRequestAddPasswordInterface.class);
     }
 }

@@ -6,6 +6,8 @@ import retrofit2.Call;
 import retrofit2.http.*;
 
 import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
+import okhttp3.MultipartBody;
 
 import com.intirix.secretsmanager.clientv1.model.Secret;
 import com.intirix.secretsmanager.clientv1.model.SecretUserData;
@@ -15,7 +17,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 
 public interface DefaultApi {
   /**
@@ -128,6 +129,18 @@ public interface DefaultApi {
     
 
   /**
+   * Unshare a secret
+   * 
+   * @param sid  (required)
+   * @param username  (required)
+   * @return Call&lt;Secret&gt;
+   */
+  @DELETE("secrets/{sid}/users/{username}")
+  Call<Secret> unshareSecret(
+    @retrofit2.http.Path("sid") String sid, @retrofit2.http.Path("username") String username
+  );
+
+  /**
    * Set a user&#39;s encrypted private key
    * 
    * @param username  (required)
@@ -161,6 +174,7 @@ public interface DefaultApi {
    * Share a secret
    * 
    * @param sid  (required)
+   * @param username  (required)
    * @param userdata  (required)
    * @return Call&lt;Secret&gt;
    */
@@ -169,7 +183,7 @@ public interface DefaultApi {
   })
   @PUT("secrets/{sid}/users/{username}")
   Call<Secret> shareSecret(
-    @retrofit2.http.Path("sid") String sid, @retrofit2.http.Body SecretUserData userdata
+    @retrofit2.http.Path("sid") String sid, @retrofit2.http.Path("username") String username, @retrofit2.http.Body SecretUserData userdata
   );
 
   /**

@@ -1,16 +1,24 @@
 package com.intirix.cloudpasswordmanager.services.backend.secretsmanager;
 
+import android.content.Context;
 import android.os.AsyncTask;
+import android.se.omapi.Session;
 import android.util.Base64;
 import android.util.Log;
 
+import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.pages.ErrorEvent;
 import com.intirix.cloudpasswordmanager.pages.FatalErrorEvent;
+import com.intirix.cloudpasswordmanager.pages.InfoEvent;
 import com.intirix.cloudpasswordmanager.pages.login.LoginSuccessfulEvent;
 import com.intirix.cloudpasswordmanager.pages.passwordadd.PasswordAddedEvent;
+import com.intirix.cloudpasswordmanager.pages.passworddetail.PasswordUpdatedEvent;
 import com.intirix.cloudpasswordmanager.pages.passwordlist.CategoryListUpdatedEvent;
 import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordListUpdatedEvent;
+import com.intirix.cloudpasswordmanager.services.backend.BackendRequestAddPasswordInterface;
+import com.intirix.cloudpasswordmanager.services.backend.BackendRequestBatchShareInterface;
 import com.intirix.cloudpasswordmanager.services.backend.BackendRequestInterface;
+import com.intirix.cloudpasswordmanager.services.backend.BackendRequestShareInterface;
 import com.intirix.cloudpasswordmanager.services.backend.beans.Category;
 import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordBean;
 import com.intirix.cloudpasswordmanager.services.backend.ocp.beans.PasswordInfo;
@@ -22,6 +30,7 @@ import com.intirix.cloudpasswordmanager.services.ui.EventService;
 import com.intirix.secretsmanager.clientv1.ApiClient;
 import com.intirix.secretsmanager.clientv1.api.DefaultApi;
 import com.intirix.secretsmanager.clientv1.model.Secret;
+import com.intirix.secretsmanager.clientv1.model.SecretUserData;
 import com.intirix.secretsmanager.clientv1.model.User;
 
 import java.io.IOException;
@@ -31,6 +40,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -43,7 +53,7 @@ import retrofit2.Response;
  * Created by jeff on 7/14/17.
  */
 
-public class SMBackendRequestImpl implements BackendRequestInterface {
+public class SMBackendRequestImpl implements BackendRequestInterface, BackendRequestAddPasswordInterface, BackendRequestBatchShareInterface {
 
     private static final String TAG = SMBackendRequestImpl.class.getSimpleName();
 
@@ -65,24 +75,17 @@ public class SMBackendRequestImpl implements BackendRequestInterface {
 
     private boolean crudRunning = false;
 
+    private Context context;
+
     @Inject
-    public SMBackendRequestImpl(SessionService sessionService, KeyStorageService keyStorageService, EventService eventService, SMEncryptionService encryptionService, SMSecretConversionService conversionService) {
+    public SMBackendRequestImpl(Context context, SessionService sessionService, KeyStorageService keyStorageService, EventService eventService, SMEncryptionService encryptionService, SMSecretConversionService conversionService) {
+        this.context = context;
         this.sessionService = sessionService;
         this.keyStorageService = keyStorageService;
         this.eventService = eventService;
         this.interceptor = new SMAuthenticationInterceptor(sessionService, keyStorageService, encryptionService);
         this.encryptionService = encryptionService;
         this.conversionService = conversionService;
-    }
-
-    @Override
-    public boolean backendSupportsSharingPasswords() {
-        return false;
-    }
-
-    @Override
-    public boolean backendSupportsAddingPasswords() {
-        return true;
     }
 
     protected DefaultApi getApi() throws MalformedURLException {
@@ -345,5 +348,93 @@ public class SMBackendRequestImpl implements BackendRequestInterface {
             Log.e(TAG, "Failed to get the users", e);
             eventService.postEvent(new ErrorEvent(e.getMessage()));
         }
+    }
+
+    /**
+     * Use AsyncTask instead of RetroFit's background system since we need to make a bunch of requests
+     * @param bean
+     * @param usersToAdd
+     * @param usersToRemove
+     */
+    @Override
+    public void updateSharingForPassword(final PasswordBean bean, final Set<String> usersToAdd, final Set<String> usersToRemove) {
+        crudRunning = true;
+        new AsyncTask<Void,Void,Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                try {
+                    doUpdateSharingForPassword(bean, usersToAdd, usersToRemove);
+                } catch (Exception e) {
+                    crudRunning = false;
+                    Log.e(TAG,e.getMessage(),e);
+                    eventService.postEvent(new ErrorEvent(e.getMessage()));
+                } finally {
+                    crudRunning = false;
+                }
+                return null;
+            }
+        }.execute();
+    }
+
+    private void doUpdateSharingForPassword(final PasswordBean bean, final Set<String> usersToAdd, final Set<String> usersToRemove) throws Exception {
+        SessionInfo session = sessionService.getCurrentSession();
+
+        eventService.postEvent(new InfoEvent(context.getString(R.string.password_detail_info_download_message)));
+        Response<Secret> resp1 = getApi().getSecret(bean.getId()).execute();
+        Log.d(TAG,"Downloaded secret, code="+resp1.code());
+        Secret secret = resp1.body();
+        eventService.postEvent(new InfoEvent(context.getString(R.string.password_detail_info_decrypt_message)));
+        byte[] secretKeyPair = conversionService.getKeyForSecret(session,secret);
+        Log.d(TAG,"Performing shares");
+
+        int successfulUpdates = 0;
+        for (final String user: usersToAdd) {
+            eventService.postEvent(new InfoEvent(context.getString(R.string.info_download_pubkey_message, user)));
+            Response<String> respPubKey = getApi().getUserPublicKey(user).execute();
+            Log.d(TAG,"Downloaded public key, code="+respPubKey.code());
+            if (respPubKey.isSuccessful()) {
+                eventService.postEvent(new InfoEvent(context.getString(R.string.info_encrypt_message, user)));
+                SecretUserData userData = conversionService.createUserData(session, secret, user, respPubKey.body(), secretKeyPair);
+
+                eventService.postEvent(new InfoEvent(context.getString(R.string.info_update_secret_message, user)));
+                Response<Secret> resp2 = getApi().shareSecret(bean.getId(), user, userData).execute();
+                if (resp2.isSuccessful()) {
+                    Log.d(TAG, "Successfully granted access");
+                    successfulUpdates++;
+                } else {
+                    Log.w(TAG, "Failed to grant access");
+                    eventService.postEvent(new ErrorEvent("Code: "+respPubKey.code()));
+                }
+            } else if (respPubKey.code()==404) {
+                Log.w(TAG,"User has not public key");
+                eventService.postEvent(new ErrorEvent(context.getString(R.string.error_user_has_not_key,user)));
+            } else {
+                Log.w(TAG,"Failed to download public key: "+respPubKey.code());
+                eventService.postEvent(new ErrorEvent("Code: "+respPubKey.code()));
+            }
+        }
+        Log.d(TAG,"Performing unshares");
+
+        for (final String user: usersToRemove) {
+            Log.d(TAG,"Unsharing secret from "+user);
+            Response<Secret> resp3 = getApi().unshareSecret(bean.getId(), user).execute();
+            if (resp3.isSuccessful()) {
+                Log.d(TAG, "Successfully revoked access");
+                successfulUpdates++;
+            } else {
+                Log.w(TAG, "Failed to revoke access");
+                eventService.postEvent(new ErrorEvent("Code: "+resp3.code()));
+            }
+        }
+
+        if (successfulUpdates>0) {
+            Log.d(TAG, "Performed "+successfulUpdates+" updates");
+            eventService.postEvent(new InfoEvent(context.getString(R.string.password_detail_info_download_message)));
+            Response<Secret> resp2 = getApi().getSecret(bean.getId()).execute();
+            conversionService.updateSecret(session, resp2.body());
+        } else {
+            Log.w(TAG, "No updates performed");
+        }
+
     }
 }

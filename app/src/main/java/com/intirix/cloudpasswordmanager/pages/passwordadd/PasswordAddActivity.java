@@ -177,6 +177,7 @@ public class PasswordAddActivity extends SecureActivity {
         updateProgressDialog();
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onInfo(InfoEvent event) {
         updateProgressDialog(event.getMessage());
     }
