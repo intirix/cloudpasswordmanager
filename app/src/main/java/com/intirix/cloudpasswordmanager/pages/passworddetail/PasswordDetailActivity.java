@@ -19,6 +19,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.graphics.drawable.PaintDrawable;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -104,7 +105,7 @@ public class PasswordDetailActivity extends SecureActivity {
     TextView notes;
 
     @BindView(R.id.password_detail_share)
-    ImageButton share;
+    FloatingActionButton share;
 
     PasswordBean passwordBean;
 
@@ -326,7 +327,7 @@ public class PasswordDetailActivity extends SecureActivity {
             }
             category.setTextColor(passwordBean.getCategoryForeground());
             if (displayShareViews != null && displayShareViews) {
-                share.setVisibility(View.VISIBLE);
+                share.show();
                 shareLabel.setVisibility(View.VISIBLE);
                 shareValue.setVisibility(View.VISIBLE);
                 Set<String> sharedUsers = new HashSet<>();
@@ -338,7 +339,7 @@ public class PasswordDetailActivity extends SecureActivity {
                     shareValue.setText(R.string.password_detail_share_value_none);
                 }
             } else {
-                share.setVisibility(View.GONE);
+                share.hide();
                 shareLabel.setVisibility(View.GONE);
                 shareValue.setVisibility(View.GONE);
                 shareValue.setText(R.string.password_detail_share_value_none);
