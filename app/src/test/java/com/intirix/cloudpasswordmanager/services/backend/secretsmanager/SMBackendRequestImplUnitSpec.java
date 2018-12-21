@@ -8,6 +8,7 @@ import com.intirix.cloudpasswordmanager.pages.FatalErrorEvent;
 import com.intirix.cloudpasswordmanager.pages.login.LoginSuccessfulEvent;
 import com.intirix.cloudpasswordmanager.pages.passwordlist.CategoryListUpdatedEvent;
 import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordListUpdatedEvent;
+import com.intirix.cloudpasswordmanager.services.SharedEncryptionService;
 import com.intirix.cloudpasswordmanager.services.backend.ocp.MockCall;
 import com.intirix.cloudpasswordmanager.services.session.MockSessionService;
 import com.intirix.cloudpasswordmanager.services.session.SessionInfo;
@@ -81,7 +82,7 @@ public class SMBackendRequestImplUnitSpec {
         eventService = new MockEventService();
         keyStorageService = EasyMock.createMock(KeyStorageService.class);
         api = EasyMock.createMock(DefaultApi.class);
-        SMEncryptionService encryptionService = new SMEncryptionService();
+        SharedEncryptionService encryptionService = new SharedEncryptionService();
 
         conversionService = EasyMock.createMock(SMSecretConversionService.class);
         impl = new SMBackendRequestImpl(RuntimeEnvironment.application, sessionService, keyStorageService, eventService, encryptionService, conversionService) {

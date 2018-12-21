@@ -11,17 +11,18 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
         <RelativeLayout
             android:id="@+id/settings_savepass_row"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp">
             <TextView
                 style="@style/settings_label"
                 android:id="@+id/settings_savepass_label"
                 android:layout_below="@id/my_toolbar"
-                android:layout_marginTop="20dp"
                 android:layout_alignLeft="@id/my_toolbar"
                 android:text="@string/settings_savepass_label"/>
 
@@ -31,6 +32,26 @@
                 android:layout_alignLeft="@id/settings_savepass_label"
                 android:layout_below="@id/settings_savepass_label"
                 android:text="@string/settings_savepass_never_label"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_marginTop="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                style="@style/settings_label"
+                android:id="@+id/settings_offline_label"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:text="@string/settings_offline_label"/>
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/settings_offline_checkbox"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                />
 
         </RelativeLayout>
 

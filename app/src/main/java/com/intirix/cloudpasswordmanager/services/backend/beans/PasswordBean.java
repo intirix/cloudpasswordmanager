@@ -15,6 +15,7 @@
  */
 package com.intirix.cloudpasswordmanager.services.backend.beans;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
@@ -24,7 +25,7 @@ import java.util.Set;
 /**
  * Created by jeff on 6/28/16.
  */
-public class PasswordBean implements Comparable<PasswordBean>, Cloneable {
+public class PasswordBean implements Comparable<PasswordBean>, Cloneable, Serializable {
 
     private String id;
 

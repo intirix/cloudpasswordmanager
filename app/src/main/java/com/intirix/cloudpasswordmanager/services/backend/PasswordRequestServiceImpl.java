@@ -15,6 +15,8 @@
  */
 package com.intirix.cloudpasswordmanager.services.backend;
 
+import android.util.Log;
+
 import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordBean;
 import com.intirix.cloudpasswordmanager.services.backend.ocp.OCPBackendRequestImpl;
 import com.intirix.cloudpasswordmanager.services.backend.secretsmanager.SMBackendRequestImpl;
@@ -70,6 +72,7 @@ public class PasswordRequestServiceImpl implements PasswordRequestService {
 
     @Override
     public void login() {
+        Log.d(TAG,"login()");
         getBackend().login();
     }
 
@@ -129,16 +132,19 @@ public class PasswordRequestServiceImpl implements PasswordRequestService {
 
     @Override
     public void listCategories() {
+        Log.d(TAG,"listCategories()");
         getBackend().listCategories();
     }
 
     @Override
     public void listPasswords() {
+        Log.d(TAG,"listPassword()");
         getBackend().listPasswords();
     }
 
     @Override
     public void listUsers() {
+        Log.d(TAG,"listUsers()");
         if (backendSupportsSharingPasswords()) {
             getBackend().listUsers();
         }

@@ -30,11 +30,17 @@ import com.intirix.cloudpasswordmanager.BuildConfig;
 import com.intirix.cloudpasswordmanager.PasswordApplication;
 import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.pages.login.LoginActivity;
+import com.intirix.cloudpasswordmanager.pages.passwordadd.PasswordAddedEvent;
+import com.intirix.cloudpasswordmanager.pages.passworddetail.PasswordUpdatedEvent;
+import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordsLoadedEvent;
 import com.intirix.cloudpasswordmanager.services.session.AutoLogoffServiceImpl;
+import com.intirix.cloudpasswordmanager.services.settings.OfflineModeService;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
+import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 
@@ -46,6 +52,9 @@ public abstract class SecureActivity extends BaseActivity {
     private static final String TAG = SecureActivity.class.getSimpleName();
 
     private Handler handler;
+
+    @Inject
+    OfflineModeService offlineModeService;
 
     private Runnable autoLogoffChecker = new Runnable() {
         @Override
@@ -145,5 +154,21 @@ public abstract class SecureActivity extends BaseActivity {
             intent.putExtra(LoginActivity.PARAM_ERROR_MESSAGE, errorMessage);
         }
         startActivity(intent);
+    }
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onPasswordsLoaded(PasswordsLoadedEvent event) {
+        offlineModeService.updateOfflineModeCache(false);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onPasswordAdded(PasswordAddedEvent event) {
+        offlineModeService.updateOfflineModeCache(false);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onPasswordUpdated(PasswordUpdatedEvent event) {
+        offlineModeService.updateOfflineModeCache(false);
     }
 }

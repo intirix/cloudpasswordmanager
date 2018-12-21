@@ -15,20 +15,26 @@
  */
 package com.intirix.cloudpasswordmanager.pages.settings;
 
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.intirix.cloudpasswordmanager.BaseTestCase;
 import com.intirix.cloudpasswordmanager.BuildConfig;
 import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.TestPasswordApplication;
+import com.intirix.cloudpasswordmanager.services.settings.OfflineModeServiceImpl;
 import com.intirix.cloudpasswordmanager.services.settings.SavePasswordEnum;
 import com.intirix.cloudpasswordmanager.services.session.SessionService;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.android.controller.ActivityController;
 
@@ -40,6 +46,12 @@ import org.robolectric.android.controller.ActivityController;
 
 public class SettingsActivityLayoutSpec extends BaseTestCase {
 
+    SharedPreferences preferences;
+
+    @Before
+    public void setUp() {
+        preferences = PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.application);
+    }
 
     @Test
     public void verifyBaseLayout() throws Exception {
@@ -79,6 +91,61 @@ public class SettingsActivityLayoutSpec extends BaseTestCase {
 
         final TextView tv = (TextView)activity.findViewById(R.id.settings_savepass_value);
         Assert.assertEquals(activity.getString(R.string.settings_savepass_always_label), tv.getText().toString());
+
+        controller.pause().stop().destroy();
+    }
+
+    @Test
+    public void verifyOfflineModeOffByDefault() {
+        SessionService sessionService = serviceRef.sessionService();
+
+        final String MOCK_URL = "https://www.example.com/owncloud";
+        final String MOCK_USER = "myusername";
+        final String MOCK_PASS = "mypassword";
+
+        sessionService.setUrl(MOCK_URL);
+        sessionService.setUsername(MOCK_USER);
+        sessionService.start();
+        sessionService.getCurrentSession().setPassword(MOCK_PASS);
+
+
+        ActivityController<SettingsActivity> controller = Robolectric.buildActivity(SettingsActivity.class).create();
+        SettingsActivity activity = controller.get();
+
+        //activity.savePasswordService.changeSavePasswordSetting(SavePasswordEnum.ALWAYS);
+
+        controller.start().resume();
+
+        final CheckBox cb = (CheckBox)activity.findViewById(R.id.settings_offline_checkbox);
+        Assert.assertFalse(cb.isChecked());
+
+        controller.pause().stop().destroy();
+    }
+
+    @Test
+    public void verifyOfflineModeCheckedWhenEnabled() {
+        SessionService sessionService = serviceRef.sessionService();
+        preferences.edit().putBoolean(OfflineModeServiceImpl.PREF_OFFLINE_MODE_SETTING,true).commit();
+
+        final String MOCK_URL = "https://www.example.com/owncloud";
+        final String MOCK_USER = "myusername";
+        final String MOCK_PASS = "mypassword";
+
+        sessionService.setUrl(MOCK_URL);
+        sessionService.setUsername(MOCK_USER);
+        sessionService.start();
+        sessionService.getCurrentSession().setPassword(MOCK_PASS);
+
+
+        ActivityController<SettingsActivity> controller = Robolectric.buildActivity(SettingsActivity.class).create();
+        SettingsActivity activity = controller.get();
+
+        //activity.savePasswordService.changeSavePasswordSetting(SavePasswordEnum.ALWAYS);
+
+        controller.start().resume();
+
+        final CheckBox cb = (CheckBox)activity.findViewById(R.id.settings_offline_checkbox);
+        Assert.assertTrue(cb.isChecked());
 
         controller.pause().stop().destroy();
     }

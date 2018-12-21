@@ -10,6 +10,7 @@ import com.intirix.cloudpasswordmanager.pages.FatalErrorEvent;
 import com.intirix.cloudpasswordmanager.pages.passworddetail.PasswordUpdatedEvent;
 import com.intirix.cloudpasswordmanager.pages.passwordlist.CategoryListUpdatedEvent;
 import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordListUpdatedEvent;
+import com.intirix.cloudpasswordmanager.services.SharedEncryptionService;
 import com.intirix.cloudpasswordmanager.services.backend.beans.Category;
 import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordBean;
 import com.intirix.cloudpasswordmanager.services.backend.ocp.PasswordRestService;
@@ -66,7 +67,7 @@ public class SMSecretConversionServiceImpl implements SMSecretConversionService 
 
     private EventService eventService;
 
-    private SMEncryptionService encryptionService;
+    private SharedEncryptionService encryptionService;
 
     private SessionService sessionService;
 
@@ -75,7 +76,7 @@ public class SMSecretConversionServiceImpl implements SMSecretConversionService 
     private ColorService colorService;
 
     @Inject
-    public SMSecretConversionServiceImpl(SessionService sessionService, EventService eventService, SMEncryptionService encryptionService, KeyStorageService keyStorageService, ColorService colorService) {
+    public SMSecretConversionServiceImpl(SessionService sessionService, EventService eventService, SharedEncryptionService encryptionService, KeyStorageService keyStorageService, ColorService colorService) {
         this.sessionService = sessionService;
         this.eventService = eventService;
         this.encryptionService = encryptionService;
@@ -91,7 +92,7 @@ public class SMSecretConversionServiceImpl implements SMSecretConversionService 
 
         try {
             if (keyStorageService.isPrivateKeyStored()) {
-                byte[] aesKey = encryptionService.keyExtend(sessionService.getUsername(), session.getPassword());
+                byte[] aesKey = encryptionService.keyExtendUsingScrypt(sessionService.getUsername(), session.getPassword());
                 byte[] encryptedPrivateKey = encryptionService.decodeBase64(keyStorageService.getEncryptedPrivateKey());
                 byte[] privateKey = encryptionService.decryptAES(aesKey, encryptedPrivateKey);
                 String privateKeyPem = new String(privateKey,"ASCII");
@@ -144,7 +145,7 @@ public class SMSecretConversionServiceImpl implements SMSecretConversionService 
 
         try {
             if (keyStorageService.isPrivateKeyStored()) {
-                byte[] aesKey = encryptionService.keyExtend(sessionService.getUsername(), session.getPassword());
+                byte[] aesKey = encryptionService.keyExtendUsingScrypt(sessionService.getUsername(), session.getPassword());
                 byte[] encryptedPrivateKey = encryptionService.decodeBase64(keyStorageService.getEncryptedPrivateKey());
                 byte[] privateKey = encryptionService.decryptAES(aesKey, encryptedPrivateKey);
                 String privateKeyPem = new String(privateKey,"ASCII");
@@ -448,7 +449,7 @@ public class SMSecretConversionServiceImpl implements SMSecretConversionService 
     @Override
     public byte[] getKeyForSecret(SessionInfo session, Secret secret) throws IOException, NoSuchAlgorithmException, NoSuchProviderException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, InvalidKeySpecException, ShortBufferException, BadPaddingException {
         Log.d(TAG,"Generating user aes256 key");
-        byte[] userAesKey = encryptionService.keyExtend(sessionService.getUsername(), session.getPassword());
+        byte[] userAesKey = encryptionService.keyExtendUsingScrypt(sessionService.getUsername(), session.getPassword());
         byte[] encryptedPrivateKey = encryptionService.decodeBase64(keyStorageService.getEncryptedPrivateKey());
         Log.d(TAG,"Decrypting RSA key");
         byte[] privateKey = encryptionService.decryptAES(userAesKey, encryptedPrivateKey);

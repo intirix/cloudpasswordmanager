@@ -23,6 +23,7 @@ import com.intirix.cloudpasswordmanager.pages.FatalErrorEvent;
 import com.intirix.cloudpasswordmanager.pages.login.LoginSuccessfulEvent;
 import com.intirix.cloudpasswordmanager.pages.passwordlist.CategoryListUpdatedEvent;
 import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordListUpdatedEvent;
+import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordsLoadedEvent;
 import com.intirix.cloudpasswordmanager.services.backend.BackendRequestInterface;
 import com.intirix.cloudpasswordmanager.services.backend.beans.Category;
 import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordBean;
@@ -127,6 +128,7 @@ public class OCPBackendRequestImpl implements BackendRequestInterface {
                 getSessionData(session).setPasswordList(passwords);
                 updatePasswordBeanList(session);
                 eventService.postEvent(new PasswordListUpdatedEvent());
+                eventService.postEvent(new PasswordsLoadedEvent());
             }
 
             @Override

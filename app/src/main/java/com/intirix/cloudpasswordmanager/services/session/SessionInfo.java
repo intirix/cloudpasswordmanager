@@ -65,6 +65,10 @@ public class SessionInfo {
         categoryList = list;
     }
 
+    public boolean isCategoryListEmpty() {
+        return categoryList==null || categoryList.size()==0;
+    }
+
     public List<String> getServerUsers() {
         return serverUsers;
     }
@@ -87,6 +91,10 @@ public class SessionInfo {
 
     public void setPasswordBeanList(List<PasswordBean> passwordBeanList) {
         this.passwordBeanList = passwordBeanList;
+    }
+
+    public boolean isPasswordBeanListEmpty() {
+        return passwordBeanList==null || passwordBeanList.size()==0;
     }
 
     public long getLastUserEvent() {

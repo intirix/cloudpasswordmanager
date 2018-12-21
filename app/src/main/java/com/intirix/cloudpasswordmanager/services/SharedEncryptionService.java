@@ -1,15 +1,22 @@
-package com.intirix.cloudpasswordmanager.services.backend.secretsmanager;
+package com.intirix.cloudpasswordmanager.services;
 
 import android.util.Base64;
 import android.util.Log;
 
-
+import org.spongycastle.crypto.engines.AESFastEngine;
 import org.spongycastle.crypto.generators.SCrypt;
+import org.spongycastle.crypto.io.CipherInputStream;
+import org.spongycastle.crypto.io.CipherOutputStream;
+import org.spongycastle.crypto.paddings.PKCS7Padding;
+import org.spongycastle.crypto.paddings.PaddedBufferedBlockCipher;
+import org.spongycastle.crypto.params.KeyParameter;
 import org.spongycastle.util.encoders.Hex;
 import org.spongycastle.util.io.pem.PemObject;
 import org.spongycastle.util.io.pem.PemReader;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
@@ -38,12 +45,10 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.inject.Inject;
 
-/**
- * Created by jeff on 7/15/17.
- */
-
-public class SMEncryptionService {
+public class SharedEncryptionService {
     private static final int AES_BLOCK_SIZE = 16;
+
+    private static final String TAG = SharedEncryptionService.class.getSimpleName();
 
     private KeyFactory rsaKeyFactory;
 
@@ -52,13 +57,13 @@ public class SMEncryptionService {
     private byte[] hmacComparisonKey = generateKey(32);
 
     @Inject
-    public SMEncryptionService() {
+    public SharedEncryptionService() {
 
 
         try {
             rsaKeyFactory = KeyFactory.getInstance("RSA");
         } catch (NoSuchAlgorithmException e) {
-            Log.e(SMEncryptionService.class.getSimpleName(),"Missing encryption",e);
+            Log.e(SharedEncryptionService.class.getSimpleName(),"Missing encryption",e);
         }
     }
 
@@ -73,9 +78,16 @@ public class SMEncryptionService {
         return key;
     }
 
-    public byte[] keyExtend(String user, String password) {
-        Charset ch = Charset.forName("ASCII");
-        return SCrypt.generate(password.getBytes(ch),user.getBytes(ch),16384,8,1,32);
+    public byte[] keyExtendUsingScrypt(String user, String password) {
+        final long t1 = System.currentTimeMillis();
+        try {
+            Charset ch = Charset.forName("ASCII");
+            return SCrypt.generate(password.getBytes(ch), user.getBytes(ch), 16384, 8, 1, 32);
+        } finally {
+            final long t2 = System.currentTimeMillis();
+            final long dt = t2 - t1;
+            Log.d(TAG,"Time to perform scrypt: "+dt+"ms");
+        }
     }
 
     public byte[] decodeBase64(String input) throws IOException {
@@ -84,6 +96,35 @@ public class SMEncryptionService {
 
     public String encodeBase64(byte[] input) throws IOException {
         return Base64.encodeToString(input, Base64.NO_WRAP);
+    }
+
+    /**
+     * Encrypt a stream of data
+     * @param keyBytes
+     * @param os
+     * @return
+     */
+    public CipherOutputStream encryptStream(byte[] keyBytes, OutputStream os) {
+        AESFastEngine aesEngine = new AESFastEngine();
+        PaddedBufferedBlockCipher cipher =
+                new PaddedBufferedBlockCipher(aesEngine, new PKCS7Padding());
+        cipher.init(true, new KeyParameter(keyBytes));
+        return new CipherOutputStream(os, cipher);
+    }
+
+    /**
+     * Decrypt a stream of data
+     * @param keyBytes
+     * @param is
+     * @return
+     */
+    public CipherInputStream decryptStream(byte[] keyBytes, InputStream is) {
+        AESFastEngine aesEngine = new AESFastEngine();
+        PaddedBufferedBlockCipher cipher =
+                new PaddedBufferedBlockCipher(aesEngine, new PKCS7Padding());
+        cipher.init(false, new KeyParameter(keyBytes));
+        return new CipherInputStream(is, cipher);
+
     }
 
     public byte[] encryptAES(byte[] keyBytes, byte[] input) throws NoSuchPaddingException, NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException, IOException {

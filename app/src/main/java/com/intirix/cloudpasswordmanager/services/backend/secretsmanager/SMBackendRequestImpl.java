@@ -15,6 +15,8 @@ import com.intirix.cloudpasswordmanager.pages.passwordadd.PasswordAddedEvent;
 import com.intirix.cloudpasswordmanager.pages.passworddetail.PasswordUpdatedEvent;
 import com.intirix.cloudpasswordmanager.pages.passwordlist.CategoryListUpdatedEvent;
 import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordListUpdatedEvent;
+import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordsLoadedEvent;
+import com.intirix.cloudpasswordmanager.services.SharedEncryptionService;
 import com.intirix.cloudpasswordmanager.services.backend.BackendRequestAddPasswordInterface;
 import com.intirix.cloudpasswordmanager.services.backend.BackendRequestBatchShareInterface;
 import com.intirix.cloudpasswordmanager.services.backend.BackendRequestInterface;
@@ -69,7 +71,7 @@ public class SMBackendRequestImpl implements BackendRequestInterface, BackendReq
 
     private SMSecretConversionService conversionService;
 
-    private SMEncryptionService encryptionService;
+    private SharedEncryptionService encryptionService;
 
     private boolean loginRunning = false;
 
@@ -78,7 +80,7 @@ public class SMBackendRequestImpl implements BackendRequestInterface, BackendReq
     private Context context;
 
     @Inject
-    public SMBackendRequestImpl(Context context, SessionService sessionService, KeyStorageService keyStorageService, EventService eventService, SMEncryptionService encryptionService, SMSecretConversionService conversionService) {
+    public SMBackendRequestImpl(Context context, SessionService sessionService, KeyStorageService keyStorageService, EventService eventService, SharedEncryptionService encryptionService, SMSecretConversionService conversionService) {
         this.context = context;
         this.sessionService = sessionService;
         this.keyStorageService = keyStorageService;
@@ -126,20 +128,27 @@ public class SMBackendRequestImpl implements BackendRequestInterface, BackendReq
     @Override
     public void login() {
         final SessionInfo session = sessionService.getCurrentSession();
-        if (keyStorageService.isPrivateKeyStored()) {
+        loginRunning = true;
 
+        if (keyStorageService.isPrivateKeyStored()) {
+            Log.d(TAG,"Private key already stored");
             new AsyncTask<Void,Void,Void>() {
                 @Override
                 protected Void doInBackground(Void... params) {
 
                     try {
-                        byte[] aesKey = encryptionService.keyExtend(sessionService.getUsername(), session.getPassword());
+                        Log.d(TAG,"Performing scrypt");
+                        byte[] aesKey = encryptionService.keyExtendUsingScrypt(sessionService.getUsername(), session.getPassword());
                         byte[] encryptedPrivateKey = encryptionService.decodeBase64(keyStorageService.getEncryptedPrivateKey());
+                        Log.d(TAG, "Decrypting private key");
                         encryptionService.decryptAES(aesKey, encryptedPrivateKey);
                     } catch (Exception e) {
                         Log.e(TAG,"Failed to decrypt key", e);
+                        loginRunning = false;
                         eventService.postEvent(new FatalErrorEvent(e.getMessage()));
                         return null;
+                    } finally {
+                        loginRunning = false;
                     }
 
                     eventService.postEvent(new LoginSuccessfulEvent());
@@ -152,6 +161,7 @@ public class SMBackendRequestImpl implements BackendRequestInterface, BackendReq
                 downloadEncryptedPrivateKey();
             } catch (MalformedURLException e) {
                 Log.e(TAG,"Failed to download key", e);
+                loginRunning = false;
                 eventService.postEvent(new FatalErrorEvent(e.getMessage()));
             }
         }
@@ -228,6 +238,7 @@ public class SMBackendRequestImpl implements BackendRequestInterface, BackendReq
                         try {
                             Log.d(TAG, "Processing secrets on "+Thread.currentThread().getName()+" thread");
                             conversionService.processSecrets(session, response.body());
+                            eventService.postEvent(new PasswordsLoadedEvent());
                         } catch (IOException e) {
                             Log.w(TAG, "downloadSecrets() error", e);
                             eventService.postEvent(new FatalErrorEvent(e.getMessage()));

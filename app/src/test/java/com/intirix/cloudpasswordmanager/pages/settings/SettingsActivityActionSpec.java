@@ -16,13 +16,17 @@
 package com.intirix.cloudpasswordmanager.pages.settings;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.widget.RecyclerView;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.intirix.cloudpasswordmanager.BaseTestCase;
 import com.intirix.cloudpasswordmanager.BuildConfig;
 import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.TestPasswordApplication;
+import com.intirix.cloudpasswordmanager.services.settings.OfflineModeServiceImpl;
 import com.intirix.cloudpasswordmanager.services.settings.SavePasswordEnum;
 import com.intirix.cloudpasswordmanager.services.session.SessionService;
 
@@ -32,6 +36,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.Shadows;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowActivity;
@@ -49,6 +54,8 @@ public class SettingsActivityActionSpec extends BaseTestCase {
     private final String MOCK_USER = "myusername";
     private final String MOCK_PASS = "mypassword";
 
+    SharedPreferences preferences;
+
     @Before
     public void setUp() {
         SessionService sessionService = serviceRef.sessionService();
@@ -59,6 +66,7 @@ public class SettingsActivityActionSpec extends BaseTestCase {
         sessionService.start();
         sessionService.getCurrentSession().setPassword(MOCK_PASS);
 
+        preferences = PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.application);
     }
 
     @Test
@@ -170,6 +178,42 @@ public class SettingsActivityActionSpec extends BaseTestCase {
         Assert.assertNotNull(intent);
         Assert.assertEquals(SettingsActivity.class.getName(), intent.getComponent().getClassName());
         Assert.assertEquals(Intent.FLAG_ACTIVITY_CLEAR_TOP, intent.getFlags() & Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        controller.pause().stop().destroy();
+    }
+
+    @Test
+    public void verifyEnableOfflineMode() throws Exception {
+
+        SessionService sessionService = serviceRef.sessionService();
+
+        ActivityController<SettingsActivity> controller = Robolectric.buildActivity(SettingsActivity.class).create().start().resume();
+        SettingsActivity activity = controller.get();
+
+        final CheckBox cb = (CheckBox)activity.findViewById(R.id.settings_offline_checkbox);
+        Assert.assertFalse(cb.isChecked());
+        cb.performClick();
+
+        Assert.assertTrue(preferences.getBoolean(OfflineModeServiceImpl.PREF_OFFLINE_MODE_SETTING,false));
+
+        controller.pause().stop().destroy();
+    }
+
+    @Test
+    public void verifyDisableOfflineMode() throws Exception {
+
+        preferences.edit().putBoolean(OfflineModeServiceImpl.PREF_OFFLINE_MODE_SETTING,true).commit();
+
+        SessionService sessionService = serviceRef.sessionService();
+
+        ActivityController<SettingsActivity> controller = Robolectric.buildActivity(SettingsActivity.class).create().start().resume();
+        SettingsActivity activity = controller.get();
+
+        final CheckBox cb = (CheckBox)activity.findViewById(R.id.settings_offline_checkbox);
+        Assert.assertTrue(cb.isChecked());
+        cb.performClick();
+
+        Assert.assertFalse(preferences.getBoolean(OfflineModeServiceImpl.PREF_OFFLINE_MODE_SETTING,true));
 
         controller.pause().stop().destroy();
     }

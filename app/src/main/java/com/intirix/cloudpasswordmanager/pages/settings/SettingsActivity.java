@@ -22,7 +22,14 @@ import android.support.v4.app.Fragment;
 import com.intirix.cloudpasswordmanager.PasswordApplication;
 import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.pages.SecureActivity;
+import com.intirix.cloudpasswordmanager.pages.passwordadd.PasswordAddedEvent;
+import com.intirix.cloudpasswordmanager.pages.passworddetail.PasswordUpdatedEvent;
+import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordsLoadedEvent;
+import com.intirix.cloudpasswordmanager.services.settings.OfflineModeService;
 import com.intirix.cloudpasswordmanager.services.settings.SavePasswordService;
+
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import javax.inject.Inject;
 
@@ -50,4 +57,5 @@ public class SettingsActivity extends SecureActivity {
     protected Fragment createInitialFragment() {
         return new SettingsFragment();
     }
+
 }

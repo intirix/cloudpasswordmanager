@@ -102,6 +102,7 @@
         not be able to able to get your password unless they have root access.  Your password will not be
         backed up to Google\'s servers.  Your device must be password protected to select this option.  Requires API 16.
     </string>
+    <string name="settings_offline_label">Offline Support:</string>
 
     <string name="about_nav_label">About</string>
     <string name="about_version_label">Version:</string>

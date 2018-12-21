@@ -1,7 +1,4 @@
-package com.intirix.cloudpasswordmanager.services.backend.secretsmanager;
-
-import com.intirix.cloudpasswordmanager.BuildConfig;
-import com.intirix.cloudpasswordmanager.TestPasswordApplication;
+package com.intirix.cloudpasswordmanager.services;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
@@ -10,9 +7,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -32,9 +31,9 @@ import javax.crypto.ShortBufferException;
 @RunWith(RobolectricTestRunner.class)
 
 
-public class SMEncryptionServiceUnitTests {
+public class SharedEncryptionServiceUnitTests {
 
-    SMEncryptionService impl;
+    SharedEncryptionService impl;
 
     String encryptedPrivateKey;
 
@@ -42,7 +41,7 @@ public class SMEncryptionServiceUnitTests {
 
     @Before
     public void setUp() throws IOException, NoSuchPaddingException, NoSuchAlgorithmException, NoSuchProviderException {
-        impl = new SMEncryptionService();
+        impl = new SharedEncryptionService();
 
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         IOUtils.copy(getClass().getResourceAsStream("/mock_rsa_key.enc"),buffer);
@@ -56,7 +55,7 @@ public class SMEncryptionServiceUnitTests {
 
     @Test
     public void verifyKeyExtenderWorks() {
-        Assert.assertEquals(32,impl.keyExtend("test","password").length);
+        Assert.assertEquals(32,impl.keyExtendUsingScrypt("test","password").length);
     }
 
     @Test
@@ -74,7 +73,7 @@ public class SMEncryptionServiceUnitTests {
 
     @Test
     public void verifyRSAEncryptionDecryption() throws IOException, NoSuchAlgorithmException, NoSuchProviderException, NoSuchPaddingException, InvalidKeyException, InvalidKeySpecException, IllegalBlockSizeException, BadPaddingException, ShortBufferException {
-        byte[] privateKey = impl.decryptAES(impl.keyExtend("admin","password"),impl.decodeBase64(encryptedPrivateKey));
+        byte[] privateKey = impl.decryptAES(impl.keyExtendUsingScrypt("admin","password"),impl.decodeBase64(encryptedPrivateKey));
         String pem = new String(privateKey, "ASCII");
 
         byte[] data = impl.generateKey(64);
@@ -102,7 +101,7 @@ public class SMEncryptionServiceUnitTests {
     public void testConvertOldFormat() throws IOException, InvalidKeyException, InvalidKeySpecException, SignatureException, NoSuchPaddingException, NoSuchAlgorithmException, NoSuchProviderException, BadPaddingException, IllegalBlockSizeException, ShortBufferException {
         String a ="OegyqyJf636xtzo9uvTNMcJrLWawJ7NCgM0GGN/6JdFAzhZudwPlqJqLZWmGGBZyTWw9RoGmRXv0fCQZrZ80MP8KOCbzNqomRpms6EXZ4JEjW3fgnCQM7VSbkHF2zNp/bgctxPLOpRYZKYruOOIhU1jJPKM8a7outbE82mxx5KDHIHidefaiRS+0fKuPYMb8Pd5qgVapYZfNDapsVZ7pI4SbDMhcvHOQfCBz8RfHXOhtu0GrGKfWsScmyH0M6L8cNUgMe8lIBUOeRGGfLd0vFZ3vTHLkojZAU5T9sOHHjkpcfk9T5gyB56k1MAqrzfUDDB9tamwbcLloc7QPbB6FgQ==";
 
-        byte[] privateKey = impl.decryptAES(impl.keyExtend("admin","password"),impl.decodeBase64(encryptedPrivateKey));
+        byte[] privateKey = impl.decryptAES(impl.keyExtendUsingScrypt("admin","password"),impl.decodeBase64(encryptedPrivateKey));
         String pem = new String(privateKey, "ASCII");
 
         byte[] bytes = impl.decryptRSA(pem,impl.decodeBase64(a));
@@ -119,7 +118,7 @@ public class SMEncryptionServiceUnitTests {
 
     @Test
     public void verifySignatureWorks() throws IOException, InvalidKeyException, InvalidKeySpecException, SignatureException, NoSuchPaddingException, NoSuchAlgorithmException, NoSuchProviderException {
-        byte[] privateKey = impl.decryptAES(impl.keyExtend("admin","password"),impl.decodeBase64(encryptedPrivateKey));
+        byte[] privateKey = impl.decryptAES(impl.keyExtendUsingScrypt("admin","password"),impl.decodeBase64(encryptedPrivateKey));
         String pem = new String(privateKey, "ASCII");
         Assert.assertTrue(pem.startsWith("-----BEGIN PRIVATE KEY-----"));
 
@@ -134,11 +133,41 @@ public class SMEncryptionServiceUnitTests {
     @Test
     public void verifyWrongPasswordFails() throws IOException, InvalidKeyException, InvalidKeySpecException, SignatureException, NoSuchPaddingException, NoSuchAlgorithmException, NoSuchProviderException {
         try {
-            byte[] privateKey = impl.decryptAES(impl.keyExtend("admin", "password2"), impl.decodeBase64(encryptedPrivateKey));
+            byte[] privateKey = impl.decryptAES(impl.keyExtendUsingScrypt("admin", "password2"), impl.decodeBase64(encryptedPrivateKey));
             String pem = new String(privateKey, "ASCII");
             Assert.assertFalse(pem.startsWith("-----BEGIN PRIVATE KEY-----"));
         } catch (IOException e) {
             Assert.assertEquals(BadPaddingException.class, e.getCause().getClass());
         }
+    }
+
+    @Test
+    public void verifyStream() throws IOException {
+        byte[] key = impl.generateKey(32);
+        byte[] data = "The quick brown fox jumps over the lazy dog".getBytes("UTF-8");
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        OutputStream os = impl.encryptStream(key, buffer);
+        os.write(data);
+        os.close();
+
+        System.out.println("Length: "+buffer.toByteArray().length);
+
+        InputStream is = impl.decryptStream(key,new ByteArrayInputStream(buffer.toByteArray()));
+
+        byte[] out = new byte[data.length];
+        int count = 0;
+        int c = 0;
+        while (c >=0 && count<data.length) {
+            c = is.read(out,count,data.length-count);
+            if (c>0) {
+                count += c;
+            }
+        }
+
+        Assert.assertEquals(data.length, count);
+
+        Assert.assertArrayEquals(data,out);
+
+
     }
 }

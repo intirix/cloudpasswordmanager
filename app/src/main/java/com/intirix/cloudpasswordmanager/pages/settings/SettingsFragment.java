@@ -21,11 +21,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.intirix.cloudpasswordmanager.PasswordApplication;
 import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.pages.BaseFragment;
+import com.intirix.cloudpasswordmanager.services.settings.OfflineModeService;
 import com.intirix.cloudpasswordmanager.services.settings.SavePasswordEnum;
 import com.intirix.cloudpasswordmanager.services.settings.SavePasswordService;
 
@@ -33,6 +36,7 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 
 /**
@@ -45,8 +49,14 @@ public class SettingsFragment extends BaseFragment {
     @Inject
     SavePasswordService savePasswordService;
 
+    @Inject
+    OfflineModeService offlineModeService;
+
     @BindView(R.id.settings_savepass_value)
     TextView currentSavePasswordOptionLabel;
+
+    @BindView(R.id.settings_offline_checkbox)
+    CheckBox offlineCheckBox;
 
     @Nullable
     @Override
@@ -67,11 +77,22 @@ public class SettingsFragment extends BaseFragment {
             savePasswordService.changeSavePasswordSetting(SavePasswordEnum.NEVER);
         }
         currentSavePasswordOptionLabel.setText(currentOption.getLabel());
+        offlineCheckBox.setChecked(offlineModeService.isOfflineModelEnabled());
 
     }
 
     @OnClick(R.id.settings_savepass_row)
     public void onClickChangeSavePassword(View view) {
         baseActivity.navigateRightPane(new SettingsSavePasswordOptionsFragment());
+    }
+
+    @OnCheckedChanged(R.id.settings_offline_checkbox)
+    public void onOfflineModeClick(CompoundButton button, boolean checked) {
+        if (checked) {
+            offlineModeService.enable();
+            offlineModeService.updateOfflineModeCache(false);
+        } else {
+            offlineModeService.disable();
+        }
     }
 }

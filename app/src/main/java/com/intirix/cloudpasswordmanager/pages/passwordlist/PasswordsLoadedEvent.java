@@ -16,9 +16,8 @@
 package com.intirix.cloudpasswordmanager.pages.passwordlist;
 
 /**
- * Created by jeff on 6/29/16.
- * Event representing when the password list has been updated.  This event
- * can occur multiple times
+ * Event represents that all the passwords have been loaded.  This event should
+ * only happen a single time
  */
-public class PasswordListUpdatedEvent {
+public class PasswordsLoadedEvent {
 }

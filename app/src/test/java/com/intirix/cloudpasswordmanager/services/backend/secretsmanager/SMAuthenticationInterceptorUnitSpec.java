@@ -2,6 +2,7 @@ package com.intirix.cloudpasswordmanager.services.backend.secretsmanager;
 
 import com.intirix.cloudpasswordmanager.BuildConfig;
 import com.intirix.cloudpasswordmanager.TestPasswordApplication;
+import com.intirix.cloudpasswordmanager.services.SharedEncryptionService;
 import com.intirix.cloudpasswordmanager.services.session.MockSessionService;
 import com.intirix.cloudpasswordmanager.services.settings.MockKeyStorageService;
 
@@ -37,7 +38,7 @@ public class SMAuthenticationInterceptorUnitSpec {
     public void setUp() throws NoSuchPaddingException, NoSuchAlgorithmException, NoSuchProviderException {
         keyStorageService = new MockKeyStorageService();
         sessionService = new MockSessionService();
-        impl = new SMAuthenticationInterceptor(sessionService, keyStorageService, new SMEncryptionService());
+        impl = new SMAuthenticationInterceptor(sessionService, keyStorageService, new SharedEncryptionService());
     }
 
     @Test

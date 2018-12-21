@@ -17,6 +17,7 @@ package com.intirix.cloudpasswordmanager.pages.login;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -35,6 +36,7 @@ import com.intirix.cloudpasswordmanager.pages.keys.ImportPrivateKeyActivity;
 import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordListActivity;
 import com.intirix.cloudpasswordmanager.services.backend.PasswordRequestService;
 import com.intirix.cloudpasswordmanager.services.session.StorageType;
+import com.intirix.cloudpasswordmanager.services.settings.OfflineModeService;
 import com.intirix.cloudpasswordmanager.services.settings.SavePasswordService;
 import com.intirix.cloudpasswordmanager.services.ssl.CertPinningService;
 import com.intirix.cloudpasswordmanager.services.ssl.PinFailedEvent;
@@ -67,6 +69,9 @@ public class LoginActivity extends BaseActivity {
 
     @Inject
     SavePasswordService savePasswordService;
+
+    @Inject
+    OfflineModeService offlineModeService;
 
     @BindView(R.id.login_storage_type)
     Spinner storageTypeSpinner;
@@ -161,6 +166,16 @@ public class LoginActivity extends BaseActivity {
 
         // when coming back from a rotate, re-show the progress dialog if needed
         updateProgressDialog();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // prevent window leak
+        if (progressDialog!=null) {
+            progressDialog.dismiss();
+        }
+
     }
 
     @Override
@@ -279,6 +294,9 @@ public class LoginActivity extends BaseActivity {
 
                 passwordRequestService.login();
                 updateProgressDialog();
+                if (offlineModeService.isOfflineModelEnabled()) {
+                    offlineModeService.loadDataFromCache(false,sessionService.getUsername(), sessionService.getCurrentSession().getPassword());
+                }
             }
         } catch (Exception e) {
             errorMessageView.setText(e.getMessage());
@@ -355,6 +373,7 @@ public class LoginActivity extends BaseActivity {
      * Update the state of the progress spinner based on the state of the login request
      */
     private void updateProgressDialog() {
+        Log.d(TAG,"updateProgressDialog()");
         if (passwordRequestService.isLoginRunning()) {
             // if the progress dialog doesn't exist, then create it
             if (progressDialog == null) {

@@ -7,6 +7,7 @@ import com.intirix.cloudpasswordmanager.BuildConfig;
 import com.intirix.cloudpasswordmanager.TestPasswordApplication;
 import com.intirix.cloudpasswordmanager.pages.passwordlist.CategoryListUpdatedEvent;
 import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordListUpdatedEvent;
+import com.intirix.cloudpasswordmanager.services.SharedEncryptionService;
 import com.intirix.cloudpasswordmanager.services.backend.beans.Category;
 import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordBean;
 import com.intirix.cloudpasswordmanager.services.session.MockSessionService;
@@ -74,7 +75,7 @@ public class SMSecretConversionServiceImplUnitSpec {
 
     private MockSessionService sessionService;
 
-    private SMEncryptionService encryptionService;
+    private SharedEncryptionService encryptionService;
 
     private MockKeyStorageService keyStorageService;
 
@@ -85,7 +86,7 @@ public class SMSecretConversionServiceImplUnitSpec {
     @Before
     public void setUp() throws IOException {
         sessionService = new MockSessionService();
-        encryptionService = new SMEncryptionService();
+        encryptionService = new SharedEncryptionService();
         eventService = new MockEventService();
 
         keyStorageService = new MockKeyStorageService();
@@ -436,7 +437,7 @@ public class SMSecretConversionServiceImplUnitSpec {
 
     @Test
     public void verifyCreateSecretFromPasswordBean() throws IOException, NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException, ShortBufferException, NoSuchPaddingException, BadPaddingException, ParseException, InvalidKeySpecException, IllegalBlockSizeException {
-        byte[] aesKey = encryptionService.keyExtend(sessionService.getUsername(), sessionService.getCurrentSession().getPassword());
+        byte[] aesKey = encryptionService.keyExtendUsingScrypt(sessionService.getUsername(), sessionService.getCurrentSession().getPassword());
         byte[] encryptedPrivateKey = encryptionService.decodeBase64(keyStorageService.getEncryptedPrivateKey());
         byte[] privateKey = encryptionService.decryptAES(aesKey, encryptedPrivateKey);
         String privateKeyPem = new String(privateKey,"ASCII");
@@ -464,7 +465,7 @@ public class SMSecretConversionServiceImplUnitSpec {
 
     @Test
     public void testGetKeyForSecret() throws Exception {
-        byte[] userAesKey = encryptionService.keyExtend(sessionService.getUsername(), sessionService.getCurrentSession().getPassword());
+        byte[] userAesKey = encryptionService.keyExtendUsingScrypt(sessionService.getUsername(), sessionService.getCurrentSession().getPassword());
         byte[] encryptedPrivateKey = encryptionService.decodeBase64(keyStorageService.getEncryptedPrivateKey());
         byte[] privateKey = encryptionService.decryptAES(userAesKey, encryptedPrivateKey);
         String privateKeyPem = new String(privateKey,"ASCII");
