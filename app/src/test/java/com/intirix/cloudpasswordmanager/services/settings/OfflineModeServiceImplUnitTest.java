@@ -13,6 +13,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 
@@ -76,6 +77,26 @@ public class OfflineModeServiceImplUnitTest {
         sessionService.getCurrentSession().setPasswordBeanList(list);
 
 
-        obj.updateOfflineModeCache();
+        obj.updateOfflineModeCache(true);
     }
+
+    @Test
+    public void verifyEnableWillCreateCacheFile() {
+        Assert.assertFalse(obj.doesCacheFileExist("passwords"));
+        obj.enable();
+        Robolectric.flushBackgroundThreadScheduler();
+        Assert.assertTrue(obj.doesCacheFileExist("passwords"));
+    }
+
+    @Test
+    public void verifyDisableWillDeleteCacheFile() {
+        Assert.assertFalse(obj.doesCacheFileExist("passwords"));
+        obj.enable();
+        Robolectric.flushBackgroundThreadScheduler();
+        Assert.assertTrue(obj.doesCacheFileExist("passwords"));
+        obj.disable();
+        Robolectric.flushBackgroundThreadScheduler();
+        Assert.assertFalse(obj.doesCacheFileExist("passwords"));
+    }
+
 }

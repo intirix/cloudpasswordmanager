@@ -60,12 +60,15 @@ public class OfflineModeServiceImpl implements OfflineModeService {
     public void enable() {
         Log.d(TAG,"Enabling offline mode");
         preferences.edit().putBoolean(OfflineModeServiceImpl.PREF_OFFLINE_MODE_SETTING,true).commit();
+        updateOfflineModeCache(false);
     }
 
     @Override
     public void disable() {
         Log.d(TAG,"Disabling offline mode");
         preferences.edit().putBoolean(OfflineModeServiceImpl.PREF_OFFLINE_MODE_SETTING,false).commit();
+        deleteCacheFile("passwords");
+        deleteCacheFile("categories");
     }
 
     @Override
@@ -186,4 +189,17 @@ public class OfflineModeServiceImpl implements OfflineModeService {
         }
     }
 
+    private void deleteCacheFile(String filename) {
+        File dir = context.getFilesDir();
+        File file = new File(dir, filename);
+        if (file.exists()) {
+            file.delete();
+        }
+    }
+
+    boolean doesCacheFileExist(String filename) {
+        File dir = context.getFilesDir();
+        File file = new File(dir, filename);
+        return file.exists();
+    }
 }
