@@ -51,6 +51,8 @@ import com.intirix.cloudpasswordmanager.services.ui.FilterPasswordServiceImpl;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.sql.Time;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Singleton;
 import javax.net.ssl.SSLContext;
@@ -123,6 +125,8 @@ public class CloudPasswordManagerModule {
 
         builder.sslSocketFactory(sslSocketFactory, customTrustManager);
         builder.hostnameVerifier(customHostnameVerifier);
+        builder.connectTimeout(60,TimeUnit.SECONDS);
+        builder.readTimeout(60,TimeUnit.SECONDS);
 
         OkHttpClient okClient = builder.build();
         return okClient;
