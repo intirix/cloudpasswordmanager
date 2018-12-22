@@ -21,6 +21,7 @@ import com.intirix.cloudpasswordmanager.pages.passwordlist.CategoryListUpdatedEv
 import com.intirix.cloudpasswordmanager.pages.FatalErrorEvent;
 import com.intirix.cloudpasswordmanager.pages.login.LoginSuccessfulEvent;
 import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordListUpdatedEvent;
+import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordsLoadedEvent;
 import com.intirix.cloudpasswordmanager.services.backend.ocp.beans.OCPSessionData;
 import com.intirix.cloudpasswordmanager.services.ui.ColorService;
 import com.intirix.cloudpasswordmanager.services.ui.MockEventService;
@@ -137,8 +138,9 @@ public class OCPBackendRequestImplUnitSpec {
         list.add(p1);
 
         passwordStorageService.getLastPasswordListCallack().onReturn(list);
-        eventService.assertNumberOfPosts(1);
-        eventService.assertEventType(0, PasswordListUpdatedEvent.class);
+        eventService.assertNumberOfPosts(2);
+        eventService.assertEventType(PasswordListUpdatedEvent.class);
+        eventService.assertEventType(PasswordsLoadedEvent.class);
         OCPSessionData data = impl.getSessionData(sessionService.getCurrentSession());
         Assert.assertEquals(list, data.getPasswordList());
         Assert.assertNull(sessionService.getCurrentSession().getCategoryList());
@@ -187,9 +189,10 @@ public class OCPBackendRequestImplUnitSpec {
 
         passwordStorageService.getLastPasswordListCallack().onReturn(list1);
         passwordStorageService.getLastCategoryListCallback().onReturn(list2);
-        eventService.assertNumberOfPosts(2);
-        eventService.assertEventType(0, PasswordListUpdatedEvent.class);
-        eventService.assertEventType(1, CategoryListUpdatedEvent.class);
+        eventService.assertNumberOfPosts(3);
+        eventService.assertEventType(PasswordListUpdatedEvent.class);
+        eventService.assertEventType(CategoryListUpdatedEvent.class);
+        eventService.assertEventType(PasswordsLoadedEvent.class);
 
         Assert.assertNotNull(sessionService.getCurrentSession().getPasswordBeanList());
 
@@ -227,9 +230,10 @@ public class OCPBackendRequestImplUnitSpec {
 
         passwordStorageService.getLastPasswordListCallack().onReturn(list1);
         passwordStorageService.getLastCategoryListCallback().onReturn(list2);
-        eventService.assertNumberOfPosts(2);
-        eventService.assertEventType(0, PasswordListUpdatedEvent.class);
-        eventService.assertEventType(1, CategoryListUpdatedEvent.class);
+        eventService.assertNumberOfPosts(3);
+        eventService.assertEventType(PasswordListUpdatedEvent.class);
+        eventService.assertEventType(CategoryListUpdatedEvent.class);
+        eventService.assertEventType(PasswordsLoadedEvent.class);
 
         Assert.assertNotNull(sessionService.getCurrentSession().getPasswordBeanList());
 
@@ -260,9 +264,10 @@ public class OCPBackendRequestImplUnitSpec {
 
         passwordStorageService.getLastPasswordListCallack().onReturn(list1);
         passwordStorageService.getLastCategoryListCallback().onReturn(list2);
-        eventService.assertNumberOfPosts(2);
-        eventService.assertEventType(0, PasswordListUpdatedEvent.class);
-        eventService.assertEventType(1, CategoryListUpdatedEvent.class);
+        eventService.assertNumberOfPosts(3);
+        eventService.assertEventType(PasswordListUpdatedEvent.class);
+        eventService.assertEventType(CategoryListUpdatedEvent.class);
+        eventService.assertEventType(PasswordsLoadedEvent.class);
 
         Assert.assertNotNull(sessionService.getCurrentSession().getPasswordBeanList());
 
@@ -292,9 +297,10 @@ public class OCPBackendRequestImplUnitSpec {
 
         passwordStorageService.getLastPasswordListCallack().onReturn(list1);
         passwordStorageService.getLastCategoryListCallback().onReturn(list2);
-        eventService.assertNumberOfPosts(2);
-        eventService.assertEventType(0, PasswordListUpdatedEvent.class);
-        eventService.assertEventType(1, CategoryListUpdatedEvent.class);
+        eventService.assertNumberOfPosts(3);
+        eventService.assertEventType(PasswordListUpdatedEvent.class);
+        eventService.assertEventType(CategoryListUpdatedEvent.class);
+        eventService.assertEventType(PasswordsLoadedEvent.class);
 
         Assert.assertNotNull(sessionService.getCurrentSession().getPasswordBeanList());
 

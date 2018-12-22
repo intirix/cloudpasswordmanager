@@ -22,6 +22,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -43,6 +44,8 @@ import butterknife.BindView;
 import butterknife.OnClick;
 
 public class PasswordListActivity extends SecureActivity implements SearchView.OnQueryTextListener {
+
+    private static final String TAG = PasswordListActivity.class.getSimpleName();
 
     public static final String SAVED_SEARCH_QUERY = "SAVED_SEARCH_QUERY";
     @BindView(R.id.password_list_recycler)
@@ -190,7 +193,11 @@ public class PasswordListActivity extends SecureActivity implements SearchView.O
 
     private void updateProgressDialog() {
         if (sessionService.getCurrentSession()!=null) {
-            boolean showDialog = sessionService.getCurrentSession().getCategoryList()==null||sessionService.getCurrentSession().getPasswordBeanList()==null;
+            boolean categoriesDecrypted = sessionService.getCurrentSession().getCategoryList() != null;
+            boolean passwordsDecrypted = sessionService.getCurrentSession().getPasswordBeanList() != null;
+            Log.d(TAG,"Categories decrypted: "+categoriesDecrypted);
+            Log.d(TAG,"Passwords decrypted: "+passwordsDecrypted);
+            boolean showDialog = !categoriesDecrypted || !passwordsDecrypted;
 
             if (showDialog) {
                 if (progressDialog==null) {

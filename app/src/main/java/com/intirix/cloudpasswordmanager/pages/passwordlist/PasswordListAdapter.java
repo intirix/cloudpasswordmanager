@@ -16,6 +16,7 @@
 package com.intirix.cloudpasswordmanager.pages.passwordlist;
 
 import android.app.Activity;
+import android.nfc.Tag;
 import android.support.v7.util.SortedList;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -68,17 +69,20 @@ public class PasswordListAdapter extends RecyclerView.Adapter<PasswordListViewHo
      */
     public void updateList(List<PasswordBean> newList) {
         sortedList.beginBatchedUpdates();
+        final long startingSize = sortedList.size();
         if (newList==null||newList.size()==0) {
             sortedList.clear();
+            Log.d(TAG,"Clearing the list adapter");
         } else {
             Set<PasswordBean> toBeAdded = new HashSet<>(newList);
 
             for (int i = sortedList.size() - 1; i >= 0; i--) {
                 final PasswordBean model = sortedList.get(i);
                 if (!newList.contains(model)) {
-                    Log.d(TAG,"Removing item from password list");
+                    Log.d(TAG,"Removing item from password list: "+model.getId());
                     sortedList.remove(model);
                 } else if (toBeAdded.contains(model)) {
+                    Log.d(TAG,"Adding item to password list: "+model.getId());
                     // de-duplicate
                     toBeAdded.remove(model);
                 }
@@ -93,6 +97,9 @@ public class PasswordListAdapter extends RecyclerView.Adapter<PasswordListViewHo
             Log.d(TAG,"Password list now has "+sortedList.size()+" items");
         }
         sortedList.endBatchedUpdates();
+        final long endingSize = sortedList.size();
+        Log.d(TAG,"List adapter went from "+startingSize+" to "+endingSize);
+
     }
 
     @Override

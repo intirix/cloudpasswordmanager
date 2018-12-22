@@ -18,7 +18,12 @@ package com.intirix.cloudpasswordmanager.services.session;
 import com.intirix.cloudpasswordmanager.services.backend.beans.Category;
 import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordBean;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by jeff on 6/29/16.
@@ -85,15 +90,42 @@ public class SessionInfo {
         return serverVersion;
     }
 
-    public List<PasswordBean> getPasswordBeanList() {
-        return passwordBeanList;
+    public synchronized List<PasswordBean> getPasswordBeanList() {
+        if (passwordBeanList==null) {
+            return null;
+        }
+        return Collections.unmodifiableList(passwordBeanList);
     }
 
-    public void setPasswordBeanList(List<PasswordBean> passwordBeanList) {
+    public synchronized void setPasswordBeanList(List<PasswordBean> passwordBeanList) {
         this.passwordBeanList = passwordBeanList;
     }
 
-    public boolean isPasswordBeanListEmpty() {
+    public synchronized void updatePasswordBeanList(Collection<PasswordBean> beanList) {
+        // just set the list if the current list is null
+        if (passwordBeanList==null) {
+            passwordBeanList = new ArrayList<>(beanList);
+            return;
+        }
+        List<PasswordBean> newList = new ArrayList<>(passwordBeanList);
+
+        final Map<String,Integer> index = new HashMap();
+        for (int i = 0; i < passwordBeanList.size(); i++) {
+            index.put(passwordBeanList.get(i).getId(),i);
+        }
+
+        for (final PasswordBean bean: beanList) {
+            if (index.containsKey(bean.getId())) {
+                // replace
+                newList.set(index.get(bean.getId()),bean);
+            } else {
+                newList.add(bean);
+            }
+        }
+        passwordBeanList = newList;
+    }
+
+    public synchronized boolean isPasswordBeanListEmpty() {
         return passwordBeanList==null || passwordBeanList.size()==0;
     }
 

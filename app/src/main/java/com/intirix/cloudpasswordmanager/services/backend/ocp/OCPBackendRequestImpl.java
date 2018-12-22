@@ -193,7 +193,7 @@ public class OCPBackendRequestImpl implements BackendRequestInterface {
             }
 
 
-            session.setPasswordBeanList(beans);
+            session.updatePasswordBeanList(beans);
         }
     }
 

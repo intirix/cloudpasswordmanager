@@ -15,10 +15,12 @@
  */
 package com.intirix.cloudpasswordmanager.services.backend.beans;
 
+import java.io.Serializable;
+
 /**
  * Created by jeff on 6/27/16.
  */
-public class Category {
+public class Category implements Serializable {
 
     private String id;
 

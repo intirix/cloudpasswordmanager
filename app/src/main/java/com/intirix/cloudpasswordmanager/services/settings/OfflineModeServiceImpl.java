@@ -118,6 +118,16 @@ public class OfflineModeServiceImpl implements OfflineModeService {
     private void saveObject(byte[] key, String filename, Object obj) {
         File dir = context.getFilesDir();
         File file = new File(dir,filename);
+
+        if (obj==null) {
+            if (file.exists()) {
+                // we should delete the file
+                Log.d(TAG,"Deleting "+file.getAbsolutePath());
+                file.delete();
+            }
+            return;
+        }
+
         Log.d(TAG,"Writing "+file.getAbsolutePath());
         try {
             ObjectOutputStream oos = null;
@@ -127,6 +137,7 @@ public class OfflineModeServiceImpl implements OfflineModeService {
                                 new BufferedOutputStream(
                                         new FileOutputStream(file))));
                 oos.writeObject(obj);
+                oos.flush();
                 Log.d(TAG,"Finished updating cache, file="+filename+", size="+file.length());
             } finally {
                 if (oos != null) {

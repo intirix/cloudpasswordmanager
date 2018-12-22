@@ -229,8 +229,6 @@ public class SMBackendRequestImpl implements BackendRequestInterface, BackendReq
                 if (response.body()!=null) {
                     Log.d(TAG, "Downloaded " + response.body().size() + " secrets on "+Thread.currentThread().getName());
                 }
-                session.setPasswordBeanList(Collections.<PasswordBean>emptyList());
-                session.setCategoryList(Collections.<Category>emptyList());
 
                 new AsyncTask<Void,Void,Void>() {
                     @Override

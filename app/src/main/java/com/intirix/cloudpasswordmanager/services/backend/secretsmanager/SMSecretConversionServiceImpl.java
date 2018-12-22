@@ -98,6 +98,9 @@ public class SMSecretConversionServiceImpl implements SMSecretConversionService 
                 String privateKeyPem = new String(privateKey,"ASCII");
 
                 List<PasswordBean> passwordBeanList = new ArrayList<>();
+                if (session.getPasswordBeanList()!=null) {
+                    passwordBeanList.addAll(session.getPasswordBeanList());
+                }
 
                 for (final String sid: response.keySet()) {
                     final Secret secret = response.get(sid);
@@ -115,7 +118,7 @@ public class SMSecretConversionServiceImpl implements SMSecretConversionService 
 
                     loop += dt_decrypt;
                     if (loop>1000) {
-                        session.setPasswordBeanList(new ArrayList<PasswordBean>(passwordBeanList));
+                        session.updatePasswordBeanList(passwordBeanList);
 
                         eventService.postEvent(new PasswordListUpdatedEvent());
                         loop = 0;
@@ -124,7 +127,7 @@ public class SMSecretConversionServiceImpl implements SMSecretConversionService 
                     Log.d(TAG, "Decrypted secret "+parsedType.name()+", decryption="+dt_decrypt+"ms, elapsed="+dt_elapsed+"ms");
                 }
 
-                session.setPasswordBeanList(passwordBeanList);
+                session.updatePasswordBeanList(passwordBeanList);
 
                 eventService.postEvent(new CategoryListUpdatedEvent());
                 eventService.postEvent(new PasswordListUpdatedEvent());
@@ -220,6 +223,7 @@ public class SMSecretConversionServiceImpl implements SMSecretConversionService 
                         parseSingleCategory(categories, entry);
                     }
                 }
+                Log.d(TAG,"Decrypted "+categories.size()+" categories");
 
                 session.setCategoryList(categories);
 
@@ -268,6 +272,16 @@ public class SMSecretConversionServiceImpl implements SMSecretConversionService 
 
     private PasswordBean parseSinglePassword(SessionInfo session, String sid, Secret secret, JsonObject topElement, List<PasswordBean> passwordBeanList) throws ParseException {
         PasswordBean bean = new PasswordBean();
+        boolean addBean = true;
+
+        // if the bean already exists in the list, then update it instead of appending
+        // this could happen due to a cache load
+        for (final PasswordBean existingBean: passwordBeanList) {
+            if (sid.equals(existingBean.getId())) {
+                bean = existingBean;
+                addBean = false;
+            }
+        }
 
         if (secret!=null && secret.getUsers()!=null) {
             Map<String, ?> map = (Map<String, ?>) secret.getUsers();
@@ -346,7 +360,9 @@ public class SMSecretConversionServiceImpl implements SMSecretConversionService 
         bean.setId(sid);
         bean.setDecrypted(true);
 
-        passwordBeanList.add(bean);
+        if (addBean) {
+            passwordBeanList.add(bean);
+        }
 
         return bean;
     }
@@ -354,7 +370,12 @@ public class SMSecretConversionServiceImpl implements SMSecretConversionService 
     private void parseSingleCategory(List<Category> categories, Map.Entry<String, JsonElement> entry) {
         // make sure it is an object
         if (entry.getValue().isJsonObject()) {
-            final Category category = new Category();
+            Category category = new Category();
+            for (final Category c: categories) {
+                if (c.getId().equals(entry.getKey())) {
+                    category = c;
+                }
+            }
 
             category.setId(entry.getKey());
             category.setUser_id(sessionService.getUsername());

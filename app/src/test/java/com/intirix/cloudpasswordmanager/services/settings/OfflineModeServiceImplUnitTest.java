@@ -78,10 +78,17 @@ public class OfflineModeServiceImplUnitTest {
 
 
         obj.updateOfflineModeCache(true);
+        Assert.assertTrue(obj.doesCacheFileExist("passwords"));
     }
 
     @Test
     public void verifyEnableWillCreateCacheFile() {
+        PasswordBean bean1 = new PasswordBean();
+        bean1.setWebsite("test.com");
+        List<PasswordBean> list = new ArrayList<>();
+        list.add(bean1);
+        sessionService.getCurrentSession().setPasswordBeanList(list);
+
         Assert.assertFalse(obj.doesCacheFileExist("passwords"));
         obj.enable();
         Robolectric.flushBackgroundThreadScheduler();
@@ -89,7 +96,24 @@ public class OfflineModeServiceImplUnitTest {
     }
 
     @Test
+    public void verifyEnableWillNotCreateCacheFileIfNothingToCache() {
+        sessionService.getCurrentSession().setPasswordBeanList(null);
+
+        Assert.assertFalse(obj.doesCacheFileExist("passwords"));
+        obj.enable();
+        Robolectric.flushBackgroundThreadScheduler();
+        Assert.assertFalse(obj.doesCacheFileExist("passwords"));
+    }
+
+    @Test
     public void verifyDisableWillDeleteCacheFile() {
+        PasswordBean bean1 = new PasswordBean();
+        bean1.setWebsite("test.com");
+        List<PasswordBean> list = new ArrayList<>();
+        list.add(bean1);
+        sessionService.getCurrentSession().setPasswordBeanList(list);
+
+
         Assert.assertFalse(obj.doesCacheFileExist("passwords"));
         obj.enable();
         Robolectric.flushBackgroundThreadScheduler();
@@ -97,6 +121,25 @@ public class OfflineModeServiceImplUnitTest {
         obj.disable();
         Robolectric.flushBackgroundThreadScheduler();
         Assert.assertFalse(obj.doesCacheFileExist("passwords"));
+    }
+
+    public void verifySaveEmptyWillDeleteCacheFile() {
+        PasswordBean bean1 = new PasswordBean();
+        bean1.setWebsite("test.com");
+        List<PasswordBean> list = new ArrayList<>();
+        list.add(bean1);
+        sessionService.getCurrentSession().setPasswordBeanList(list);
+
+
+
+        Assert.assertFalse(obj.doesCacheFileExist("passwords"));
+        obj.enable();
+        Robolectric.flushBackgroundThreadScheduler();
+        Assert.assertTrue(obj.doesCacheFileExist("passwords"));
+        sessionService.getCurrentSession().setPasswordBeanList(null);
+        obj.updateOfflineModeCache(false);
+        Assert.assertFalse(obj.doesCacheFileExist("passwords"));
+
     }
 
 }
