@@ -21,6 +21,7 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
@@ -42,12 +43,16 @@ public class BiometricServiceImpl implements BiometricService {
     // Unique identifier of a key pair
     private static final String KEY_NAME = "CPMKEY";
 
+    /**
+     * Callback that gets invoked during the enrollment flow
+     */
     @TargetApi(Build.VERSION_CODES.P)
     private class BiometricEnrollmentCallback extends BiometricPrompt.AuthenticationCallback {
         @Override
         public void onAuthenticationSucceeded(BiometricPrompt.AuthenticationResult result) {
             super.onAuthenticationSucceeded(result);
             try {
+                // pass in the cipher to perform the encryption
                 successfulEnrollment(result.getCryptoObject().getCipher());
                 Toast.makeText(context, context.getString(R.string.settings_biometrics_enroll_success), Toast.LENGTH_LONG);
             } catch (Exception e) {
@@ -62,6 +67,9 @@ public class BiometricServiceImpl implements BiometricService {
         }
     }
 
+    /**
+     * Callback that gets invoked during the authentication flow
+     */
     @TargetApi(Build.VERSION_CODES.P)
     private class BiometricAuthenticationCallback extends BiometricPrompt.AuthenticationCallback {
         @Override
@@ -130,16 +138,22 @@ public class BiometricServiceImpl implements BiometricService {
     @TargetApi(Build.VERSION_CODES.P)
     public void enroll() {
         try {
+            // delete the old key if this is a re-enroll
             sharedEncryptionService.deleteKey(KEY_NAME);
+            // generate a key that can only be used if authenticated
             SecretKey key = sharedEncryptionService.generateKey(KEY_NAME, true);
 
+            // create the cipher
             Cipher cipher = Cipher.getInstance(
                     KeyProperties.KEY_ALGORITHM_AES + "/"
                             + KeyProperties.BLOCK_MODE_CBC + "/"
                             + KeyProperties.ENCRYPTION_PADDING_PKCS7);
             if (key != null) {
-                cipher.init(Cipher.ENCRYPT_MODE, key);
+                byte[] iv = sharedEncryptionService.generateKey(SharedEncryptionService.AES_BLOCK_SIZE);
+                cipher.init(Cipher.ENCRYPT_MODE, key, new IvParameterSpec(iv));
 
+                // tell android to prompt for a biometric authentication
+                // android has the same flow for enroll and auth.  The callback and cipher mode is what is different
                 final BiometricEnrollmentCallback callback = new BiometricEnrollmentCallback();
                 BiometricPrompt prompt = new BiometricPrompt.Builder(context)
                         .setTitle(context.getString(R.string.settings_biometrics_enroll_title))
@@ -148,7 +162,7 @@ public class BiometricServiceImpl implements BiometricService {
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        //callback.onAuthenticationFailed();
+                                        Log.d(TAG,"cancel");
                                     }
                                 })
                         .build();
@@ -211,9 +225,12 @@ public class BiometricServiceImpl implements BiometricService {
                 BufferedInputStream is = new BufferedInputStream(
                         new FileInputStream(file));
 
-                // skip the IV
+                // the Cipher has already been initialized with the IV, but the stream still has it
+                // we read in the IV just so that we can skip those bytes
                 byte[] iv = new byte[SharedEncryptionService.AES_BLOCK_SIZE];
-                is.read(iv,0, SharedEncryptionService.AES_BLOCK_SIZE);
+                if (is.read(iv,0, SharedEncryptionService.AES_BLOCK_SIZE)!=SharedEncryptionService.AES_BLOCK_SIZE) {
+                    throw new IOException("Failed to skip the IV");
+                }
 
 
                 ois = new ObjectInputStream(
@@ -279,19 +296,7 @@ public class BiometricServiceImpl implements BiometricService {
                             + KeyProperties.BLOCK_MODE_CBC + "/"
                             + KeyProperties.ENCRYPTION_PADDING_PKCS7);
             if (key != null) {
-                byte[] iv = new byte[SharedEncryptionService.AES_BLOCK_SIZE];
-                BufferedInputStream is = null;
-                try {
-                    is = new BufferedInputStream(
-                            new FileInputStream(getBiometricDataFile()));
-
-                    // read the iv
-                    is.read(iv, 0, SharedEncryptionService.AES_BLOCK_SIZE);
-                } finally {
-                    if (is!=null) {
-                        is.close();
-                    }
-                }
+                byte[] iv = getIV();
 
 
                 cipher.init(Cipher.DECRYPT_MODE, key, new IvParameterSpec(iv));
@@ -304,7 +309,7 @@ public class BiometricServiceImpl implements BiometricService {
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        //callback.onAuthenticationFailed();
+                                        Log.d(TAG,"cancel");
                                     }
                                 })
                         .build();
@@ -315,5 +320,29 @@ public class BiometricServiceImpl implements BiometricService {
             Log.e(TAG,"Failed to authenticate",e);
             Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG);
         }
+    }
+
+    /**
+     * Get the IV from the biometric data file
+     * @return
+     * @throws IOException
+     */
+    private byte[] getIV() throws IOException {
+        byte[] iv = new byte[SharedEncryptionService.AES_BLOCK_SIZE];
+        BufferedInputStream is = null;
+        try {
+            is = new BufferedInputStream(
+                    new FileInputStream(getBiometricDataFile()));
+
+            // read the iv
+            if (is.read(iv, 0, SharedEncryptionService.AES_BLOCK_SIZE)!=SharedEncryptionService.AES_BLOCK_SIZE) {
+                throw new IOException("Failed to read IV");
+            }
+        } finally {
+            if (is!=null) {
+                is.close();
+            }
+        }
+        return iv;
     }
 }
