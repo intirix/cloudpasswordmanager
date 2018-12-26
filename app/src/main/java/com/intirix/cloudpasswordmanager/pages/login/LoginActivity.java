@@ -34,6 +34,8 @@ import com.intirix.cloudpasswordmanager.pages.BaseActivity;
 import com.intirix.cloudpasswordmanager.pages.FatalErrorEvent;
 import com.intirix.cloudpasswordmanager.pages.keys.ImportPrivateKeyActivity;
 import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordListActivity;
+import com.intirix.cloudpasswordmanager.services.BiometricAuthenticationSuccessfulEvent;
+import com.intirix.cloudpasswordmanager.services.BiometricService;
 import com.intirix.cloudpasswordmanager.services.backend.PasswordRequestService;
 import com.intirix.cloudpasswordmanager.services.session.StorageType;
 import com.intirix.cloudpasswordmanager.services.settings.OfflineModeService;
@@ -73,6 +75,9 @@ public class LoginActivity extends BaseActivity {
     @Inject
     OfflineModeService offlineModeService;
 
+    @Inject
+    BiometricService biometricService;
+
     @BindView(R.id.login_storage_type)
     Spinner storageTypeSpinner;
 
@@ -101,6 +106,9 @@ public class LoginActivity extends BaseActivity {
 
     @BindView(R.id.login_import_key_button)
     View importKeyButton;
+
+    @BindView(R.id.login_biometric_login)
+    View biometricLogin;
 
     ProgressDialog progressDialog;
 
@@ -159,6 +167,14 @@ public class LoginActivity extends BaseActivity {
 
             int selectedPosition = storageTypeAdapter.getPosition(sessionService.getStorageType());
             storageTypeSpinner.setSelection(selectedPosition);
+        }
+
+        if (biometricService.isBiometricPromptEnabled()&&biometricService.isEnrolled()) {
+            Log.d(TAG,"Showing biometric login button");
+            biometricLogin.setVisibility(View.VISIBLE);
+        } else {
+            Log.d(TAG,"Hiding biometric login button");
+            biometricLogin.setVisibility(View.GONE);
         }
 
         // recheck the pinning flags
@@ -328,6 +344,12 @@ public class LoginActivity extends BaseActivity {
 
     }
 
+    @OnClick(R.id.login_biometric_login)
+    public void onBiometricLogin(View view) {
+        Log.d(TAG,"onBiometricLogin()");
+        biometricService.promptForAuthentication();
+    }
+
     @OnItemSelected(R.id.login_storage_type)
     public void spinnerItemSelected(Spinner spinner, int position) {
         updateLoginForm(false);
@@ -345,6 +367,19 @@ public class LoginActivity extends BaseActivity {
         errorMessageView.setText(event.getMessage());
         updateErrorMessageVisibility();
         updateLoginForm(true);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onBiometricSuccess(BiometricAuthenticationSuccessfulEvent event) {
+        sessionService.setStorageType((StorageType)storageTypeSpinner.getSelectedItem());
+        sessionService.setUrl(urlInput.getText().toString());
+
+        passwordRequestService.login();
+        updateProgressDialog();
+        if (offlineModeService.isOfflineModelEnabled()) {
+            offlineModeService.loadDataFromCache(false,sessionService.getUsername(), sessionService.getCurrentSession().getPassword());
+        }
+
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

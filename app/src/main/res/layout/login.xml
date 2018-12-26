@@ -104,6 +104,16 @@
             android:layout_alignParentRight="true"
             android:text="@string/login_login_label"/>
 
+        <ImageButton
+            android:id="@+id/login_biometric_login"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_fingerprint_black_48dp"
+            android:contentDescription="@string/login_biologin_text"
+            android:layout_below="@id/login_login_button"
+            android:layout_alignLeft="@id/login_login_button"/>
+
+
     </RelativeLayout>
     </LinearLayout>
 

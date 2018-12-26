@@ -17,6 +17,7 @@ package com.intirix.cloudpasswordmanager.pages.settings;
 
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.view.View;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
@@ -24,6 +25,7 @@ import com.intirix.cloudpasswordmanager.BaseTestCase;
 import com.intirix.cloudpasswordmanager.BuildConfig;
 import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.TestPasswordApplication;
+import com.intirix.cloudpasswordmanager.services.MockBiometricService;
 import com.intirix.cloudpasswordmanager.services.settings.OfflineModeServiceImpl;
 import com.intirix.cloudpasswordmanager.services.settings.SavePasswordEnum;
 import com.intirix.cloudpasswordmanager.services.session.SessionService;
@@ -150,5 +152,130 @@ public class SettingsActivityLayoutSpec extends BaseTestCase {
         controller.pause().stop().destroy();
     }
 
+    @Test
+    public void verifyBiometricSettingsNotVisibleForOlderOSVersions() {
+        SessionService sessionService = serviceRef.sessionService();
+
+        final String MOCK_URL = "https://www.example.com/owncloud";
+        final String MOCK_USER = "myusername";
+        final String MOCK_PASS = "mypassword";
+
+        sessionService.setUrl(MOCK_URL);
+        sessionService.setUsername(MOCK_USER);
+        sessionService.start();
+        sessionService.getCurrentSession().setPassword(MOCK_PASS);
+
+
+        ActivityController<SettingsActivity> controller = Robolectric.buildActivity(SettingsActivity.class).create();
+        SettingsActivity activity = controller.start().get();
+
+        MockBiometricService biometricService = new MockBiometricService();
+        activity.fragment.biometricService = biometricService;
+
+        //activity.savePasswordService.changeSavePasswordSetting(SavePasswordEnum.ALWAYS);
+
+        controller.resume();
+
+        Assert.assertEquals(View.GONE,activity.findViewById(R.id.settings_biometric_row).getVisibility());
+
+        controller.pause().stop().destroy();
+    }
+
+
+    @Test
+    public void verifyBiometricSettingsVisibleForP() {
+        SessionService sessionService = serviceRef.sessionService();
+
+        final String MOCK_URL = "https://www.example.com/owncloud";
+        final String MOCK_USER = "myusername";
+        final String MOCK_PASS = "mypassword";
+
+        sessionService.setUrl(MOCK_URL);
+        sessionService.setUsername(MOCK_USER);
+        sessionService.start();
+        sessionService.getCurrentSession().setPassword(MOCK_PASS);
+
+
+        ActivityController<SettingsActivity> controller = Robolectric.buildActivity(SettingsActivity.class).create();
+        SettingsActivity activity = controller.start().get();
+
+        MockBiometricService biometricService = new MockBiometricService();
+        activity.fragment.biometricService = biometricService;
+        biometricService.setAvailable(true);
+
+        //activity.savePasswordService.changeSavePasswordSetting(SavePasswordEnum.ALWAYS);
+
+        controller.resume();
+
+        Assert.assertEquals(View.VISIBLE,activity.findViewById(R.id.settings_biometric_row).getVisibility());
+
+        controller.pause().stop().destroy();
+    }
+
+
+
+    @Test
+    public void verifyBiometricCheckedWhenAlreadyEnrolled() {
+        SessionService sessionService = serviceRef.sessionService();
+
+        final String MOCK_URL = "https://www.example.com/owncloud";
+        final String MOCK_USER = "myusername";
+        final String MOCK_PASS = "mypassword";
+
+        sessionService.setUrl(MOCK_URL);
+        sessionService.setUsername(MOCK_USER);
+        sessionService.start();
+        sessionService.getCurrentSession().setPassword(MOCK_PASS);
+
+
+        ActivityController<SettingsActivity> controller = Robolectric.buildActivity(SettingsActivity.class).create();
+        SettingsActivity activity = controller.start().get();
+
+        MockBiometricService biometricService = new MockBiometricService();
+        activity.fragment.biometricService = biometricService;
+
+        biometricService.setAvailable(true);
+        biometricService.setEnrolled(true);
+
+        controller.resume();
+
+        final CheckBox cb = (CheckBox)activity.findViewById(R.id.settings_biometric_checkbox);
+        Assert.assertTrue(cb.isChecked());
+
+
+        controller.pause().stop().destroy();
+    }
+
+    @Test
+    public void verifyBiometricNotCheckedWhenNotEnrolled() {
+        SessionService sessionService = serviceRef.sessionService();
+
+        final String MOCK_URL = "https://www.example.com/owncloud";
+        final String MOCK_USER = "myusername";
+        final String MOCK_PASS = "mypassword";
+
+        sessionService.setUrl(MOCK_URL);
+        sessionService.setUsername(MOCK_USER);
+        sessionService.start();
+        sessionService.getCurrentSession().setPassword(MOCK_PASS);
+
+
+        ActivityController<SettingsActivity> controller = Robolectric.buildActivity(SettingsActivity.class).create();
+        SettingsActivity activity = controller.start().get();
+
+        MockBiometricService biometricService = new MockBiometricService();
+        activity.fragment.biometricService = biometricService;
+
+        biometricService.setAvailable(true);
+        biometricService.setEnrolled(false);
+
+        controller.resume();
+
+        final CheckBox cb = (CheckBox)activity.findViewById(R.id.settings_biometric_checkbox);
+        Assert.assertFalse(cb.isChecked());
+
+
+        controller.pause().stop().destroy();
+    }
 
 }

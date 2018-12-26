@@ -41,6 +41,8 @@ public class SettingsActivity extends SecureActivity {
     @Inject
     SavePasswordService savePasswordService;
 
+    SettingsFragment fragment;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,7 +57,8 @@ public class SettingsActivity extends SecureActivity {
 
     @Override
     protected Fragment createInitialFragment() {
-        return new SettingsFragment();
+        fragment = new SettingsFragment();
+        return fragment;
     }
 
 }

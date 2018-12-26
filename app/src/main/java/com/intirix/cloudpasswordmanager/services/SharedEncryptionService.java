@@ -1,5 +1,10 @@
 package com.intirix.cloudpasswordmanager.services;
 
+import android.annotation.TargetApi;
+import android.os.Build;
+import android.security.keystore.KeyGenParameterSpec;
+import android.security.keystore.KeyProperties;
+import android.support.annotation.Nullable;
 import android.util.Base64;
 import android.util.Log;
 
@@ -14,15 +19,22 @@ import org.spongycastle.util.encoders.Hex;
 import org.spongycastle.util.io.pem.PemObject;
 import org.spongycastle.util.io.pem.PemReader;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.KeyStore;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
@@ -30,23 +42,27 @@ import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.Signature;
 import java.security.SignatureException;
+import java.security.spec.ECGenParameterSpec;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
+import java.util.Enumeration;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.KeyGenerator;
 import javax.crypto.Mac;
 import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
 import javax.crypto.ShortBufferException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.inject.Inject;
 
 public class SharedEncryptionService {
-    private static final int AES_BLOCK_SIZE = 16;
+    public static final int AES_BLOCK_SIZE = 16;
 
     private static final String TAG = SharedEncryptionService.class.getSimpleName();
 
@@ -66,6 +82,146 @@ public class SharedEncryptionService {
             Log.e(SharedEncryptionService.class.getSimpleName(),"Missing encryption",e);
         }
     }
+
+    /**
+     * Get a stored keypair
+     * @param keyName
+     * @return
+     * @throws Exception
+     */
+    @Nullable
+    public KeyPair getKeyPair(String keyName) throws Exception {
+        KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
+        keyStore.load(null);
+        if (keyStore.containsAlias(keyName)) {
+            // Get public key
+            PublicKey publicKey = keyStore.getCertificate(keyName).getPublicKey();
+            // Get private key
+            PrivateKey privateKey = (PrivateKey) keyStore.getKey(keyName, null);
+            // Return a key pair
+            return new KeyPair(publicKey, privateKey);
+        }
+        return null;
+    }
+
+    /**
+     * Get a secret key from the keystore
+     * @param keyName
+     * @return
+     * @throws Exception
+     */
+    public SecretKey getSecretKey(String keyName) throws Exception {
+        KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
+        keyStore.load(null);
+        if (keyStore.containsAlias(keyName)) {
+            return (SecretKey)keyStore.getKey(keyName,null);
+        }
+        return null;
+    }
+
+    @TargetApi(Build.VERSION_CODES.P)
+    public SecretKey generateKey(String keyName, boolean invalidatedByBiometricEnrollment) throws Exception {
+        Log.d(TAG,"Generating key "+keyName);
+        KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
+        KeyGenerator keyGenerator = KeyGenerator.getInstance(
+                KeyProperties.KEY_ALGORITHM_AES,
+                "AndroidKeyStore");
+        keyStore.load(null);
+        keyGenerator.init(new
+                KeyGenParameterSpec.Builder(keyName,
+                KeyProperties.PURPOSE_ENCRYPT |
+                        KeyProperties.PURPOSE_DECRYPT)
+                .setBlockModes(KeyProperties.BLOCK_MODE_CBC)
+                .setUserAuthenticationRequired(true)
+                .setInvalidatedByBiometricEnrollment(invalidatedByBiometricEnrollment)
+                .setEncryptionPaddings(
+                        KeyProperties.ENCRYPTION_PADDING_PKCS7)
+                .build());
+        return keyGenerator.generateKey();
+    }
+
+    /**
+     * Generate NIST P-256 EC Key pair for signing and verification
+     * @param keyName
+     * @param invalidatedByBiometricEnrollment
+     * @return
+     * @throws Exception
+     */
+    @TargetApi(Build.VERSION_CODES.P)
+    public KeyPair generateKeyPair(String keyName, boolean invalidatedByBiometricEnrollment) throws Exception {
+        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance(KeyProperties.KEY_ALGORITHM_EC, "AndroidKeyStore");
+
+        KeyGenParameterSpec.Builder builder = new KeyGenParameterSpec.Builder(keyName,
+                KeyProperties.PURPOSE_SIGN)
+                .setAlgorithmParameterSpec(new ECGenParameterSpec("secp256r1"))
+                .setDigests(KeyProperties.DIGEST_SHA256,
+                        KeyProperties.DIGEST_SHA384,
+                        KeyProperties.DIGEST_SHA512)
+                // Require the user to authenticate with a biometric to authorize every use of the key
+                .setUserAuthenticationRequired(true)
+                // Generated keys will be invalidated if the biometric templates are added more to user device
+                .setInvalidatedByBiometricEnrollment(invalidatedByBiometricEnrollment);
+
+        keyPairGenerator.initialize(builder.build());
+
+        return keyPairGenerator.generateKeyPair();
+    }
+
+    /**
+     * Delete a key
+     * @param keyName
+     * @throws Exception
+     */
+    public void deleteKey(String keyName) throws Exception {
+        KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
+        keyStore.load(null);
+        if (keyStore.containsAlias(keyName)) {
+            Log.d(TAG,"Deleting key "+keyName);
+            keyStore.deleteEntry(keyName);
+        } else {
+            Log.d(TAG,"Skipped deleting unknown key "+keyName);
+        }
+    }
+
+    public boolean doesKeyExist(String keyName) {
+        try {
+            KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
+            keyStore.load(null);
+            if (keyStore.containsAlias(keyName)) {
+                Log.d(TAG,"Keystore contains "+keyName);
+                return true;
+            } else {
+                Log.d(TAG,"Keystore does not contain "+keyName+", here is the list of valid aliases");
+                Enumeration<String> e = keyStore.aliases();
+                while (e.hasMoreElements()) {
+                    String s = e.nextElement();
+                    Log.d(TAG,"  "+s);
+                }
+                return false;
+            }
+        } catch (Exception e) {
+            Log.w(TAG,"Failed to load keystore",e);
+            return false;
+        }
+    }
+
+    /**
+     * Get the signature for a stored keypair
+     * @param keyName
+     * @return
+     * @throws Exception
+     */
+    public Signature getSignatureForKey(String keyName) throws Exception {
+        KeyPair keyPair = getKeyPair(keyName);
+
+        if (keyPair != null) {
+            Signature signature = Signature.getInstance("SHA256withECDSA");
+            signature.initSign(keyPair.getPrivate());
+            return signature;
+        }
+        return null;
+    }
+
 
     /**
      * Generate a random key
@@ -126,6 +282,19 @@ public class SharedEncryptionService {
         return new CipherInputStream(is, cipher);
 
     }
+
+    public byte[] encryptWithCipher(Cipher cipher, byte[] input) throws BadPaddingException, IllegalBlockSizeException {
+        return cipher.doFinal(input);
+    }
+
+    public byte[] encryptWithCipher(Cipher cipher, Serializable obj) throws BadPaddingException, IllegalBlockSizeException, IOException {
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream(1024);
+        ObjectOutputStream oos = new ObjectOutputStream(buffer);
+        oos.writeObject(obj);
+        oos.close();
+        return cipher.doFinal(buffer.toByteArray());
+    }
+
 
     public byte[] encryptAES(byte[] keyBytes, byte[] input) throws NoSuchPaddingException, NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException, IOException {
         byte[] ivData = generateKey(AES_BLOCK_SIZE);

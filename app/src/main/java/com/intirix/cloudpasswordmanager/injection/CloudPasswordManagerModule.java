@@ -18,6 +18,8 @@ package com.intirix.cloudpasswordmanager.injection;
 import android.content.Context;
 import android.util.Log;
 
+import com.intirix.cloudpasswordmanager.services.BiometricService;
+import com.intirix.cloudpasswordmanager.services.BiometricServiceImpl;
 import com.intirix.cloudpasswordmanager.services.backend.PasswordRequestService;
 import com.intirix.cloudpasswordmanager.services.backend.PasswordRequestServiceImpl;
 import com.intirix.cloudpasswordmanager.services.backend.ocp.PasswordStorageService;
@@ -202,4 +204,7 @@ public class CloudPasswordManagerModule {
     OfflineModeService provideOfflineModeService(OfflineModeServiceImpl impl) {
         return impl;
     }
+
+    @Provides @Singleton
+    BiometricService provideBiometricService(BiometricServiceImpl impl) { return impl; }
 }

@@ -21,6 +21,7 @@
     <string name="login_user_hint">Username</string>
     <string name="login_pass_hint">Password</string>
     <string name="login_login_label">Login</string>
+    <string name="login_biologin_text">Login with biometrics</string>
     <string name="login_pin_label">Pin SSL</string>
     <string name="login_unpin_label">Unpin SSL</string>
     <string name="login_import_key_label">Import Private Key</string>
@@ -103,6 +104,13 @@
         backed up to Google\'s servers.  Your device must be password protected to select this option.  Requires API 16.
     </string>
     <string name="settings_offline_label">Offline Support:</string>
+    <string name="settings_biometrics_label">Biometric/Fingerprint Support:</string>
+    <string name="settings_biometrics_enroll_title">Enroll in Biometric Login</string>
+    <string name="settings_biometrics_enroll_success">Successful Enrollment</string>
+    <string name="settings_biometrics_enroll_cancel">Cancel</string>
+    <string name="settings_biometrics_auth_title">Login using Biometrics</string>
+    <string name="settings_biometrics_auth_success">Successful Authentication</string>
+    <string name="settings_biometrics_auth_cancel">Cancel</string>
 
     <string name="about_nav_label">About</string>
     <string name="about_version_label">Version:</string>
