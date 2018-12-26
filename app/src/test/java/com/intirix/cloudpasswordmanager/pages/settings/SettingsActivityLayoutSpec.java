@@ -278,4 +278,85 @@ public class SettingsActivityLayoutSpec extends BaseTestCase {
         controller.pause().stop().destroy();
     }
 
+
+    /**
+     * There was a bug related to navigating to the settings page
+     * When you load the page, the code checks the fingerprint checkbox,
+     * but that action kicks off the enroll code as if the user checked it
+     */
+    @Test
+    public void verifyBiometricDoesntReenrollWhenSettingsLoaded() {
+        SessionService sessionService = serviceRef.sessionService();
+
+        final String MOCK_URL = "https://www.example.com/owncloud";
+        final String MOCK_USER = "myusername";
+        final String MOCK_PASS = "mypassword";
+
+        sessionService.setUrl(MOCK_URL);
+        sessionService.setUsername(MOCK_USER);
+        sessionService.start();
+        sessionService.getCurrentSession().setPassword(MOCK_PASS);
+
+
+        ActivityController<SettingsActivity> controller = Robolectric.buildActivity(SettingsActivity.class).create();
+        SettingsActivity activity = controller.start().get();
+
+        MockBiometricService biometricService = new MockBiometricService();
+        activity.fragment.biometricService = biometricService;
+
+        biometricService.setAvailable(true);
+        biometricService.setEnrolled(true);
+
+        controller.resume();
+
+        final CheckBox cb = (CheckBox)activity.findViewById(R.id.settings_biometric_checkbox);
+        Assert.assertTrue(cb.isChecked());
+
+        Assert.assertFalse(biometricService.wasEnrollCalled());
+        Assert.assertFalse(biometricService.wasUnenrollCalled());
+
+        controller.pause().stop().destroy();
+    }
+
+    /**
+     * There was a bug related to navigating to the settings page
+     * When you load the page, the code checks the fingerprint checkbox,
+     * but that action kicks off the enroll code as if the user checked it
+     */
+    @Test
+    public void verifyBiometricDoesntUnenrollWhenSettingsLoaded() {
+        SessionService sessionService = serviceRef.sessionService();
+
+        final String MOCK_URL = "https://www.example.com/owncloud";
+        final String MOCK_USER = "myusername";
+        final String MOCK_PASS = "mypassword";
+
+        sessionService.setUrl(MOCK_URL);
+        sessionService.setUsername(MOCK_USER);
+        sessionService.start();
+        sessionService.getCurrentSession().setPassword(MOCK_PASS);
+
+
+        ActivityController<SettingsActivity> controller = Robolectric.buildActivity(SettingsActivity.class).create();
+        SettingsActivity activity = controller.start().get();
+
+        MockBiometricService biometricService = new MockBiometricService();
+        activity.fragment.biometricService = biometricService;
+
+        biometricService.setAvailable(true);
+        biometricService.setEnrolled(false);
+
+        controller.resume();
+
+        final CheckBox cb = (CheckBox)activity.findViewById(R.id.settings_biometric_checkbox);
+        Assert.assertFalse(cb.isChecked());
+
+        Assert.assertFalse(biometricService.wasEnrollCalled());
+        Assert.assertFalse(biometricService.wasUnenrollCalled());
+
+
+        controller.pause().stop().destroy();
+    }
+
+
 }

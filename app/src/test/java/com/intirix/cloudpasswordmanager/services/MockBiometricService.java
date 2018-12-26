@@ -5,6 +5,7 @@ public class MockBiometricService implements BiometricService {
     private boolean available = false;
     private boolean enrollCalled = false;
     private boolean unenrollCalled = false;
+    private boolean promptCalled = false;
 
     public void setEnrolled(boolean enrolled) {
         this.enrolled = enrolled;
@@ -40,5 +41,10 @@ public class MockBiometricService implements BiometricService {
     @Override
     public void unenroll() {
         unenrollCalled = true;
+    }
+
+    @Override
+    public void promptForAuthentication() {
+        promptCalled = true;
     }
 }

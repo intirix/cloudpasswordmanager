@@ -107,19 +107,19 @@ public class SettingsFragment extends BaseFragment {
 
     @OnCheckedChanged(R.id.settings_offline_checkbox)
     public void onOfflineModeClick(CompoundButton button, boolean checked) {
-        if (checked) {
+        if (checked&&!offlineModeService.isOfflineModelEnabled()) {
             offlineModeService.enable();
             offlineModeService.updateOfflineModeCache(false);
-        } else {
+        } else if (!checked&&offlineModeService.isOfflineModelEnabled()){
             offlineModeService.disable();
         }
     }
 
     @OnCheckedChanged(R.id.settings_biometric_checkbox)
     public void onBiometricClick(CompoundButton button, boolean checked) {
-        if (checked) {
+        if (checked&&!biometricService.isEnrolled()) {
             biometricService.enroll();
-        } else {
+        } else if (!checked&&biometricService.isEnrolled()){
             biometricService.unenroll();
         }
     }
