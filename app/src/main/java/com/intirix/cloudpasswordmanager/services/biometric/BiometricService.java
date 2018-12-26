@@ -1,4 +1,4 @@
-package com.intirix.cloudpasswordmanager.services;
+package com.intirix.cloudpasswordmanager.services.biometric;
 
 import android.content.Context;
 import android.os.Build;

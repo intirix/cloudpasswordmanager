@@ -22,10 +22,8 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.intirix.cloudpasswordmanager.BaseTestCase;
-import com.intirix.cloudpasswordmanager.BuildConfig;
 import com.intirix.cloudpasswordmanager.R;
-import com.intirix.cloudpasswordmanager.TestPasswordApplication;
-import com.intirix.cloudpasswordmanager.services.MockBiometricService;
+import com.intirix.cloudpasswordmanager.services.biometric.MockBiometricService;
 import com.intirix.cloudpasswordmanager.services.settings.OfflineModeServiceImpl;
 import com.intirix.cloudpasswordmanager.services.settings.SavePasswordEnum;
 import com.intirix.cloudpasswordmanager.services.session.SessionService;
@@ -37,7 +35,6 @@ import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
-import org.robolectric.annotation.Config;
 import org.robolectric.android.controller.ActivityController;
 
 /**

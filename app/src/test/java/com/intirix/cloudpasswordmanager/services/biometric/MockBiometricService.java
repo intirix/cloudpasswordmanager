@@ -1,4 +1,6 @@
-package com.intirix.cloudpasswordmanager.services;
+package com.intirix.cloudpasswordmanager.services.biometric;
+
+import com.intirix.cloudpasswordmanager.services.biometric.BiometricService;
 
 public class MockBiometricService implements BiometricService {
     private boolean enrolled = false;

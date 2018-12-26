@@ -1,4 +1,4 @@
-package com.intirix.cloudpasswordmanager.services;
+package com.intirix.cloudpasswordmanager.services.biometric;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.pages.ErrorEvent;
+import com.intirix.cloudpasswordmanager.services.SharedEncryptionService;
 import com.intirix.cloudpasswordmanager.services.session.SessionService;
 import com.intirix.cloudpasswordmanager.services.ui.EventService;
 

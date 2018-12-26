@@ -28,7 +28,7 @@ import android.widget.TextView;
 import com.intirix.cloudpasswordmanager.PasswordApplication;
 import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.pages.BaseFragment;
-import com.intirix.cloudpasswordmanager.services.BiometricService;
+import com.intirix.cloudpasswordmanager.services.biometric.BiometricService;
 import com.intirix.cloudpasswordmanager.services.settings.OfflineModeService;
 import com.intirix.cloudpasswordmanager.services.settings.SavePasswordEnum;
 import com.intirix.cloudpasswordmanager.services.settings.SavePasswordService;

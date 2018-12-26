@@ -18,8 +18,8 @@ package com.intirix.cloudpasswordmanager.injection;
 import android.content.Context;
 import android.util.Log;
 
-import com.intirix.cloudpasswordmanager.services.BiometricService;
-import com.intirix.cloudpasswordmanager.services.BiometricServiceImpl;
+import com.intirix.cloudpasswordmanager.services.biometric.BiometricService;
+import com.intirix.cloudpasswordmanager.services.biometric.BiometricServiceImpl;
 import com.intirix.cloudpasswordmanager.services.backend.PasswordRequestService;
 import com.intirix.cloudpasswordmanager.services.backend.PasswordRequestServiceImpl;
 import com.intirix.cloudpasswordmanager.services.backend.ocp.PasswordStorageService;
@@ -53,7 +53,6 @@ import com.intirix.cloudpasswordmanager.services.ui.FilterPasswordServiceImpl;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.sql.Time;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Singleton;
