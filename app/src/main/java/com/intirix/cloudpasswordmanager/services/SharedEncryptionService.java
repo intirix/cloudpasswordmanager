@@ -8,13 +8,16 @@ import android.support.annotation.Nullable;
 import android.util.Base64;
 import android.util.Log;
 
+import org.spongycastle.crypto.CipherParameters;
 import org.spongycastle.crypto.engines.AESFastEngine;
 import org.spongycastle.crypto.generators.SCrypt;
 import org.spongycastle.crypto.io.CipherInputStream;
 import org.spongycastle.crypto.io.CipherOutputStream;
+import org.spongycastle.crypto.modes.CBCBlockCipher;
 import org.spongycastle.crypto.paddings.PKCS7Padding;
 import org.spongycastle.crypto.paddings.PaddedBufferedBlockCipher;
 import org.spongycastle.crypto.params.KeyParameter;
+import org.spongycastle.crypto.params.ParametersWithIV;
 import org.spongycastle.util.encoders.Hex;
 import org.spongycastle.util.io.pem.PemObject;
 import org.spongycastle.util.io.pem.PemReader;
@@ -260,11 +263,17 @@ public class SharedEncryptionService {
      * @param os
      * @return
      */
-    public CipherOutputStream encryptStream(byte[] keyBytes, OutputStream os) {
+    public CipherOutputStream encryptStream(byte[] keyBytes, OutputStream os) throws IOException {
         AESFastEngine aesEngine = new AESFastEngine();
         PaddedBufferedBlockCipher cipher =
-                new PaddedBufferedBlockCipher(aesEngine, new PKCS7Padding());
-        cipher.init(true, new KeyParameter(keyBytes));
+                new PaddedBufferedBlockCipher(new CBCBlockCipher(aesEngine), new PKCS7Padding());
+        byte[] ivData = generateKey(AES_BLOCK_SIZE);
+
+        KeyParameter keyParam = new KeyParameter(keyBytes);
+        CipherParameters params = new ParametersWithIV(keyParam, ivData);
+
+        cipher.init(true, params);
+        os.write(ivData);
         return new CipherOutputStream(os, cipher);
     }
 
@@ -274,11 +283,18 @@ public class SharedEncryptionService {
      * @param is
      * @return
      */
-    public CipherInputStream decryptStream(byte[] keyBytes, InputStream is) {
+    public CipherInputStream decryptStream(byte[] keyBytes, InputStream is) throws IOException {
         AESFastEngine aesEngine = new AESFastEngine();
         PaddedBufferedBlockCipher cipher =
-                new PaddedBufferedBlockCipher(aesEngine, new PKCS7Padding());
-        cipher.init(false, new KeyParameter(keyBytes));
+                new PaddedBufferedBlockCipher(new CBCBlockCipher(aesEngine), new PKCS7Padding());
+        byte[] iv = new byte[AES_BLOCK_SIZE];
+        if (is.read(iv)!=AES_BLOCK_SIZE) {
+            throw new IOException("Failed to read IV");
+        }
+        KeyParameter keyParam = new KeyParameter(keyBytes);
+        CipherParameters params = new ParametersWithIV(keyParam, iv);
+
+        cipher.init(false, params);
         return new CipherInputStream(is, cipher);
 
     }
