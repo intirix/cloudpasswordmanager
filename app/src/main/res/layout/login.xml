@@ -51,6 +51,7 @@
             style="@style/login_form_element"
             android:id="@+id/login_user"
             android:layout_below="@id/login_url"
+            android:inputType="textNoSuggestions"
             android:hint="@string/login_user_hint"/>
 
         <EditText
@@ -71,7 +72,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:gravity="left"
+            android:gravity="start"
             android:layout_below="@id/login_error_message"
             android:layout_alignParentLeft="true">
             <Button
@@ -106,12 +107,13 @@
 
         <ImageButton
             android:id="@+id/login_biometric_login"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@drawable/ic_fingerprint_black_48dp"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_below="@id/login_error_message"
+            android:layout_centerHorizontal="true"
+            android:background="@android:color/transparent"
             android:contentDescription="@string/login_biologin_text"
-            android:layout_below="@id/login_login_button"
-            android:layout_alignLeft="@id/login_login_button"/>
+            android:src="@drawable/ic_fingerprint_black_48dp" />
 
 
     </RelativeLayout>
