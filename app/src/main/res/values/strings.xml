@@ -11,6 +11,7 @@
 
     <string name="storage_type_owncloud_passwords">OwnCloud Passwords</string>
     <string name="storage_type_secrets_manager_v1">Secrets Manager</string>
+    <string name="storage_type_demo">Demo</string>
 
     <string name="info_download_pubkey_message">Downloading public key for %s</string>
     <string name="info_encrypt_message">Encrypting secret for %s</string>

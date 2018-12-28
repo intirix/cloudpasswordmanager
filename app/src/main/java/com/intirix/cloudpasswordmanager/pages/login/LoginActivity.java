@@ -160,7 +160,8 @@ public class LoginActivity extends BaseActivity {
 
         if (storageTypeAdapter==null) {
             storageTypeAdapter = new StorageTypeAdapter(this,android.R.layout.simple_spinner_item,
-                    StorageType.OWNCLOUD_PASSWORDS, StorageType.SECRETS_MANAGER_API_V1);
+                    StorageType.OWNCLOUD_PASSWORDS, StorageType.SECRETS_MANAGER_API_V1,
+                    StorageType.DEMO);
             storageTypeSpinner.setAdapter(storageTypeAdapter);
 
             int selectedPosition = storageTypeAdapter.getPosition(sessionService.getStorageType());
@@ -288,19 +289,30 @@ public class LoginActivity extends BaseActivity {
     public void onLogin(View view) {
 
         try {
-            if (urlInput.getText().length() == 0) {
-                errorMessageView.setText(R.string.error_empty_url);
-                updateErrorMessageVisibility();
-            } else if (!urlInput.getText().toString().startsWith("http")) {
-                errorMessageView.setText(R.string.error_bad_url);
-                updateErrorMessageVisibility();
-            } else {
+            StorageType storageType = (StorageType)storageTypeSpinner.getSelectedItem();
+
+            boolean passedValidation = true;
+
+            // don't do validation for the DEMO type
+            if (!StorageType.DEMO.equals(storageType)) {
+                if (urlInput.getText().length() == 0) {
+                    errorMessageView.setText(R.string.error_empty_url);
+                    updateErrorMessageVisibility();
+                    passedValidation = false;
+                } else if (!urlInput.getText().toString().startsWith("http")) {
+                    errorMessageView.setText(R.string.error_bad_url);
+                    updateErrorMessageVisibility();
+                    passedValidation = false;
+                }
+            }
+
+            if (passedValidation){
 
                 errorMessageView.setText("");
                 updateErrorMessageVisibility();
 
                 Log.d(LoginActivity.class.getSimpleName(), "onLogin() - "+new URL(urlInput.getText().toString()));
-                sessionService.setStorageType((StorageType)storageTypeSpinner.getSelectedItem());
+                sessionService.setStorageType(storageType);
                 sessionService.setUrl(urlInput.getText().toString());
                 sessionService.setUsername(userInput.getText().toString());
                 sessionService.start();

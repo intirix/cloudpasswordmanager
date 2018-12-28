@@ -18,6 +18,7 @@ package com.intirix.cloudpasswordmanager.services.backend;
 import android.util.Log;
 
 import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordBean;
+import com.intirix.cloudpasswordmanager.services.backend.demo.DemoBackendRequestImpl;
 import com.intirix.cloudpasswordmanager.services.backend.ocp.OCPBackendRequestImpl;
 import com.intirix.cloudpasswordmanager.services.backend.secretsmanager.SMBackendRequestImpl;
 import com.intirix.cloudpasswordmanager.services.session.SessionService;
@@ -39,13 +40,19 @@ public class PasswordRequestServiceImpl implements PasswordRequestService {
 
     private SMBackendRequestImpl smimpl;
 
+    private DemoBackendRequestImpl demoImpl;
+
     private SessionService sessionService;
 
     @Inject
-    public PasswordRequestServiceImpl(SessionService sessionService, OCPBackendRequestImpl ocpImpl, SMBackendRequestImpl smimpl) {
+    public PasswordRequestServiceImpl(SessionService sessionService,
+                                      OCPBackendRequestImpl ocpImpl,
+                                      SMBackendRequestImpl smimpl,
+                                      DemoBackendRequestImpl demoImpl) {
         this.sessionService = sessionService;
         this.ocpImpl = ocpImpl;
         this.smimpl = smimpl;
+        this.demoImpl = demoImpl;
     }
 
     private BackendRequestInterface getBackend() {
@@ -53,6 +60,8 @@ public class PasswordRequestServiceImpl implements PasswordRequestService {
             return ocpImpl;
         } else if (sessionService.getStorageType()==StorageType.SECRETS_MANAGER_API_V1) {
             return smimpl;
+        } else if (sessionService.getStorageType()==StorageType.DEMO) {
+            return demoImpl;
         }
         return null;
     }

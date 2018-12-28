@@ -8,7 +8,8 @@ import com.intirix.cloudpasswordmanager.R;
 
 public enum StorageType {
     OWNCLOUD_PASSWORDS(R.string.storage_type_owncloud_passwords),
-    SECRETS_MANAGER_API_V1(R.string.storage_type_secrets_manager_v1);
+    SECRETS_MANAGER_API_V1(R.string.storage_type_secrets_manager_v1),
+    DEMO(R.string.storage_type_demo);
 
     private final int labelResource;
 
