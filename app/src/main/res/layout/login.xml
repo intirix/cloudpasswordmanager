@@ -34,6 +34,7 @@
         <Spinner
             style="@style/login_form_element"
             android:id="@+id/login_storage_type"
+            android:layout_height="48dp"
             >
 
         </Spinner>

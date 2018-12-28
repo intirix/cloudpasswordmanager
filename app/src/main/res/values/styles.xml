@@ -6,6 +6,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:spinnerItemStyle">@style/SpinnerItem</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -22,6 +23,10 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:background">?attr/colorPrimary</item>
         <item name="android:theme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
+    </style>
+
+    <style name="SpinnerItem">
+        <item name="android:textSize">20sp</item>
     </style>
 
     <style name="login_form_element">
