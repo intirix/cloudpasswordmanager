@@ -24,6 +24,7 @@ import com.intirix.cloudpasswordmanager.BuildConfig;
 import com.intirix.cloudpasswordmanager.TestPasswordApplication;
 import com.intirix.cloudpasswordmanager.services.session.MockSessionService;
 import com.intirix.cloudpasswordmanager.services.backend.PasswordRequestService;
+import com.intirix.cloudpasswordmanager.services.session.StorageType;
 
 import org.easymock.EasyMock;
 import org.junit.Assert;
@@ -219,6 +220,105 @@ public class LoginActivityFormLayoutSpec extends BaseTestCase {
         Assert.assertEquals("Error message should be visible", View.VISIBLE, activity.errorMessageView.getVisibility());
         Assert.assertFalse(activity.loginButton.isEnabled());
         Assert.assertFalse(activity.pinButton.isEnabled());
+
+        controller.pause().stop().destroy();
+    }
+
+    @Test
+    public void verifyAllFieldsGoneForDemoMode() {
+        ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class).create().start();
+        LoginActivity activity = controller.get();
+
+        PasswordRequestService passwordRequestService = activity.passwordRequestService;
+        EasyMock.expect(passwordRequestService.isLoginRunning()).andReturn(false).anyTimes();
+        EasyMock.expect(passwordRequestService.supportsUrl()).andReturn(false).anyTimes();
+        EasyMock.expect(passwordRequestService.supportsUsername()).andReturn(false).anyTimes();
+        EasyMock.expect(passwordRequestService.supportsPassword()).andReturn(false).anyTimes();
+        EasyMock.expect(passwordRequestService.supportsCustomKey()).andReturn(false).anyTimes();
+        EasyMock.replay(passwordRequestService);
+
+        controller.resume();
+
+        Assert.assertEquals("", activity.urlInput.getText().toString());
+        Assert.assertEquals("", activity.errorMessageView.getText().toString());
+        Assert.assertEquals(View.GONE, activity.errorMessageView.getVisibility());
+
+        activity.storageTypeSpinner.setSelection(activity.storageTypeAdapter.getIndexOfStorageType(StorageType.DEMO));
+        //activity.updateLoginForm(true);
+
+        Assert.assertEquals("", activity.errorMessageView.getText().toString());
+        Assert.assertEquals(View.GONE, activity.errorMessageView.getVisibility());
+        Assert.assertEquals(View.GONE, activity.urlInput.getVisibility());
+        Assert.assertEquals(View.GONE, activity.userInput.getVisibility());
+        Assert.assertEquals(View.GONE, activity.passInput.getVisibility());
+        Assert.assertEquals(View.GONE, activity.pinButton.getVisibility());
+        Assert.assertEquals(View.GONE, activity.importKeyButton.getVisibility());
+
+        Assert.assertTrue(activity.loginButton.isEnabled());
+        Assert.assertFalse(activity.pinButton.isEnabled());
+
+        controller.pause().stop().destroy();
+    }
+
+    @Test
+    public void verifyManageKeyButtonGoneForOCPBackend() {
+        ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class).create().start();
+        LoginActivity activity = controller.get();
+
+        PasswordRequestService passwordRequestService = activity.passwordRequestService;
+        EasyMock.expect(passwordRequestService.isLoginRunning()).andReturn(false).anyTimes();
+        EasyMock.expect(passwordRequestService.supportsUrl()).andReturn(true).anyTimes();
+        EasyMock.expect(passwordRequestService.supportsUsername()).andReturn(true).anyTimes();
+        EasyMock.expect(passwordRequestService.supportsPassword()).andReturn(true).anyTimes();
+        EasyMock.expect(passwordRequestService.supportsCustomKey()).andReturn(false).anyTimes();
+        EasyMock.replay(passwordRequestService);
+
+        controller.resume();
+
+        Assert.assertEquals("", activity.urlInput.getText().toString());
+        Assert.assertEquals("", activity.errorMessageView.getText().toString());
+        Assert.assertEquals(View.GONE, activity.errorMessageView.getVisibility());
+
+        activity.storageTypeSpinner.setSelection(activity.storageTypeAdapter.getIndexOfStorageType(StorageType.OWNCLOUD_PASSWORDS));
+        //activity.updateLoginForm(true);
+
+        Assert.assertEquals(View.VISIBLE, activity.urlInput.getVisibility());
+        Assert.assertEquals(View.VISIBLE, activity.userInput.getVisibility());
+        Assert.assertEquals(View.VISIBLE, activity.passInput.getVisibility());
+        Assert.assertEquals(View.VISIBLE, activity.pinButton.getVisibility());
+        Assert.assertEquals(View.GONE, activity.importKeyButton.getVisibility());
+
+        controller.pause().stop().destroy();
+    }
+
+    @Test
+    public void verifyManageKeyButtonVisibleForSMBackend() {
+        ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class).create().start();
+        LoginActivity activity = controller.get();
+
+        PasswordRequestService passwordRequestService = activity.passwordRequestService;
+        EasyMock.expect(passwordRequestService.isLoginRunning()).andReturn(false).anyTimes();
+        EasyMock.expect(passwordRequestService.supportsUrl()).andReturn(true).anyTimes();
+        EasyMock.expect(passwordRequestService.supportsUsername()).andReturn(true).anyTimes();
+        EasyMock.expect(passwordRequestService.supportsPassword()).andReturn(true).anyTimes();
+        EasyMock.expect(passwordRequestService.supportsCustomKey()).andReturn(true).anyTimes();
+        EasyMock.replay(passwordRequestService);
+
+        controller.resume();
+
+
+        Assert.assertEquals("", activity.urlInput.getText().toString());
+        Assert.assertEquals("", activity.errorMessageView.getText().toString());
+        Assert.assertEquals(View.GONE, activity.errorMessageView.getVisibility());
+
+        activity.storageTypeSpinner.setSelection(activity.storageTypeAdapter.getIndexOfStorageType(StorageType.SECRETS_MANAGER_API_V1));
+        //activity.updateLoginForm(true);
+
+        Assert.assertEquals(View.VISIBLE, activity.urlInput.getVisibility());
+        Assert.assertEquals(View.VISIBLE, activity.userInput.getVisibility());
+        Assert.assertEquals(View.VISIBLE, activity.passInput.getVisibility());
+        Assert.assertEquals(View.VISIBLE, activity.pinButton.getVisibility());
+        Assert.assertEquals(View.VISIBLE, activity.importKeyButton.getVisibility());
 
         controller.pause().stop().destroy();
     }

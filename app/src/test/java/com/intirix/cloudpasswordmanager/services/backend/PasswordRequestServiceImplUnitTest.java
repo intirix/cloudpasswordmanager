@@ -27,7 +27,7 @@ public class PasswordRequestServiceImplUnitTest {
     @Before
     public void setUp() {
         sessionService = new MockSessionService();
-        impl = new PasswordRequestServiceImpl(sessionService,null,null);
+        impl = new PasswordRequestServiceImpl(sessionService,null,null, null);
     }
 
     @Test

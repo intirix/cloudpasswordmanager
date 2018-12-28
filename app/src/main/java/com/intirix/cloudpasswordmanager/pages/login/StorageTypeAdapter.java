@@ -33,6 +33,15 @@ public class StorageTypeAdapter extends ArrayAdapter<StorageType> {
         return values.length;
     }
 
+    public int getIndexOfStorageType(StorageType t) {
+        for (int i = 0; i <values.length; i++) {
+            if (t.equals(values[i])) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     public StorageType getItem(int position){
         return values[position];
     }

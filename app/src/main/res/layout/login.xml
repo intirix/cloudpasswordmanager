@@ -21,103 +21,104 @@
         android:layout_height="match_parent" android:orientation="vertical">
 
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="4"/>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1">
-
-        <Spinner
-            style="@style/login_form_element"
-            android:id="@+id/login_storage_type"
-            android:layout_height="48dp"
-            >
-
-        </Spinner>
-
-        <EditText
-            style="@style/login_form_element"
-            android:id="@+id/login_url"
-            android:drawableLeft="@drawable/ic_highlight_off_black_24dp"
-            android:hint="@string/login_url_hint"
-            android:layout_below="@id/login_storage_type"
-            android:inputType="textUri"/>
-
-
-        <EditText
-            style="@style/login_form_element"
-            android:id="@+id/login_user"
-            android:layout_below="@id/login_url"
-            android:inputType="textNoSuggestions"
-            android:hint="@string/login_user_hint"/>
-
-        <EditText
-            style="@style/login_form_element"
-            android:id="@+id/login_pass"
-            android:layout_below="@id/login_user"
-            android:inputType="textPassword"
-            android:hint="@string/login_pass_hint"/>
-
-        <TextView
-            android:id="@+id/login_error_message"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/login_pass"
-            android:contentDescription="@string/login_error_description"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="4"/>
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="start"
-            android:layout_below="@id/login_error_message"
-            android:layout_alignParentLeft="true">
-            <Button
-                android:id="@+id/login_pin_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/login_pin_label"/>
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
 
-            <Button
-                android:id="@+id/login_unpin_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/login_unpin_label"
-                android:visibility="gone"/>
+            <Spinner
+                style="@style/login_form_element"
+                android:id="@+id/login_storage_type"
+                android:layout_height="48dp"
+                >
 
-            <Button
-                android:id="@+id/login_import_key_button"
+            </Spinner>
+
+            <EditText
+                style="@style/login_form_element"
+                android:id="@+id/login_url"
+                android:drawableLeft="@drawable/ic_highlight_off_black_24dp"
+                android:hint="@string/login_url_hint"
+                android:inputType="textUri"/>
+
+
+            <EditText
+                style="@style/login_form_element"
+                android:id="@+id/login_user"
+                android:inputType="textNoSuggestions"
+                android:hint="@string/login_user_hint"/>
+
+            <EditText
+                style="@style/login_form_element"
+                android:id="@+id/login_pass"
+                android:inputType="textPassword"
+                android:hint="@string/login_pass_hint"/>
+
+            <TextView
+                android:id="@+id/login_error_message"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/login_import_key_label"
-                android:visibility="visible"/>
+                android:contentDescription="@string/login_error_description"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="start"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentLeft="true">
+                    <Button
+                        android:id="@+id/login_pin_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/login_pin_label"/>
+
+                    <Button
+                        android:id="@+id/login_unpin_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/login_unpin_label"
+                        android:visibility="gone"/>
+
+                    <Button
+                        android:id="@+id/login_import_key_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/login_import_key_label"
+                        android:visibility="visible"/>
+
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/login_login_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentRight="true"
+                    android:text="@string/login_login_label"/>
+
+                <ImageButton
+                    android:id="@+id/login_biometric_login"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@string/login_biologin_text"
+                    android:src="@drawable/ic_fingerprint_black_48dp" />
+            </RelativeLayout>
 
         </LinearLayout>
-
-        <Button
-            android:id="@+id/login_login_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/login_error_message"
-            android:layout_alignParentRight="true"
-            android:text="@string/login_login_label"/>
-
-        <ImageButton
-            android:id="@+id/login_biometric_login"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:layout_below="@id/login_error_message"
-            android:layout_centerHorizontal="true"
-            android:background="@android:color/transparent"
-            android:contentDescription="@string/login_biologin_text"
-            android:src="@drawable/ic_fingerprint_black_48dp" />
-
-
-    </RelativeLayout>
     </LinearLayout>
 
 

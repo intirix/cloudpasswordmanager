@@ -14,9 +14,34 @@ public class MockPasswordRequestService implements PasswordRequestService {
 
     private boolean supportAdding = false;
 
+    private boolean supportsUrls = false;
+    private boolean supportsUsername = false;
+    private boolean supportsPassword = false;
+    private boolean supportsKey = false;
+
     @Override
     public void login() {
 
+    }
+
+    @Override
+    public boolean supportsUrl() {
+        return supportsUrls;
+    }
+
+    @Override
+    public boolean supportsUsername() {
+        return supportsUsername;
+    }
+
+    @Override
+    public boolean supportsPassword() {
+        return supportsPassword;
+    }
+
+    @Override
+    public boolean supportsCustomKey() {
+        return supportsKey;
     }
 
     @Override
@@ -80,5 +105,21 @@ public class MockPasswordRequestService implements PasswordRequestService {
 
     public void setSupportAdding(boolean supportAdding) {
         this.supportAdding = supportAdding;
+    }
+
+    public void setSupportsUrls(boolean supportsUrls) {
+        this.supportsUrls = supportsUrls;
+    }
+
+    public void setSupportsUsername(boolean supportsUsername) {
+        this.supportsUsername = supportsUsername;
+    }
+
+    public void setSupportsPassword(boolean supportsPassword) {
+        this.supportsPassword = supportsPassword;
+    }
+
+    public void setSupportsKey(boolean supportsKey) {
+        this.supportsKey = supportsKey;
     }
 }

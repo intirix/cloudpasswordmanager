@@ -86,6 +86,26 @@ public class PasswordRequestServiceImpl implements PasswordRequestService {
     }
 
     @Override
+    public boolean supportsUrl() {
+        return getBackend().supportsUrl();
+    }
+
+    @Override
+    public boolean supportsUsername() {
+        return getBackend().supportsUsername();
+    }
+
+    @Override
+    public boolean supportsPassword() {
+        return getBackend().supportsPassword();
+    }
+
+    @Override
+    public boolean supportsCustomKey() {
+        return getBackend().supportsCustomKey();
+    }
+
+    @Override
     public boolean isLoginRunning() {
         if (sessionService.getCurrentSession()==null) {
             return false;

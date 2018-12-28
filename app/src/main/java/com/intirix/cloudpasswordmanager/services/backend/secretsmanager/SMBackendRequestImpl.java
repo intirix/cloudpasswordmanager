@@ -167,6 +167,26 @@ public class SMBackendRequestImpl implements BackendRequestInterface, BackendReq
         }
     }
 
+    @Override
+    public boolean supportsUrl() {
+        return true;
+    }
+
+    @Override
+    public boolean supportsUsername() {
+        return true;
+    }
+
+    @Override
+    public boolean supportsPassword() {
+        return true;
+    }
+
+    @Override
+    public boolean supportsCustomKey() {
+        return true;
+    }
+
     private void downloadEncryptedPrivateKey() throws MalformedURLException {
         Log.i(TAG, "Downloading the private key");
         Call<String> call = getApi().getUserEncryptedPrivateKey(sessionService.getUsername());

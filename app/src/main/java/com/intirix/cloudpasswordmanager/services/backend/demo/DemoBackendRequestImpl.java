@@ -38,6 +38,26 @@ public class DemoBackendRequestImpl implements BackendRequestInterface {
     }
 
     @Override
+    public boolean supportsUrl() {
+        return false;
+    }
+
+    @Override
+    public boolean supportsUsername() {
+        return false;
+    }
+
+    @Override
+    public boolean supportsPassword() {
+        return false;
+    }
+
+    @Override
+    public boolean supportsCustomKey() {
+        return false;
+    }
+
+    @Override
     public boolean isLoginRunning() {
         return false;
     }

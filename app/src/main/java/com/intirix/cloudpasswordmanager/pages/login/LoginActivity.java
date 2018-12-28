@@ -46,6 +46,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.inject.Inject;
@@ -208,32 +209,70 @@ public class LoginActivity extends BaseActivity {
     }
 
     void updateLoginForm(boolean clearError) {
-        String url = urlInput.getText().toString();
         try {
             if (clearError) {
                 // default hiding error messages and enabling everything
                 errorMessageView.setText("");
                 errorMessageView.setVisibility(View.GONE);
             }
+
+            StorageType storageType = (StorageType)storageTypeSpinner.getSelectedItem();
+            sessionService.setStorageType(storageType);
+
+            // always enable the login button
             loginButton.setEnabled(true);
+
+            updateUrlField();
+
+            if (passwordRequestService.supportsCustomKey()) {
+                importKeyButton.setEnabled(true);
+                importKeyButton.setVisibility(View.VISIBLE);
+            } else {
+                importKeyButton.setEnabled(false);
+                importKeyButton.setVisibility(View.GONE);
+            }
+
+            if (passwordRequestService.supportsUsername()) {
+                userInput.setVisibility(View.VISIBLE);
+            } else {
+                userInput.setVisibility(View.GONE);
+            }
+
+            if (passwordRequestService.supportsPassword()) {
+                passInput.setVisibility(View.VISIBLE);
+            } else {
+                passInput.setVisibility(View.GONE);
+            }
+
+        } catch (Exception e) {
+            errorMessageView.setText(e.getMessage());
+            errorMessageView.setVisibility(View.VISIBLE);
+            loginButton.setEnabled(false);
+            pinButton.setVisibility(View.VISIBLE);
+            pinButton.setEnabled(false);
+            unpinButton.setVisibility(View.INVISIBLE);
+            unpinButton.setEnabled(false);
+            urlInput.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_highlight_off_black_24dp, 0, 0, 0);
+        }
+    }
+
+    /**
+     * Update all buttons and url field based on if the backend supports urls
+     * @throws MalformedURLException
+     */
+    private void updateUrlField() throws MalformedURLException {
+        if (passwordRequestService.supportsUrl()) {
+            String url = urlInput.getText().toString();
             pinButton.setEnabled(true);
             unpinButton.setEnabled(true);
             urlInput.setEnabled(true);
-            importKeyButton.setEnabled(true);
-
-            if (storageTypeSpinner.getSelectedItemPosition()==0) {
-                importKeyButton.setEnabled(false);
-                importKeyButton.setVisibility(View.GONE);
-            } else {
-                importKeyButton.setEnabled(true);
-                importKeyButton.setVisibility(View.VISIBLE);
-            }
-
+            urlInput.setVisibility(View.VISIBLE);
 
             if (url.length()==0) {
                 urlInput.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_highlight_off_black_24dp, 0, 0, 0);
                 loginButton.setEnabled(false);
                 pinButton.setEnabled(false);
+                pinButton.setVisibility(View.VISIBLE);
             } else if (certPinningService.isEnabled()) {
                 // validate that the url is valid
                 new URL(url);
@@ -268,15 +307,19 @@ public class LoginActivity extends BaseActivity {
                     urlInput.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_no_encryption_black_24dp, 0, 0, 0);
                 }
             }
-        } catch (Exception e) {
-            errorMessageView.setText(e.getMessage());
-            errorMessageView.setVisibility(View.VISIBLE);
-            loginButton.setEnabled(false);
-            pinButton.setVisibility(View.VISIBLE);
+
+
+        } else {
             pinButton.setEnabled(false);
-            unpinButton.setVisibility(View.INVISIBLE);
+            pinButton.setVisibility(View.GONE);
             unpinButton.setEnabled(false);
-            urlInput.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_highlight_off_black_24dp, 0, 0, 0);
+            unpinButton.setVisibility(View.GONE);
+            urlInput.setEnabled(false);
+            urlInput.setVisibility(View.GONE);
+            // prevent an infinite loop
+            if (urlInput.length()!=0) {
+                urlInput.setText("");
+            }
         }
     }
 
@@ -290,11 +333,12 @@ public class LoginActivity extends BaseActivity {
 
         try {
             StorageType storageType = (StorageType)storageTypeSpinner.getSelectedItem();
+            sessionService.setStorageType(storageType);
 
             boolean passedValidation = true;
 
             // don't do validation for the DEMO type
-            if (!StorageType.DEMO.equals(storageType)) {
+            if (passwordRequestService.supportsUrl()) {
                 if (urlInput.getText().length() == 0) {
                     errorMessageView.setText(R.string.error_empty_url);
                     updateErrorMessageVisibility();
@@ -311,12 +355,20 @@ public class LoginActivity extends BaseActivity {
                 errorMessageView.setText("");
                 updateErrorMessageVisibility();
 
-                Log.d(LoginActivity.class.getSimpleName(), "onLogin() - "+new URL(urlInput.getText().toString()));
-                sessionService.setStorageType(storageType);
-                sessionService.setUrl(urlInput.getText().toString());
+                if (passwordRequestService.supportsUrl()) {
+                    Log.d(LoginActivity.class.getSimpleName(), "onLogin() - " + new URL(urlInput.getText().toString()));
+                    sessionService.setUrl(urlInput.getText().toString());
+                } else {
+                    sessionService.setUrl("");
+                }
                 sessionService.setUsername(userInput.getText().toString());
                 sessionService.start();
-                sessionService.getCurrentSession().setPassword(passInput.getText().toString());
+                if (passwordRequestService.supportsPassword()) {
+                    sessionService.getCurrentSession().setPassword(passInput.getText().toString());
+                } else {
+                    // demo mode
+                    sessionService.getCurrentSession().setPassword("password");
+                }
 
                 passwordRequestService.login();
                 updateProgressDialog();
@@ -325,6 +377,7 @@ public class LoginActivity extends BaseActivity {
                 }
             }
         } catch (Exception e) {
+            Log.d(TAG,"Failed validation", e);
             errorMessageView.setText(e.getMessage());
             updateErrorMessageVisibility();
         }

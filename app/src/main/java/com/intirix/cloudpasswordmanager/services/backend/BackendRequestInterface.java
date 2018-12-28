@@ -29,6 +29,30 @@ public interface BackendRequestInterface {
     public void login();
 
     /**
+     * Does the backend connect to an external url?
+     * @return
+     */
+    public boolean supportsUrl();
+
+    /**
+     * Does the backend support having a username
+     * @return
+     */
+    public boolean supportsUsername();
+
+    /**
+     * Does the backend support having a password
+     * @return
+     */
+    public boolean supportsPassword();
+
+    /**
+     * Does the backend support having a custom key
+     * @return
+     */
+    public boolean supportsCustomKey();
+
+    /**
      * Is the login request still running
      * @return
      */

@@ -95,6 +95,26 @@ public class OCPBackendRequestImpl implements BackendRequestInterface {
     }
 
     @Override
+    public boolean supportsUrl() {
+        return true;
+    }
+
+    @Override
+    public boolean supportsUsername() {
+        return true;
+    }
+
+    @Override
+    public boolean supportsPassword() {
+        return true;
+    }
+
+    @Override
+    public boolean supportsCustomKey() {
+        return false;
+    }
+
+    @Override
     public boolean isLoginRunning() {
         return loginRunning;
     }
