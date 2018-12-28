@@ -17,8 +17,8 @@ android {
         applicationId "com.intirix.cloudpasswordmanager"
         minSdkVersion 15
         targetSdkVersion 28
-        versionCode 16
-        versionName "2.0.0"
+        versionCode 17
+        versionName "2.1.0"
     }
     signingConfigs {
         myrelease {
