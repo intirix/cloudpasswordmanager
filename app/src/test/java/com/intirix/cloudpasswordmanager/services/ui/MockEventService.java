@@ -39,6 +39,15 @@ public class MockEventService implements EventService {
     }
 
     /**
+     * Log all the events
+     */
+    public void logEvents() {
+        for (Object event: events) {
+            System.out.println(event);
+        }
+    }
+
+    /**
      * Check the event type
      * @param i
      * @param klass

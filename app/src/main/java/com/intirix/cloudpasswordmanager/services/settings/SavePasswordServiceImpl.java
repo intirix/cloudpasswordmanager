@@ -50,6 +50,7 @@ public class SavePasswordServiceImpl implements SavePasswordService {
 
     private static final String TAG = SavePasswordServiceImpl.class.getSimpleName();
     public static final String SAVE_PASSWORD_KEY = "SavePasswordKey";
+    public static final String SAVE_PASSWORD_PASSWORD = "password";
 
     private Context context;
 
@@ -251,13 +252,13 @@ public class SavePasswordServiceImpl implements SavePasswordService {
             }
 
             if (removePassword) {
-                ed.remove("password");
+                ed.remove(SAVE_PASSWORD_PASSWORD);
             } else if (encryptedPassword==null) {
                 currentSetting = oldSetting;
                 Log.w(TAG,"Failed to change save password setting");
                 return false;
             } else {
-                ed.putString("password",encryptedPassword);
+                ed.putString(SAVE_PASSWORD_PASSWORD,encryptedPassword);
             }
 
             ed.commit();

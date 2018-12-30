@@ -22,6 +22,7 @@ import com.intirix.cloudpasswordmanager.BuildConfig;
 import com.intirix.cloudpasswordmanager.TestPasswordApplication;
 import com.intirix.cloudpasswordmanager.services.MockSharedEncryptionService;
 import com.intirix.cloudpasswordmanager.services.SharedEncryptionService;
+import com.intirix.cloudpasswordmanager.services.session.MockSessionService;
 import com.intirix.cloudpasswordmanager.services.settings.SavePasswordEnum;
 import com.intirix.cloudpasswordmanager.services.settings.SavePasswordServiceImpl;
 import com.intirix.cloudpasswordmanager.services.ui.MockEventService;
@@ -46,10 +47,16 @@ public class SavePasswordServiceImplUnitTest {
 
     private MockEventService eventService;
 
+    private MockSessionService sessionService;
+
     @Before
     public void setUp() {
         deviceSpecific = RuntimeEnvironment.application.getSharedPreferences("device.xml", Context.MODE_PRIVATE);
         eventService = new MockEventService();
+        sessionService = new MockSessionService();
+        sessionService.setUsername("admin");
+        sessionService.start();
+        sessionService.getCurrentSession().setPassword("password");
     }
 
     @Test
@@ -86,7 +93,7 @@ public class SavePasswordServiceImplUnitTest {
     @Test
     public void testEncryptionWithKeystore() {
         deviceSpecific.edit().putString(SavePasswordServiceImpl.PREF_SAVE_PASSWORD_SETTING, SavePasswordEnum.KEYSTORE.toString()).commit();
-        SavePasswordServiceImpl impl = new SavePasswordServiceImpl(RuntimeEnvironment.application, null, new MockSharedEncryptionService(),eventService);
+        SavePasswordServiceImpl impl = new SavePasswordServiceImpl(RuntimeEnvironment.application, null, new MockSharedEncryptionService(), eventService);
         String PASSWORD = "random_password";
         String encrypted = impl.encryptPassword(PASSWORD);
         Assert.assertEquals(PASSWORD, impl.decryptPassword(encrypted));
@@ -95,10 +102,35 @@ public class SavePasswordServiceImplUnitTest {
     @Test
     public void testEncryptionWithPrefKey() {
         deviceSpecific.edit().putString(SavePasswordServiceImpl.PREF_SAVE_PASSWORD_SETTING, SavePasswordEnum.ALWAYS.toString()).commit();
-        SavePasswordServiceImpl impl = new SavePasswordServiceImpl(RuntimeEnvironment.application, null, new MockSharedEncryptionService(),eventService);
+        SavePasswordServiceImpl impl = new SavePasswordServiceImpl(RuntimeEnvironment.application, null, new MockSharedEncryptionService(), eventService);
         String PASSWORD = "random_password";
         String encrypted = impl.encryptPassword(PASSWORD);
         Assert.assertEquals(PASSWORD, impl.decryptPassword(encrypted));
     }
 
+    @Test
+    public void verifyFailingToChangeSettingActuallyDoesntChangeSetting() {
+        deviceSpecific.edit().putString(SavePasswordServiceImpl.PREF_SAVE_PASSWORD_SETTING, SavePasswordEnum.ALWAYS.toString()).commit();
+
+        SavePasswordServiceImpl impl = new SavePasswordServiceImpl(RuntimeEnvironment.application, null, new SharedEncryptionService(), eventService);
+        Assert.assertEquals(SavePasswordEnum.ALWAYS, impl.currentSetting);
+
+        // keystore doesn't actually work in unit tests
+        // so this call should fail
+        impl.changeSavePasswordSetting(SavePasswordEnum.KEYSTORE);
+        Assert.assertEquals(SavePasswordEnum.ALWAYS, impl.currentSetting);
+        eventService.logEvents();
+    }
+
+    @Test
+    public void verifyChangingSettingToNeverRemovesPassword() {
+        SavePasswordServiceImpl impl = new SavePasswordServiceImpl(RuntimeEnvironment.application, sessionService, new SharedEncryptionService(), eventService);
+        Assert.assertEquals(SavePasswordEnum.NEVER, impl.currentSetting);
+
+        impl.changeSavePasswordSetting(SavePasswordEnum.ALWAYS);
+        Assert.assertNotEquals("",deviceSpecific.getString(SavePasswordServiceImpl.SAVE_PASSWORD_PASSWORD,""));
+
+        impl.changeSavePasswordSetting(SavePasswordEnum.NEVER);
+        Assert.assertEquals("",deviceSpecific.getString(SavePasswordServiceImpl.SAVE_PASSWORD_PASSWORD,""));
+    }
 }
