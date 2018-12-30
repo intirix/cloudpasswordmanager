@@ -18,6 +18,7 @@ package com.intirix.cloudpasswordmanager.pages.settings;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.View;
 
 import com.intirix.cloudpasswordmanager.services.settings.SavePasswordEnum;
@@ -27,6 +28,8 @@ import com.intirix.cloudpasswordmanager.services.settings.SavePasswordService;
  * Created by jeff on 10/22/16.
  */
 public abstract class SavePasswordOption {
+
+    private static final String TAG = SavePasswordOption.class.getSimpleName();
 
     protected SavePasswordService savePasswordService;
 
@@ -65,11 +68,13 @@ public abstract class SavePasswordOption {
 
     public void onClick(View v) {
         if (isAvailable(activity)) {
-            savePasswordService.changeSavePasswordSetting(option);
-
-            Intent intent = new Intent(activity, SettingsActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            activity.startActivity(intent);
+            if (savePasswordService.changeSavePasswordSetting(option)) {
+                Intent intent = new Intent(activity, SettingsActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                activity.startActivity(intent);
+            } else {
+                Log.d(TAG,"Failed to change settings, not going back");
+            }
         }
     }
 }

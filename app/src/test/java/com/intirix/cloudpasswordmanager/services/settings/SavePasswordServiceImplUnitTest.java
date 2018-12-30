@@ -20,8 +20,11 @@ import android.content.SharedPreferences;
 
 import com.intirix.cloudpasswordmanager.BuildConfig;
 import com.intirix.cloudpasswordmanager.TestPasswordApplication;
+import com.intirix.cloudpasswordmanager.services.MockSharedEncryptionService;
+import com.intirix.cloudpasswordmanager.services.SharedEncryptionService;
 import com.intirix.cloudpasswordmanager.services.settings.SavePasswordEnum;
 import com.intirix.cloudpasswordmanager.services.settings.SavePasswordServiceImpl;
+import com.intirix.cloudpasswordmanager.services.ui.MockEventService;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -41,15 +44,17 @@ public class SavePasswordServiceImplUnitTest {
 
     private SharedPreferences deviceSpecific;
 
+    private MockEventService eventService;
+
     @Before
     public void setUp() {
         deviceSpecific = RuntimeEnvironment.application.getSharedPreferences("device.xml", Context.MODE_PRIVATE);
-
+        eventService = new MockEventService();
     }
 
     @Test
     public void testFirstRun() {
-        SavePasswordServiceImpl impl = new SavePasswordServiceImpl(RuntimeEnvironment.application, null);
+        SavePasswordServiceImpl impl = new SavePasswordServiceImpl(RuntimeEnvironment.application, null, new SharedEncryptionService(), eventService);
         Assert.assertEquals(SavePasswordEnum.NEVER, impl.currentSetting);
     }
 
@@ -57,7 +62,7 @@ public class SavePasswordServiceImplUnitTest {
     public void testNeverSelected() {
         deviceSpecific.edit().putString(SavePasswordServiceImpl.PREF_SAVE_PASSWORD_SETTING, SavePasswordEnum.NEVER.toString());
 
-        SavePasswordServiceImpl impl = new SavePasswordServiceImpl(RuntimeEnvironment.application, null);
+        SavePasswordServiceImpl impl = new SavePasswordServiceImpl(RuntimeEnvironment.application, null, new SharedEncryptionService(), eventService);
         Assert.assertEquals(SavePasswordEnum.NEVER, impl.currentSetting);
     }
 
@@ -65,7 +70,7 @@ public class SavePasswordServiceImplUnitTest {
     public void testAlwaysSelected() {
         deviceSpecific.edit().putString(SavePasswordServiceImpl.PREF_SAVE_PASSWORD_SETTING, SavePasswordEnum.ALWAYS.toString()).commit();
 
-        SavePasswordServiceImpl impl = new SavePasswordServiceImpl(RuntimeEnvironment.application, null);
+        SavePasswordServiceImpl impl = new SavePasswordServiceImpl(RuntimeEnvironment.application, null, new SharedEncryptionService(), eventService);
         Assert.assertEquals(SavePasswordEnum.ALWAYS, impl.currentSetting);
     }
 
@@ -73,16 +78,27 @@ public class SavePasswordServiceImplUnitTest {
     public void testUnknownSelected() {
         deviceSpecific.edit().putString(SavePasswordServiceImpl.PREF_SAVE_PASSWORD_SETTING, "UNKNOWN").commit();
 
-        SavePasswordServiceImpl impl = new SavePasswordServiceImpl(RuntimeEnvironment.application, null);
+        SavePasswordServiceImpl impl = new SavePasswordServiceImpl(RuntimeEnvironment.application, null, new SharedEncryptionService(), eventService);
         Assert.assertEquals(SavePasswordEnum.NEVER, impl.currentSetting);
+        Assert.assertFalse(impl.isPasswordAvailable());
     }
 
     @Test
-    public void testEncryption() {
-        SavePasswordServiceImpl impl = new SavePasswordServiceImpl(RuntimeEnvironment.application, null);
+    public void testEncryptionWithKeystore() {
+        deviceSpecific.edit().putString(SavePasswordServiceImpl.PREF_SAVE_PASSWORD_SETTING, SavePasswordEnum.KEYSTORE.toString()).commit();
+        SavePasswordServiceImpl impl = new SavePasswordServiceImpl(RuntimeEnvironment.application, null, new MockSharedEncryptionService(),eventService);
         String PASSWORD = "random_password";
-        Assert.assertEquals(PASSWORD, impl.decryptPassword(impl.encryptPassword(PASSWORD)));
+        String encrypted = impl.encryptPassword(PASSWORD);
+        Assert.assertEquals(PASSWORD, impl.decryptPassword(encrypted));
+    }
 
+    @Test
+    public void testEncryptionWithPrefKey() {
+        deviceSpecific.edit().putString(SavePasswordServiceImpl.PREF_SAVE_PASSWORD_SETTING, SavePasswordEnum.ALWAYS.toString()).commit();
+        SavePasswordServiceImpl impl = new SavePasswordServiceImpl(RuntimeEnvironment.application, null, new MockSharedEncryptionService(),eventService);
+        String PASSWORD = "random_password";
+        String encrypted = impl.encryptPassword(PASSWORD);
+        Assert.assertEquals(PASSWORD, impl.decryptPassword(encrypted));
     }
 
 }

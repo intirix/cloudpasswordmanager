@@ -84,7 +84,9 @@ public class SettingsFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        SavePasswordOption currentOption = SavePasswordOptionFactory.createOption(savePasswordService.getCurrentSetting(), getActivity(), savePasswordService);
+        SavePasswordEnum savePasswordServiceCurrentSetting = savePasswordService.getCurrentSetting();
+        Log.d(TAG,"Current save password setting: "+savePasswordServiceCurrentSetting);
+        SavePasswordOption currentOption = SavePasswordOptionFactory.createOption(savePasswordServiceCurrentSetting, getActivity(), savePasswordService);
         if (currentOption==null) {
             Log.w(TAG, "Unknown save password policy selected, changing to option NEVER");
             currentOption = SavePasswordOptionFactory.createOption(SavePasswordEnum.NEVER, getActivity(), savePasswordService);

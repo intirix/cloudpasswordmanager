@@ -18,9 +18,12 @@ package com.intirix.cloudpasswordmanager.pages.settings;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
+import android.widget.Toast;
 
 import com.intirix.cloudpasswordmanager.PasswordApplication;
 import com.intirix.cloudpasswordmanager.R;
+import com.intirix.cloudpasswordmanager.pages.ErrorEvent;
 import com.intirix.cloudpasswordmanager.pages.SecureActivity;
 import com.intirix.cloudpasswordmanager.pages.passwordadd.PasswordAddedEvent;
 import com.intirix.cloudpasswordmanager.pages.passworddetail.PasswordUpdatedEvent;
@@ -37,6 +40,8 @@ import javax.inject.Inject;
  * Created by jeff on 10/3/16.
  */
 public class SettingsActivity extends SecureActivity {
+
+    private static final String TAG = SettingsActivity.class.getSimpleName();
 
     @Inject
     SavePasswordService savePasswordService;
@@ -61,4 +66,9 @@ public class SettingsActivity extends SecureActivity {
         return fragment;
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onError(ErrorEvent event) {
+        Log.e(TAG, event.getMessage());
+        Toast.makeText(this, event.getMessage(), Toast.LENGTH_LONG).show();
+    }
 }

@@ -38,6 +38,7 @@ import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
@@ -45,6 +46,8 @@ import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.Signature;
 import java.security.SignatureException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 import java.security.spec.ECGenParameterSpec;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
@@ -113,7 +116,7 @@ public class SharedEncryptionService {
      * @return
      * @throws Exception
      */
-    public SecretKey getSecretKey(String keyName) throws Exception {
+    public SecretKey getSecretKey(String keyName) throws IOException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException, KeyStoreException {
         KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
         keyStore.load(null);
         if (keyStore.containsAlias(keyName)) {
@@ -124,7 +127,7 @@ public class SharedEncryptionService {
 
     @TargetApi(Build.VERSION_CODES.P)
     public SecretKey generateKey(String keyName, boolean invalidatedByBiometricEnrollment) throws Exception {
-        Log.d(TAG,"Generating key "+keyName);
+        Log.d(TAG,"Generating key "+keyName+" in AndroidKeyStore");
         KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
         KeyGenerator keyGenerator = KeyGenerator.getInstance(
                 KeyProperties.KEY_ALGORITHM_AES,
@@ -253,8 +256,16 @@ public class SharedEncryptionService {
         return Base64.decode(input.getBytes("ASCII"),Base64.NO_WRAP);
     }
 
+    public byte[] decodeBase64(byte[] input) throws IOException {
+        return Base64.decode(input,Base64.NO_WRAP);
+    }
+
     public String encodeBase64(byte[] input) throws IOException {
         return Base64.encodeToString(input, Base64.NO_WRAP);
+    }
+
+    public String encodeHex(byte[] input) {
+        return Hex.toHexString(input);
     }
 
     /**
@@ -311,19 +322,34 @@ public class SharedEncryptionService {
         return cipher.doFinal(buffer.toByteArray());
     }
 
+    public byte[] encryptWithKey(String key, byte[] input) throws NoSuchPaddingException, NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException, IOException, CertificateException, KeyStoreException, UnrecoverableKeyException {
+        return encryptWithKey(getSecretKey(key),input);
+    }
 
-    public byte[] encryptAES(byte[] keyBytes, byte[] input) throws NoSuchPaddingException, NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException, IOException {
+
+    public byte[] encryptWithKey(SecretKey key, byte[] input) throws NoSuchPaddingException, NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException, IOException {
         byte[] ivData = generateKey(AES_BLOCK_SIZE);
         IvParameterSpec ivspec = new IvParameterSpec(ivData);
-        SecretKeySpec key = new SecretKeySpec(keyBytes, "AES");
         Cipher cipher = Cipher.getInstance("AES/CBC/PKCS7Padding", "BC");
-
         try {
             cipher.init(Cipher.ENCRYPT_MODE, key, ivspec);
         } catch (InvalidAlgorithmParameterException e) {
             throw new IOException(e);
         }
 
+        return encryptWithCipherAndIV(input, ivData, cipher);
+
+    }
+
+    /**
+     * Encrypt data with the Cipher, but also prepend the IV to the output
+     * @param input
+     * @param ivData
+     * @param cipher
+     * @return
+     * @throws IOException
+     */
+    private byte[] encryptWithCipherAndIV(byte[] input, byte[] ivData, Cipher cipher) throws IOException {
         byte[] encrypted;
 
         try {
@@ -339,6 +365,70 @@ public class SharedEncryptionService {
         System.arraycopy(encrypted, 0, output, ivData.length, encrypted.length);
 
         return output;
+    }
+
+    /**
+     * Encrypt data with the raw AES256 key
+     * @param keyBytes
+     * @param input
+     * @return
+     * @throws NoSuchPaddingException
+     * @throws NoSuchAlgorithmException
+     * @throws NoSuchProviderException
+     * @throws InvalidKeyException
+     * @throws IOException
+     */
+    public byte[] encryptAES(byte[] keyBytes, byte[] input) throws NoSuchPaddingException, NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException, IOException {
+        byte[] ivData = generateKey(AES_BLOCK_SIZE);
+        IvParameterSpec ivspec = new IvParameterSpec(ivData);
+        SecretKeySpec key = new SecretKeySpec(keyBytes, "AES");
+        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS7Padding", "BC");
+
+        try {
+            cipher.init(Cipher.ENCRYPT_MODE, key, ivspec);
+        } catch (InvalidAlgorithmParameterException e) {
+            throw new IOException(e);
+        }
+
+        return encryptWithCipherAndIV(input, ivData, cipher);
+    }
+
+    public byte[] decryptAESWithKey(String key, byte[] input) throws IOException, InvalidKeyException, NoSuchPaddingException, NoSuchAlgorithmException, NoSuchProviderException, CertificateException, KeyStoreException, UnrecoverableKeyException {
+        return decryptAESWithKey(getSecretKey(key),input);
+    }
+
+
+    /**
+     * Decrypt data with an AES256 SecretKey object
+     *
+     * @param key
+     * @param input
+     * @return
+     * @throws IOException
+     * @throws InvalidKeyException
+     * @throws NoSuchPaddingException
+     * @throws NoSuchAlgorithmException
+     * @throws NoSuchProviderException
+     */
+    public byte[] decryptAESWithKey(SecretKey key, byte[] input) throws IOException, InvalidKeyException, NoSuchPaddingException, NoSuchAlgorithmException, NoSuchProviderException {
+        byte[] ivData = Arrays.copyOf(input, AES_BLOCK_SIZE);
+        byte[] encrypted = Arrays.copyOfRange(input, AES_BLOCK_SIZE, input.length);
+
+        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS7Padding", "BC");
+        IvParameterSpec ivspec = new IvParameterSpec(ivData);
+        try {
+            cipher.init(Cipher.DECRYPT_MODE, key, ivspec);
+        } catch (InvalidAlgorithmParameterException e) {
+            throw new IOException(e);
+        }
+
+        try {
+            return cipher.doFinal(encrypted);
+        } catch (BadPaddingException e) {
+            throw new IOException(e);
+        } catch (IllegalBlockSizeException e) {
+            throw new IOException(e);
+        }
     }
 
     public byte[] decryptAES(byte[] keyBytes, byte[] input) throws IOException, InvalidKeyException, NoSuchPaddingException, NoSuchAlgorithmException, NoSuchProviderException {

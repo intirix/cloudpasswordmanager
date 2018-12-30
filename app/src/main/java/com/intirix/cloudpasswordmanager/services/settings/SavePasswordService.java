@@ -56,5 +56,5 @@ public interface SavePasswordService {
      * Change the save password setting
      * @param value
      */
-    public void changeSavePasswordSetting(SavePasswordEnum value);
+    public boolean changeSavePasswordSetting(SavePasswordEnum value);
 }

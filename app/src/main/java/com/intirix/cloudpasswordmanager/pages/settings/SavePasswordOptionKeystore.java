@@ -15,26 +15,28 @@
  */
 package com.intirix.cloudpasswordmanager.pages.settings;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.KeyguardManager;
+import android.content.Context;
 
+import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.services.settings.SavePasswordEnum;
 import com.intirix.cloudpasswordmanager.services.settings.SavePasswordService;
 
 /**
- * Created by jeff on 11/4/16.
+ * Created by jeff on 10/22/16.
  */
-public class SavePasswordOptionFactory {
+public class SavePasswordOptionKeystore extends SavePasswordOption {
 
-    static SavePasswordOption createOption(SavePasswordEnum option, Activity activity, SavePasswordService savePasswordService) {
-        if (SavePasswordEnum.NEVER.equals(option)) {
-            return new SavePasswordOptionNever(activity, savePasswordService);
-        } else if (SavePasswordEnum.ALWAYS.equals(option)) {
-            return new SavePasswordOptionAlways(activity, savePasswordService);
-        } else if (SavePasswordEnum.PASSWORD_PROTECTED.equals(option)) {
-            return new SavePasswordOptionWhenPasswordProtected(activity, savePasswordService);
-        } else if (SavePasswordEnum.KEYSTORE.equals(option)) {
-            return new SavePasswordOptionKeystore(activity, savePasswordService);
-        }
-        return null;
+    public SavePasswordOptionKeystore(Activity activity, SavePasswordService savePasswordService) {
+        super(activity, savePasswordService, SavePasswordEnum.KEYSTORE);
+        label = activity.getString(R.string.settings_savepass_keystore_label);
+        description = activity.getString(R.string.settings_savepass_keystore_descr);
+    }
+
+    @Override
+    public boolean isAvailable(Context ctx) {
+        return true;
     }
 }

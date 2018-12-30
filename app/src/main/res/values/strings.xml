@@ -104,6 +104,14 @@
         not be able to able to get your password unless they have root access.  Your password will not be
         backed up to Google\'s servers.  Your device must be password protected to select this option.  Requires API 16.
     </string>
+    <string name="settings_savepass_keystore_label">Encrypt and Store Your Password In the Android Keystore</string>
+    <string name="settings_savepass_keystore_descr">Your password will be encrypted and saved on the device\'s keystore.
+        When you open the app, the password field will be pre-populated.  Other apps on your device will
+        not be able to able to get your password unless they have root access.  Your password will not be
+        backed up to Google\'s servers.  Your device must be password protected to select this option.  If your device
+        supports a secure encryption storage device, that device will be used to store the encryption key that
+        your password was encrypted with
+    </string>
     <string name="settings_offline_label">Offline Support:</string>
     <string name="settings_biometrics_label">Biometric/Fingerprint Support:</string>
     <string name="settings_biometrics_enroll_title">Enroll in Biometric Login</string>

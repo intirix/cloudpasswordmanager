@@ -16,6 +16,8 @@
 package com.intirix.cloudpasswordmanager.pages.settings;
 
 import android.content.Context;
+import android.graphics.drawable.GradientDrawable;
+import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -58,12 +60,50 @@ public class SavePasswordOptionsViewHolder extends RecyclerView.ViewHolder imple
 
         Context context = label.getContext();
         if (!bean.isAvailable(context)) {
-            row.setBackgroundColor(ContextCompat.getColor(context, R.color.selectOptionUnavailableBackground));
-        }
-        else if (bean.isCurrentlySelected()) {
-            row.setBackgroundColor(ContextCompat.getColor(context, R.color.selectOptionSelectedBackground));
+            setBackground(row,R.drawable.select_option_unavailable);
+            //row.setBackgroundColor(ContextCompat.getColor(context, R.color.selectOptionUnavailableBackground));
+            //removeBorder(row);
+        } else if (bean.isCurrentlySelected()) {
+            setBackground(row,R.drawable.select_option_selected);
+            //row.setBackgroundColor(ContextCompat.getColor(context, R.color.selectOptionSelectedBackground));
+            //addBorder(row);
         } else {
-            row.setBackgroundColor(ContextCompat.getColor(context, R.color.selectOptionUnselectedBackground));
+            setBackground(row,R.drawable.select_option_unselected);
+            //row.setBackgroundColor(ContextCompat.getColor(context, R.color.selectOptionUnselectedBackground));
+            //removeBorder(row);
+        }
+    }
+
+    private void setBackground(View view, int resource) {
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+            view.setBackgroundDrawable(view.getResources().getDrawable(resource));
+        } else {
+            view.setBackground(view.getResources().getDrawable(resource));
+        }
+    }
+
+    private void addBorder(View view) {
+        //use a GradientDrawable with only one color set, to make it a solid color
+        GradientDrawable border = new GradientDrawable();
+        border.setColor(0xFFFFFFFF); //white background
+        border.setStroke(1, 0xFF000000); //black border with full opacity
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+            view.setBackgroundDrawable(border);
+        } else {
+            view.setBackground(border);
+        }
+    }
+
+
+    private void removeBorder(View view) {
+        //use a GradientDrawable with only one color set, to make it a solid color
+        GradientDrawable border = new GradientDrawable();
+        border.setColor(0xFFFFFFFF); //white background
+        border.setStroke(0, 0xFF000000); //black border with full opacity
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+            view.setBackgroundDrawable(border);
+        } else {
+            view.setBackground(border);
         }
     }
 
