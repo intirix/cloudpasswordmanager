@@ -28,6 +28,7 @@ import com.intirix.cloudpasswordmanager.services.session.StorageType;
 
 import org.easymock.EasyMock;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
@@ -43,10 +44,25 @@ import org.robolectric.android.controller.ActivityController;
 
 public class LoginActivityFormLayoutSpec extends BaseTestCase {
 
+    private void initDefaultPasswordRequestService(PasswordRequestService passwordRequestService) {
+        EasyMock.expect(passwordRequestService.isLoginRunning()).andReturn(false).anyTimes();
+        EasyMock.expect(passwordRequestService.supportsUrl()).andReturn(true).anyTimes();
+        EasyMock.expect(passwordRequestService.supportsUsername()).andReturn(true).anyTimes();
+        EasyMock.expect(passwordRequestService.supportsPassword()).andReturn(true).anyTimes();
+        EasyMock.expect(passwordRequestService.supportsCustomKey()).andReturn(true).anyTimes();
+        EasyMock.replay(passwordRequestService);
+    }
+
+
     @Test
     public void verifyFormIsBlankOnFirstStart() {
-        ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class).create().start().resume();
+        ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class).create().start();
         LoginActivity activity = controller.get();
+
+        PasswordRequestService passwordRequestService = activity.passwordRequestService;
+        initDefaultPasswordRequestService(passwordRequestService);
+
+        controller.resume();
 
         Assert.assertEquals("", activity.urlInput.getText().toString());
         Assert.assertEquals("", activity.userInput.getText().toString());
@@ -65,8 +81,13 @@ public class LoginActivityFormLayoutSpec extends BaseTestCase {
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.putExtra(LoginActivity.PARAM_ERROR_MESSAGE, "ERROR");
 
-        ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class,intent).create().start().resume();
+        ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class,intent).create().start();
         LoginActivity activity = controller.get();
+
+        PasswordRequestService passwordRequestService = activity.passwordRequestService;
+        initDefaultPasswordRequestService(passwordRequestService);
+
+        controller.resume();
 
         Assert.assertEquals("", activity.urlInput.getText().toString());
         Assert.assertEquals("", activity.userInput.getText().toString());
@@ -110,8 +131,13 @@ public class LoginActivityFormLayoutSpec extends BaseTestCase {
 
     @Test
     public void verifyPinButtonIsDisabledForNonSSL() {
-        ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class).create().start().resume();
+        ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class).create().start();
         LoginActivity activity = controller.get();
+
+        PasswordRequestService passwordRequestService = activity.passwordRequestService;
+        initDefaultPasswordRequestService(passwordRequestService);
+
+        controller.resume();
 
         activity.urlInput.setText("http://cloud.example.com");
         Assert.assertTrue(activity.loginButton.isEnabled());
@@ -134,6 +160,11 @@ public class LoginActivityFormLayoutSpec extends BaseTestCase {
         sessionService.setUrl(TESTURL);
         sessionService.setUsername(TESTUSER);
 
+        PasswordRequestService passwordRequestService = activity.passwordRequestService;
+        initDefaultPasswordRequestService(passwordRequestService);
+
+
+        Assert.assertSame(passwordRequestService,activity.passwordRequestService);
         controller.start().resume();
 
         Assert.assertEquals(TESTURL, activity.urlInput.getText().toString());
@@ -156,8 +187,7 @@ public class LoginActivityFormLayoutSpec extends BaseTestCase {
         LoginActivity activity = controller.get();
 
         PasswordRequestService passwordRequestService = activity.passwordRequestService;
-        EasyMock.expect(passwordRequestService.isLoginRunning()).andReturn(false).anyTimes();
-        EasyMock.replay(passwordRequestService);
+        initDefaultPasswordRequestService(passwordRequestService);
 
 
         sessionService.setUrl(TESTURL1);
@@ -186,8 +216,13 @@ public class LoginActivityFormLayoutSpec extends BaseTestCase {
 
     @Test
     public void verifyErrorMessageWhenUrlIsMissingProtocol() {
-        ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class).create().start().resume();
+        ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class).create().start();
         LoginActivity activity = controller.get();
+
+        PasswordRequestService passwordRequestService = activity.passwordRequestService;
+        initDefaultPasswordRequestService(passwordRequestService);
+
+        controller.resume();
 
         Assert.assertEquals("", activity.urlInput.getText().toString());
         Assert.assertEquals("", activity.errorMessageView.getText().toString());
@@ -206,8 +241,13 @@ public class LoginActivityFormLayoutSpec extends BaseTestCase {
 
     @Test
     public void verifyErrorMessageWhenUrlHasInvalidProtocol() {
-        ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class).create().start().resume();
+        ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class).create().start();
         LoginActivity activity = controller.get();
+
+        PasswordRequestService passwordRequestService = activity.passwordRequestService;
+        initDefaultPasswordRequestService(passwordRequestService);
+
+        controller.resume();
 
         Assert.assertEquals("", activity.urlInput.getText().toString());
         Assert.assertEquals("", activity.errorMessageView.getText().toString());
@@ -297,12 +337,7 @@ public class LoginActivityFormLayoutSpec extends BaseTestCase {
         LoginActivity activity = controller.get();
 
         PasswordRequestService passwordRequestService = activity.passwordRequestService;
-        EasyMock.expect(passwordRequestService.isLoginRunning()).andReturn(false).anyTimes();
-        EasyMock.expect(passwordRequestService.supportsUrl()).andReturn(true).anyTimes();
-        EasyMock.expect(passwordRequestService.supportsUsername()).andReturn(true).anyTimes();
-        EasyMock.expect(passwordRequestService.supportsPassword()).andReturn(true).anyTimes();
-        EasyMock.expect(passwordRequestService.supportsCustomKey()).andReturn(true).anyTimes();
-        EasyMock.replay(passwordRequestService);
+        initDefaultPasswordRequestService(passwordRequestService);
 
         controller.resume();
 

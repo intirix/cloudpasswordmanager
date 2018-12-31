@@ -18,7 +18,9 @@ package com.intirix.cloudpasswordmanager.pages.login;
 import com.intirix.cloudpasswordmanager.BaseTestCase;
 import com.intirix.cloudpasswordmanager.BuildConfig;
 import com.intirix.cloudpasswordmanager.TestPasswordApplication;
+import com.intirix.cloudpasswordmanager.services.backend.PasswordRequestService;
 
+import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,10 +39,21 @@ public class DependencyInjectionUnitTest extends BaseTestCase {
 
     @Test
     public void verifyDependencyInjection() throws Exception {
-        ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class).create().start().resume();
+        ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class).create().start();
         LoginActivity activity = controller.get();
 
         Assert.assertNotNull(activity.passwordRequestService);
+
+        PasswordRequestService passwordRequestService = activity.passwordRequestService;
+        EasyMock.expect(passwordRequestService.isLoginRunning()).andReturn(false).anyTimes();
+        EasyMock.expect(passwordRequestService.supportsUrl()).andReturn(true).anyTimes();
+        EasyMock.expect(passwordRequestService.supportsUsername()).andReturn(true).anyTimes();
+        EasyMock.expect(passwordRequestService.supportsPassword()).andReturn(true).anyTimes();
+        EasyMock.expect(passwordRequestService.supportsCustomKey()).andReturn(true).anyTimes();
+        EasyMock.replay(passwordRequestService);
+
+
+        controller.resume();
 
         controller.pause().stop().destroy();
     }

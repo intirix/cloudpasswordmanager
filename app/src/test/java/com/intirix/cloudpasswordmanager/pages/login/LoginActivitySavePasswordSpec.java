@@ -18,10 +18,12 @@ package com.intirix.cloudpasswordmanager.pages.login;
 import com.intirix.cloudpasswordmanager.BaseTestCase;
 import com.intirix.cloudpasswordmanager.BuildConfig;
 import com.intirix.cloudpasswordmanager.TestPasswordApplication;
+import com.intirix.cloudpasswordmanager.services.backend.PasswordRequestService;
 import com.intirix.cloudpasswordmanager.services.settings.SavePasswordEnum;
 import com.intirix.cloudpasswordmanager.services.settings.SavePasswordService;
 import com.intirix.cloudpasswordmanager.services.session.MockSessionService;
 
+import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,7 +47,7 @@ public class LoginActivitySavePasswordSpec extends BaseTestCase {
         MockSessionService sessionService = (MockSessionService)serviceRef.sessionService();
 
         // given the user is on the login page
-        ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class).create();
+        ActivityController<LoginActivity> controller = Robolectric.buildActivity(LoginActivity.class).create().start();
         LoginActivity activity = controller.get();
 
         final String MOCK_URL = "https://www.example.com/owncloud";
@@ -61,7 +63,15 @@ public class LoginActivitySavePasswordSpec extends BaseTestCase {
         savePasswordService.changeSavePasswordSetting(SavePasswordEnum.ALWAYS);
         sessionService.end();
 
-        controller.start().resume();
+        PasswordRequestService passwordRequestService = activity.passwordRequestService;
+        EasyMock.expect(passwordRequestService.isLoginRunning()).andReturn(false).anyTimes();
+        EasyMock.expect(passwordRequestService.supportsUrl()).andReturn(true).anyTimes();
+        EasyMock.expect(passwordRequestService.supportsUsername()).andReturn(true).anyTimes();
+        EasyMock.expect(passwordRequestService.supportsPassword()).andReturn(true).anyTimes();
+        EasyMock.expect(passwordRequestService.supportsCustomKey()).andReturn(true).anyTimes();
+        EasyMock.replay(passwordRequestService);
+
+        controller.resume();
 
         Assert.assertEquals(MOCK_PASS, activity.passInput.getText().toString());
 

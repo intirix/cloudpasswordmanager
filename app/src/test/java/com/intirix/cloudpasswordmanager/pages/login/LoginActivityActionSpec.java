@@ -50,6 +50,15 @@ import org.robolectric.android.controller.ActivityController;
 
 public class LoginActivityActionSpec extends BaseTestCase {
 
+    private void initDefaultPasswordRequestService(PasswordRequestService passwordRequestService) {
+        EasyMock.expect(passwordRequestService.isLoginRunning()).andReturn(false).anyTimes();
+        EasyMock.expect(passwordRequestService.supportsUrl()).andReturn(true).anyTimes();
+        EasyMock.expect(passwordRequestService.supportsUsername()).andReturn(true).anyTimes();
+        EasyMock.expect(passwordRequestService.supportsPassword()).andReturn(true).anyTimes();
+        EasyMock.expect(passwordRequestService.supportsCustomKey()).andReturn(true).anyTimes();
+        EasyMock.replay(passwordRequestService);
+    }
+
     @Test
     public void verifyFailedLogin() throws Exception {
         MockSessionService sessionService = (MockSessionService)serviceRef.sessionService();
@@ -59,6 +68,10 @@ public class LoginActivityActionSpec extends BaseTestCase {
         LoginActivity activity = controller.get();
 
         PasswordRequestService passwordRequestService = activity.passwordRequestService;
+        EasyMock.expect(passwordRequestService.supportsUrl()).andReturn(true).anyTimes();
+        EasyMock.expect(passwordRequestService.supportsUsername()).andReturn(true).anyTimes();
+        EasyMock.expect(passwordRequestService.supportsPassword()).andReturn(true).anyTimes();
+        EasyMock.expect(passwordRequestService.supportsCustomKey()).andReturn(true).anyTimes();
         passwordRequestService.login();
         EasyMock.expectLastCall();
         EasyMock.expect(passwordRequestService.isLoginRunning()).andReturn(false).andReturn(true).andReturn(false);
@@ -121,6 +134,10 @@ public class LoginActivityActionSpec extends BaseTestCase {
         LoginActivity activity = controller.get();
 
         PasswordRequestService passwordRequestService = activity.passwordRequestService;
+        EasyMock.expect(passwordRequestService.supportsUrl()).andReturn(true).anyTimes();
+        EasyMock.expect(passwordRequestService.supportsUsername()).andReturn(true).anyTimes();
+        EasyMock.expect(passwordRequestService.supportsPassword()).andReturn(true).anyTimes();
+        EasyMock.expect(passwordRequestService.supportsCustomKey()).andReturn(true).anyTimes();
         passwordRequestService.login();
         EasyMock.expectLastCall();
         EasyMock.expect(passwordRequestService.isLoginRunning()).andReturn(false).andReturn(true).andReturn(false);
@@ -195,6 +212,10 @@ public class LoginActivityActionSpec extends BaseTestCase {
         LoginActivity activity = controller.get();
 
         PasswordRequestService passwordRequestService = activity.passwordRequestService;
+        EasyMock.expect(passwordRequestService.supportsUrl()).andReturn(true).anyTimes();
+        EasyMock.expect(passwordRequestService.supportsUsername()).andReturn(true).anyTimes();
+        EasyMock.expect(passwordRequestService.supportsPassword()).andReturn(true).anyTimes();
+        EasyMock.expect(passwordRequestService.supportsCustomKey()).andReturn(true).anyTimes();
         EasyMock.expect(passwordRequestService.isLoginRunning()).andReturn(true);
         EasyMock.replay(passwordRequestService);
 
@@ -220,6 +241,10 @@ public class LoginActivityActionSpec extends BaseTestCase {
         LoginActivity activity = controller.get();
 
         PasswordRequestService passwordRequestService = activity.passwordRequestService;
+        EasyMock.expect(passwordRequestService.supportsUrl()).andReturn(true).anyTimes();
+        EasyMock.expect(passwordRequestService.supportsUsername()).andReturn(true).anyTimes();
+        EasyMock.expect(passwordRequestService.supportsPassword()).andReturn(true).anyTimes();
+        EasyMock.expect(passwordRequestService.supportsCustomKey()).andReturn(true).anyTimes();
         EasyMock.expect(passwordRequestService.isLoginRunning()).andReturn(false).anyTimes();
         EasyMock.replay(passwordRequestService);
 
@@ -265,6 +290,10 @@ public class LoginActivityActionSpec extends BaseTestCase {
         LoginActivity activity = controller.get();
 
         PasswordRequestService passwordRequestService = activity.passwordRequestService;
+        EasyMock.expect(passwordRequestService.supportsUrl()).andReturn(true).anyTimes();
+        EasyMock.expect(passwordRequestService.supportsUsername()).andReturn(true).anyTimes();
+        EasyMock.expect(passwordRequestService.supportsPassword()).andReturn(true).anyTimes();
+        EasyMock.expect(passwordRequestService.supportsCustomKey()).andReturn(true).anyTimes();
         EasyMock.expect(passwordRequestService.isLoginRunning()).andReturn(false).anyTimes();
         EasyMock.replay(passwordRequestService);
 
@@ -310,6 +339,10 @@ public class LoginActivityActionSpec extends BaseTestCase {
         LoginActivity activity = controller.get();
 
         PasswordRequestService passwordRequestService = activity.passwordRequestService;
+        EasyMock.expect(passwordRequestService.supportsUrl()).andReturn(true).anyTimes();
+        EasyMock.expect(passwordRequestService.supportsUsername()).andReturn(true).anyTimes();
+        EasyMock.expect(passwordRequestService.supportsPassword()).andReturn(true).anyTimes();
+        EasyMock.expect(passwordRequestService.supportsCustomKey()).andReturn(true).anyTimes();
         EasyMock.expect(passwordRequestService.isLoginRunning()).andReturn(false).anyTimes();
         EasyMock.replay(passwordRequestService);
 
@@ -355,6 +388,10 @@ public class LoginActivityActionSpec extends BaseTestCase {
         LoginActivity activity = controller.get();
 
         PasswordRequestService passwordRequestService = activity.passwordRequestService;
+        EasyMock.expect(passwordRequestService.supportsUrl()).andReturn(true).anyTimes();
+        EasyMock.expect(passwordRequestService.supportsUsername()).andReturn(true).anyTimes();
+        EasyMock.expect(passwordRequestService.supportsPassword()).andReturn(true).anyTimes();
+        EasyMock.expect(passwordRequestService.supportsCustomKey()).andReturn(true).anyTimes();
         passwordRequestService.login();
         EasyMock.expectLastCall();
         EasyMock.expect(passwordRequestService.isLoginRunning()).andReturn(false).andReturn(false).andReturn(true);
@@ -405,6 +442,10 @@ public class LoginActivityActionSpec extends BaseTestCase {
         LoginActivity activity = controller.get();
 
         PasswordRequestService passwordRequestService = activity.passwordRequestService;
+        EasyMock.expect(passwordRequestService.supportsUrl()).andReturn(true).anyTimes();
+        EasyMock.expect(passwordRequestService.supportsUsername()).andReturn(true).anyTimes();
+        EasyMock.expect(passwordRequestService.supportsPassword()).andReturn(true).anyTimes();
+        EasyMock.expect(passwordRequestService.supportsCustomKey()).andReturn(true).anyTimes();
         EasyMock.expect(passwordRequestService.isLoginRunning()).andReturn(false).anyTimes();
         EasyMock.replay(passwordRequestService);
 
@@ -451,6 +492,10 @@ public class LoginActivityActionSpec extends BaseTestCase {
         LoginActivity activity = controller.get();
 
         PasswordRequestService passwordRequestService = activity.passwordRequestService;
+        EasyMock.expect(passwordRequestService.supportsUrl()).andReturn(true).anyTimes();
+        EasyMock.expect(passwordRequestService.supportsUsername()).andReturn(true).anyTimes();
+        EasyMock.expect(passwordRequestService.supportsPassword()).andReturn(true).anyTimes();
+        EasyMock.expect(passwordRequestService.supportsCustomKey()).andReturn(true).anyTimes();
         EasyMock.expect(passwordRequestService.isLoginRunning()).andReturn(false).anyTimes();
         EasyMock.replay(passwordRequestService);
 
