@@ -2,6 +2,8 @@
 
 Android frontend for Cloud-based password managers
 
+![Build Status](https://codebuild.us-east-1.amazonaws.com/badges?uuid=eyJlbmNyeXB0ZWREYXRhIjoiR1BOdWRPZmlVblpBdWl0ZXpoS0ZDZ2RRb3lJVzB4TFZJd2xEd1RFSHBlSTFZZWlJU2NYa0RoV1grN1VocGw5MVhWVzNtZ3l1RmpPb1Z6emZYZWttb1VnPSIsIml2UGFyYW1ldGVyU3BlYyI6IjRuY0VoSE84Ym1tbnAyWlIiLCJtYXRlcmlhbFNldFNlcmlhbCI6MX0%3D&branch=master)
+
 Backends
 ========
 
