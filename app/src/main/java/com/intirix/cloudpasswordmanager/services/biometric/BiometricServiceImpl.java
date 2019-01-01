@@ -149,8 +149,9 @@ public class BiometricServiceImpl implements BiometricService {
                             + KeyProperties.BLOCK_MODE_CBC + "/"
                             + KeyProperties.ENCRYPTION_PADDING_PKCS7);
             if (key != null) {
-                byte[] iv = sharedEncryptionService.generateKey(SharedEncryptionService.AES_BLOCK_SIZE);
-                cipher.init(Cipher.ENCRYPT_MODE, key, new IvParameterSpec(iv));
+                //byte[] iv = sharedEncryptionService.generateKey(SharedEncryptionService.AES_BLOCK_SIZE);
+                //cipher.init(Cipher.ENCRYPT_MODE, key, new IvParameterSpec(iv));
+                cipher.init(Cipher.ENCRYPT_MODE, key);
 
                 // tell android to prompt for a biometric authentication
                 // android has the same flow for enroll and auth.  The callback and cipher mode is what is different
@@ -170,6 +171,7 @@ public class BiometricServiceImpl implements BiometricService {
             }
         } catch (Exception e) {
             Log.e(TAG,"Failed to enroll in biometric login",e);
+            eventService.postEvent(new ErrorEvent("Failed to enroll: "+e.getMessage()));
         }
     }
 
