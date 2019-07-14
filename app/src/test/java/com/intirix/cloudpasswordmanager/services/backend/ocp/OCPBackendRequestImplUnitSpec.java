@@ -17,6 +17,7 @@ package com.intirix.cloudpasswordmanager.services.backend.ocp;
 
 import com.intirix.cloudpasswordmanager.BuildConfig;
 import com.intirix.cloudpasswordmanager.TestPasswordApplication;
+import com.intirix.cloudpasswordmanager.pages.login.LoginFailedEvent;
 import com.intirix.cloudpasswordmanager.pages.passwordlist.CategoryListUpdatedEvent;
 import com.intirix.cloudpasswordmanager.pages.FatalErrorEvent;
 import com.intirix.cloudpasswordmanager.pages.login.LoginSuccessfulEvent;
@@ -91,8 +92,8 @@ public class OCPBackendRequestImplUnitSpec {
         passwordStorageService.getLastVersionCallback().onError("ERROR");
         Assert.assertFalse(impl.isLoginRunning());
         eventService.assertNumberOfPosts(1);
-        eventService.assertEventType(0, FatalErrorEvent.class);
-        Assert.assertEquals("ERROR", eventService.getEvent(0, FatalErrorEvent.class).getMessage());
+        eventService.assertEventType(0, LoginFailedEvent.class);
+        Assert.assertEquals("ERROR", eventService.getEvent(0, LoginFailedEvent.class).getMessage());
     }
 
     @Test
@@ -124,9 +125,8 @@ public class OCPBackendRequestImplUnitSpec {
 
         passwordStorageService.getLastCategoryListCallback().onError("ERROR");
         eventService.assertNumberOfPosts(1);
-        eventService.assertEventType(0, FatalErrorEvent.class);
-        Assert.assertEquals("ERROR", eventService.getEvent(0, FatalErrorEvent.class).getMessage());
-        Assert.assertNull("Session did not terminate when fatal error occurred", sessionService.getCurrentSession());
+        eventService.assertEventType(0, LoginFailedEvent.class);
+        Assert.assertEquals("ERROR", eventService.getEvent(0, LoginFailedEvent.class).getMessage());
     }
 
     @Test
@@ -159,9 +159,8 @@ public class OCPBackendRequestImplUnitSpec {
 
         passwordStorageService.getLastPasswordListCallack().onError("ERROR");
         eventService.assertNumberOfPosts(1);
-        eventService.assertEventType(0, FatalErrorEvent.class);
-        Assert.assertEquals("ERROR", eventService.getEvent(0, FatalErrorEvent.class).getMessage());
-        Assert.assertNull("Session did not terminate when fatal error occurred", sessionService.getCurrentSession());
+        eventService.assertEventType(0, LoginFailedEvent.class);
+        Assert.assertEquals("ERROR", eventService.getEvent(0, LoginFailedEvent.class).getMessage());
     }
 
     @Test
