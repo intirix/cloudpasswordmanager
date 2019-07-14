@@ -7,6 +7,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.intirix.cloudpasswordmanager.pages.FatalErrorEvent;
+import com.intirix.cloudpasswordmanager.pages.login.LoginFailedEvent;
 import com.intirix.cloudpasswordmanager.pages.passworddetail.PasswordUpdatedEvent;
 import com.intirix.cloudpasswordmanager.pages.passwordlist.CategoryListUpdatedEvent;
 import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordListUpdatedEvent;
@@ -132,7 +133,7 @@ public class SMSecretConversionServiceImpl implements SMSecretConversionService 
                 eventService.postEvent(new CategoryListUpdatedEvent());
                 eventService.postEvent(new PasswordListUpdatedEvent());
             } else {
-                eventService.postEvent(new FatalErrorEvent("Decryption key not available"));
+                eventService.postEvent(new LoginFailedEvent("Decryption key not available"));
             }
         } catch (Exception e){
             Log.w(TAG,"Failed to decrypt secrets", e);
@@ -179,7 +180,7 @@ public class SMSecretConversionServiceImpl implements SMSecretConversionService 
 
                 eventService.postEvent(new PasswordUpdatedEvent());
             } else {
-                eventService.postEvent(new FatalErrorEvent("Decryption key not available"));
+                eventService.postEvent(new LoginFailedEvent("Decryption key not available"));
             }
         } catch (Exception e){
             Log.w(TAG,"Failed to decrypt secrets", e);

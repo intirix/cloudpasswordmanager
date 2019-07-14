@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.intirix.cloudpasswordmanager.pages.login.LoginFailedEvent;
 import com.intirix.cloudpasswordmanager.pages.login.LoginSuccessfulEvent;
 import com.intirix.cloudpasswordmanager.pages.passwordadd.PasswordAddedEvent;
 import com.intirix.cloudpasswordmanager.pages.passwordlist.CategoryListUpdatedEvent;
@@ -37,6 +38,7 @@ public class OfflineModeServiceImpl implements OfflineModeService {
     private SharedPreferences preferences;
     private SharedEncryptionService encryptionService;
     private EventService eventService;
+    private boolean running = false;
     public static final String PREF_OFFLINE_MODE_SETTING = "OFFLINE_MODE_SETTING_KEY";
 
     @Inject
@@ -47,6 +49,11 @@ public class OfflineModeServiceImpl implements OfflineModeService {
         this.eventService = eventService;
         preferences = PreferenceManager.getDefaultSharedPreferences(context);
 
+    }
+
+    @Override
+    public boolean isDecryptionRunning() {
+        return running;
     }
 
     @Override
@@ -90,6 +97,7 @@ public class OfflineModeServiceImpl implements OfflineModeService {
 
     @Override
     public void loadDataFromCache(boolean foreground, final String username, final String password) {
+        running = true;
         if (foreground) {
             Log.w(TAG,"loadDataFromCache() on main");
 
@@ -103,6 +111,25 @@ public class OfflineModeServiceImpl implements OfflineModeService {
                 }
             }.execute();
         }
+    }
+
+    @Override
+    public boolean isOfflineModeAvailable() {
+        SessionInfo currentSession = sessionService.getCurrentSession();
+
+        if (currentSession==null) {
+            Log.d(TAG, "isOfflineModeAvailable(): no - there is not session");
+            return false;
+        }
+        if (!isOfflineModelEnabled()) {
+            Log.d(TAG, "isOfflineModeAvailable(): no - offline mode is disabled");
+            return false;
+        }
+        if (currentSession.isPasswordBeanListEmpty()) {
+            Log.d(TAG, "isOfflineModeAvailable(): no - no passwords available");
+            return false;
+        }
+        return true;
     }
 
     private void updateOfflineModeCache() {
@@ -157,11 +184,15 @@ public class OfflineModeServiceImpl implements OfflineModeService {
 
         try {
             List<PasswordBean> passwordList = (List<PasswordBean>)decryptFile(currentSession, key,"passwords");
-            // send the login as soon as a single successful decryption happens
-            eventService.postEvent(new LoginSuccessfulEvent());
             if (passwordList!=null&&currentSession.isPasswordBeanListEmpty()) {
                 Log.d(TAG,"Decrypted "+passwordList.size()+" passwords");
                 currentSession.setPasswordBeanList(passwordList);
+
+                // send the login as soon as a single successful decryption of a password happens
+                Log.d(TAG,"loadDataFromCache(): Sending successful login event");
+                eventService.postEvent(new LoginSuccessfulEvent());
+
+
                 eventService.postEvent(new PasswordListUpdatedEvent());
             }
             List<Category> categoryList = (List<Category>)decryptFile(currentSession, key,"categories");
@@ -173,7 +204,9 @@ public class OfflineModeServiceImpl implements OfflineModeService {
 
         } catch (Exception e) {
             Log.e(TAG,"Failed", e);
-
+            eventService.postEvent(new LoginFailedEvent(e.getMessage()));
+        } finally {
+            running = false;
         }
 
     }

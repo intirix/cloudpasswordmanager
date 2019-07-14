@@ -20,6 +20,7 @@ import android.util.Log;
 
 import com.intirix.cloudpasswordmanager.R;
 import com.intirix.cloudpasswordmanager.pages.FatalErrorEvent;
+import com.intirix.cloudpasswordmanager.pages.login.LoginFailedEvent;
 import com.intirix.cloudpasswordmanager.pages.login.LoginSuccessfulEvent;
 import com.intirix.cloudpasswordmanager.pages.passwordlist.CategoryListUpdatedEvent;
 import com.intirix.cloudpasswordmanager.pages.passwordlist.PasswordListUpdatedEvent;
@@ -89,7 +90,7 @@ public class OCPBackendRequestImpl implements BackendRequestInterface {
             @Override
             public void onError(String message) {
                 loginRunning = false;
-                eventService.postEvent(new FatalErrorEvent(message));
+                eventService.postEvent(new LoginFailedEvent(message));
             }
         });
     }
@@ -132,8 +133,8 @@ public class OCPBackendRequestImpl implements BackendRequestInterface {
 
             @Override
             public void onError(String message) {
-                sessionService.end();
-                eventService.postEvent(new FatalErrorEvent(message));
+                //sessionService.end();
+                eventService.postEvent(new LoginFailedEvent(message));
             }
         });
     }
@@ -153,8 +154,8 @@ public class OCPBackendRequestImpl implements BackendRequestInterface {
 
             @Override
             public void onError(String message) {
-                sessionService.end();
-                eventService.postEvent(new FatalErrorEvent(message));
+                //sessionService.end();
+                eventService.postEvent(new LoginFailedEvent(message));
             }
         });
     }

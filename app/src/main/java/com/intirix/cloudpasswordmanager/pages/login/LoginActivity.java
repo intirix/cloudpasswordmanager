@@ -41,6 +41,7 @@ import com.intirix.cloudpasswordmanager.services.settings.SavePasswordService;
 import com.intirix.cloudpasswordmanager.services.ssl.CertPinningService;
 import com.intirix.cloudpasswordmanager.services.ssl.PinFailedEvent;
 import com.intirix.cloudpasswordmanager.services.ssl.PinSuccessfulEvent;
+import com.intirix.cloudpasswordmanager.services.ui.EventService;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -76,6 +77,9 @@ public class LoginActivity extends BaseActivity {
 
     @Inject
     BiometricService biometricService;
+
+    @Inject
+    EventService eventService;
 
     @BindView(R.id.login_storage_type)
     Spinner storageTypeSpinner;
@@ -450,9 +454,22 @@ public class LoginActivity extends BaseActivity {
         Log.d(TAG,"onLogin()");
         updateProgressDialog();
 
-        passwordRequestService.listPasswords();
-        passwordRequestService.listCategories();
-        passwordRequestService.listUsers();
+        try {
+            passwordRequestService.listPasswords();
+            passwordRequestService.listCategories();
+            passwordRequestService.listUsers();
+        } catch (Exception e) {
+            if (offlineModeService.isOfflineModeAvailable()) {
+                // ignore
+                errorMessageView.setText(e.getMessage());
+                updateErrorMessageVisibility();
+                Log.w(TAG,"onLogin(): Failed login, but offline mode available",e);
+            } else {
+                Log.w(TAG,"onLogin(): Failed login without offline mode",e);
+                eventService.postEvent(new FatalErrorEvent(e.getMessage()));
+                return;
+            }
+        }
 
         Intent intent = new Intent(LoginActivity.this, PasswordListActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -461,10 +478,36 @@ public class LoginActivity extends BaseActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onFatalError(FatalErrorEvent event) {
+        Log.w(TAG,"onFatalError(): "+event.getMessage());
         updateProgressDialog();
-        sessionService.end();
+
+        // only end the session if the offline thread is not running
+        if (!offlineModeService.isDecryptionRunning()) {
+            sessionService.end();
+        }
         errorMessageView.setText(event.getMessage());
         updateErrorMessageVisibility();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onLoginFailed(LoginFailedEvent event) {
+        Log.w(TAG,"onLoginFailed(): "+event.getMessage());
+        errorMessageView.setText(event.getMessage());
+        // if the remote server failed/errors/rejected but the
+        // local cache was available, then force a login
+        if (offlineModeService.isOfflineModeAvailable()) {
+            updateErrorMessageVisibility();
+            Intent intent = new Intent(LoginActivity.this, PasswordListActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        } else {
+            updateProgressDialog();
+            // only end the session if the offline thread is not running
+            if (!offlineModeService.isDecryptionRunning()) {
+                sessionService.end();
+            }
+            updateErrorMessageVisibility();
+        }
     }
 
     /**

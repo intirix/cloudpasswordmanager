@@ -75,6 +75,8 @@ public class SessionServiceImpl implements SessionService {
     @Override
     public void end() {
         currentSession = null;
+        Log.w(TAG,"Session has ended", new Exception("Ended session"));
+
     }
 
     @Override
