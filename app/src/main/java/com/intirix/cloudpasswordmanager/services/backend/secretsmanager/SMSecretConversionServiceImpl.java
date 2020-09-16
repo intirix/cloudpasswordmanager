@@ -171,12 +171,7 @@ public class SMSecretConversionServiceImpl implements SMSecretConversionService 
 
                 Log.d(TAG, "Decrypted secret "+parsedType.name()+", decryption="+dt_decrypt+"ms, elapsed="+dt_elapsed+"ms");
 
-                for (int i = 0; i<session.getPasswordBeanList().size(); i++) {
-                    if (sid.equals(session.getPasswordBeanList().get(i).getId())) {
-                        Log.d(TAG,"Replacing password "+i+" with newly decrypted secret");
-                        session.getPasswordBeanList().set(i, passwordBeanList.get(0));
-                    }
-                }
+                session.updatePasswordBeanList(passwordBeanList);
 
                 eventService.postEvent(new PasswordUpdatedEvent());
             } else {
