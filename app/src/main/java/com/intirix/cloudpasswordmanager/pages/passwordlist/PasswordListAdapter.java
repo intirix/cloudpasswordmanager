@@ -16,9 +16,9 @@
 package com.intirix.cloudpasswordmanager.pages.passwordlist;
 
 import android.app.Activity;
-import android.nfc.Tag;
-import android.support.v7.util.SortedList;
-import android.support.v7.widget.RecyclerView;
+
+import androidx.recyclerview.widget.SortedList;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;

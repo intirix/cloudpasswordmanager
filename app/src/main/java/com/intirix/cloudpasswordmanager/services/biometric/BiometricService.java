@@ -1,10 +1,6 @@
 package com.intirix.cloudpasswordmanager.services.biometric;
 
-import android.content.Context;
-import android.os.Build;
-import android.support.v4.hardware.fingerprint.FingerprintManagerCompat;
-
-import javax.inject.Inject;
+import androidx.core.hardware.fingerprint.FingerprintManagerCompat;
 
 public interface BiometricService {
     /**

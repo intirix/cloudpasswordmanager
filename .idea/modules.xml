@@ -2,12 +2,14 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/CloudPasswordManager.iml" filepath="$PROJECT_DIR$/CloudPasswordManager.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/cloudpasswordmanager.iml" filepath="$PROJECT_DIR$/.idea/modules/cloudpasswordmanager.iml" group="cloudpasswordmanager" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/cloudpasswordmanager-app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/cloudpasswordmanager-app.iml" group="cloudpasswordmanager/app" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/secretsmanagerapiv1/io.swagger-secretsmanagerapiv1.iml" filepath="$PROJECT_DIR$/.idea/modules/secretsmanagerapiv1/io.swagger-secretsmanagerapiv1.iml" group="cloudpasswordmanager/secretsmanagerapiv1" />
-      <module fileurl="file://$PROJECT_DIR$/secretsmanagerapiv1/secretsmanagerapiv1.iml" filepath="$PROJECT_DIR$/secretsmanagerapiv1/secretsmanagerapiv1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/cloudpasswordmanager.iml" filepath="$PROJECT_DIR$/.idea/modules/cloudpasswordmanager.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/cloudpasswordmanager.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/cloudpasswordmanager.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/cloudpasswordmanager.app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/cloudpasswordmanager.app.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/cloudpasswordmanager.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/cloudpasswordmanager.app.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/cloudpasswordmanager.app.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/cloudpasswordmanager.app.unitTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/secretsmanagerapiv1/cloudpasswordmanager.secretsmanagerapiv1.iml" filepath="$PROJECT_DIR$/.idea/modules/secretsmanagerapiv1/cloudpasswordmanager.secretsmanagerapiv1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/secretsmanagerapiv1/cloudpasswordmanager.secretsmanagerapiv1.main.iml" filepath="$PROJECT_DIR$/.idea/modules/secretsmanagerapiv1/cloudpasswordmanager.secretsmanagerapiv1.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/secretsmanagerapiv1/cloudpasswordmanager.secretsmanagerapiv1.test.iml" filepath="$PROJECT_DIR$/.idea/modules/secretsmanagerapiv1/cloudpasswordmanager.secretsmanagerapiv1.test.iml" />
     </modules>
   </component>
 </project>

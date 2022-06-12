@@ -18,7 +18,7 @@ package com.intirix.cloudpasswordmanager.pages.passwordlist;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.PaintDrawable;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 

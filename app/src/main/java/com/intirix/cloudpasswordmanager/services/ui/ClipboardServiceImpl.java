@@ -16,8 +16,10 @@
 package com.intirix.cloudpasswordmanager.services.ui;
 
 import android.content.ClipData;
+import android.content.ClipDescription;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.os.PersistableBundle;
 
 import javax.inject.Inject;
 
@@ -37,6 +39,14 @@ public class ClipboardServiceImpl implements ClipboardService {
     public void copyStringToClipboard(String label, String text) {
         ClipboardManager clipboard = (ClipboardManager)context.getSystemService(Context.CLIPBOARD_SERVICE);
         ClipData clip = ClipData.newPlainText(label, text);
+        PersistableBundle extras = clip.getDescription().getExtras();
+        if (extras==null) {
+            extras = new PersistableBundle();
+            extras.putBoolean(ClipDescription.EXTRA_IS_SENSITIVE, true);
+            clip.getDescription().setExtras(extras);
+        } else {
+            extras.putBoolean(ClipDescription.EXTRA_IS_SENSITIVE, true);
+        }
         clipboard.setPrimaryClip(clip);
     }
 }

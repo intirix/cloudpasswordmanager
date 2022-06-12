@@ -17,8 +17,7 @@ package com.intirix.cloudpasswordmanager;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.view.View;
+import androidx.annotation.NonNull;
 
 import com.intirix.cloudpasswordmanager.injection.CloudPasswordManagerModule;
 import com.intirix.cloudpasswordmanager.injection.MockCloudPasswordManagerModule;

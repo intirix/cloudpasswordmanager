@@ -15,7 +15,7 @@
  */
 package com.intirix.cloudpasswordmanager;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.intirix.cloudpasswordmanager.injection.CloudPasswordManagerModule;
 

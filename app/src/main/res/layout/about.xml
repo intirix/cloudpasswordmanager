@@ -10,7 +10,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".pages.about.AboutActivity">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/my_toolbar"
         style="@style/toolbar_style"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>

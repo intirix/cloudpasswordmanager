@@ -15,19 +15,15 @@
  */
 package com.intirix.cloudpasswordmanager.pages.passworddetail;
 
-import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.view.View;
 
 import com.intirix.cloudpasswordmanager.BaseTestCase;
-import com.intirix.cloudpasswordmanager.BuildConfig;
 import com.intirix.cloudpasswordmanager.R;
-import com.intirix.cloudpasswordmanager.TestPasswordApplication;
-import com.intirix.cloudpasswordmanager.pages.login.LoginActivity;
 import com.intirix.cloudpasswordmanager.services.backend.MockPasswordRequestService;
 import com.intirix.cloudpasswordmanager.services.session.SessionService;
 import com.intirix.cloudpasswordmanager.services.backend.beans.PasswordBean;
@@ -38,10 +34,7 @@ import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.Shadows;
-import org.robolectric.annotation.Config;
-import org.robolectric.fakes.RoboMenu;
 import org.robolectric.shadows.ShadowActivity;
-import org.robolectric.shadows.ShadowClipboardManager;
 import org.robolectric.shadows.ShadowLooper;
 import org.robolectric.shadows.ShadowToast;
 import org.robolectric.android.controller.ActivityController;
